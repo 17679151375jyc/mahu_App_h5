@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no">
+    <!--<link rel="icon" href="<%= BASE_URL %>favicon.ico">-->
+
+    <!--<link rel="stylesheet" href="http://at.alicdn.com/t/font_1123887_ybsa1h26oh.css">-->
+    <link rel="stylesheet" href="./font_1123887_ybsa1h26oh.css">
+    <!-- fontawesome -->
+    <!--<link href="https://cdn.bootcss.com/font-awesome/5.10.0-12/css/all.css" rel="stylesheet">-->
+    <!--<link rel="stylesheet" href="./font-awesome.css" >-->
+
+    <!--<script type="text/javascript" src="./ezuikit.js"></script>-->
+    <!--<script type="text/javascript" src="./js/jquery.min.js"></script>-->
+
+    <!--<script type="text/javascript" src="./EZUIKit/ezuikit.js"></script>-->
+    <!--<script src="./EZUIKit/js/jquery.min.js"></script>-->
+    <!--<script type="text/javascript" src="http://172.31.1.203/EZUIKit/ezuikit.js"></script>-->
+    <!--<script type="text/javascript" src="http://172.31.1.203/EZUIKit/js/jsPlugin-1.2.0_test.js"></script>-->
+    <!--<script src="http://172.31.1.203/EZUIKit/js/jquery.min.js"></script>-->
+
+    <!--<script type="text/javascript" src="./EZUIKit/js/jsPlugin-1.2.0_test.js"></script>-->
+    <!--<script src="http://172.31.1.88/ezuikit.js"></script>-->
+    <!--<script src="http://172.31.1.218:8080/ezuikit.js"></script>-->
+    <!--<script type="text/javascript" src="../src/view/UIKit/ezuikit.js"></script>-->
+    <!--<script type="text/javascript" src="../src/view/UIKit/ezuikit-new.js"></script>-->
+    <!--<script src="../src/view/UIKit/ezuikit.js">/ezuikit.js</script>-->
+    <!--<script src="https://open.ys7.com/sdk/js/1.4/ezuikit.js"></script>-->
+    <!--<script src="./EZUIKit/js/jquery.min.js"></script>-->
+
+    <!-- fundebug录屏 -->
+    <!--<script src="https://js.fundebug.cn/fundebug.revideo.0.5.0.min.js"></script>-->
+
+    <title>家庭版</title>
+</head>
+
+<body>
+    <noscript>
+      <strong>We're sorry but cube3.0 doesn't work properly without JavaScript enabled. Please enable it to continue.</strong>
+    </noscript>
+    <div id="app"></div>
+    <!-- built files will be auto injected -->
+
+
+    <!-- 高德地图 -->
+    <div id="container"></div>
+    <script>
+        setTimeout(() => {
+            window.cyjInit = function() {
+                var jsapi2 = document.createElement('script');
+                jsapi2.charset = 'utf-8';
+                jsapi2.src = 'https://webapi.amap.com/ui/1.0/main.js?v=1.0.11';
+                document.head.appendChild(jsapi2);
+
+                var map = new AMap.Map('container');
+            }
+
+            // var url = 'https://webapi.amap.com/maps?v=1.4.13&key=13269fa2c095c2e92f8869d33c936eab&callback=cyjInit';//生产
+            var url = 'https://webapi.amap.com/maps?v=1.4.13&key=2dad1f97040fa9fca518b5b6123ff4c7&callback=cyjInit';
+            var jsapi = document.createElement('script');
+            jsapi.charset = 'utf-8';
+            jsapi.src = url;
+            document.head.appendChild(jsapi);
+        }, 500);
+    </script>
+
+    <!-- 高德地图 -->
+    <!-- <script type="text/javascript" src='https://webapi.amap.com/maps?v=1.4.13&key=2dad1f97040fa9fca518b5b6123ff4c7&callback=init'></script>-->
+    <!-- 高德地图 UI组件库 1.0 -->
+    <!-- <script src="https://webapi.amap.com/ui/1.0/main.js?v=1.0.11"></script>-->
+</body>
+
+</html>
