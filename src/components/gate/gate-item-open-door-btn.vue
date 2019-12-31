@@ -10,7 +10,7 @@
        @touchstart="openDoorTouch"
        @touchend="openDoorTouchEnd">
     <img :src="require('./icon-open-door-white.png')" style="width: 3.7333vw;height: 4.2666vw;margin-bottom: 2vw">
-    <p class="base-text-details-large-white">开门</p>
+    <p class="base-text-details-large-white but_text_line_height">开门</p>
   </div>
 </template>
 

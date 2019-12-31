@@ -9,9 +9,12 @@
       <router-view :noticeNumber='noticeNumber' @Refresh='Refresh'></router-view>
     </transition>
     <div>
-      <div class="title_top">
-        <div>{{ formTitle.addressName }}</div>
-        <div @click="plotClick">{{ formTitle.dtateTime }}
+      <div class="base-horizontal-layout-space-between-item-center title_top">
+        <div class="base-horizontal-layout-general-item-center address_css">
+          <div class="plot_css">{{ formTitle.addressName }}</div>
+        </div>
+        <div @click="plotClick" class="base-horizontal-layout-end-item-center date_css">
+          <div class="plot_css">{{ formTitle.dtateTime }}</div>
           <img :src="require('@/assets/notification/icon_bottom.png')">
         </div>
       </div>
@@ -286,49 +289,38 @@
   }
 </script>
 
-<style scoped>
-*{
-  font-family: '微软';
-}
-.title_top{
+<style lang="stylus" scoped>
+  .title_top{
     height: 13.07vw;
-    width: 100%;
+    line-height: 13.07vw;
+    width: 89.37vw;
     background-color: #fff;
+    padding: 0 5.33vw;
   }
-  .title_top div{
-    height: 7.47vw;
-    line-height: 7.47vw;
-    color: #666;
-    font-size: 3.73vw;
-    background-color: #F4F4F4;
-    border-radius: 1.07vw;
-    margin-top: 2.93vw;
-    margin-bottom: 2.67vw;
-    padding:0 2.13vw;
-    overflow: hidden;
-    /* 文本不会换行 */
-    white-space: nowrap;
-    /* 当文本溢出包含元素时，以省略号表示超出的文本 */
-    text-overflow: ellipsis;
+  .address_css{
+    height 7.47vw;
+    width 30vw;
   }
-  .title_top div img{
-    float: right;
+  .date_css{
+    height 7.47vw;
+    line-height 7.47vw;
+    max-width 50vw;
+    background-color #f5f5f5
+    padding: 0 1.07vw
+    border-radius 1.07vw
+  }
+  .plot_css{
+    height 5.33vw
+    line-height: 5.33vw;
+    margin-top: 1.07vw;
+    color #666;
+    font-weight bold
+    font-size 3.73vw 
+  }
+  .date_css img{
     width: 2vw;
     height: 1.2vw;
-    margin: 3.2vw 0 3.2vw 1vw;
-  }
-  .title_top div:nth-child(1){
-    float: left;
-    width: 56.6vw;
-    margin-left: 5.33vw;
-    background-color: #fff;
-    font-weight: bold;
-    font-size: 4vw;
-  }
-  .title_top div:nth-child(2){
-    float: right;
-    width: 17.93vw;
-    margin-right: 2.67vw;
+    margin-left: 2.67vw;
   }
   .swipe{
     height: 100%;

@@ -18,35 +18,35 @@
       </div>
     </div>-->
     <div class="menu-item">
-      <div
-        class="item"
-        @touchstart="addActiveCls"
-        @touchend="removeActiveCls"
-        v-for="(item,index) in menuList"
-        :key="index"
-        @click="toPath(item.value)"
-      >
-        <img :src="item.icon" />
-        <span>{{item.value}}</span>
+      <div class="item"
+           v-for="(item,index) in menuList"
+           :key="index"
+           @click="toPath(item.value)"
+           @touchstart="addActiveCls"
+           @touchend="removeActiveCls">
+        <div class="base-vertical-layout-center-item-center">
+          <img :src="item.icon"/>
+          <span>{{item.value}}</span>
+        </div>
+        <div v-if="item.isUntreated" style="position: relative;bottom: 14vw;left: 6vw;width: 0;height: 0">
+          <div style="width: 8px;height: 8px;border-radius: 4px;background-color: red"></div>
+        </div>
       </div>
     </div>
     <div
       class="base-horizontal-layout-space-between-item-center"
-      style="height:13.0666vw;padding: 0 5.3333vw;background-color: white;box-sizing: border-box"
-    >
+      style="height:13.0666vw;padding: 0 5.3333vw;background-color: white;box-sizing: border-box">
       <p style="font-size: 4.8vw;color: #666;font-weight: bold">巡更通知</p>
       <div
         class="base-horizontal-layout-center-item-center"
         style="width: 22.4vw;height: 7.4666vw;border-radius: 1.0666vw;background-color: #F5F5F5"
-        @click="getTaskLogs('')"
-      >
+        @click="getTaskLogs('')">
         <p class="base-text-details-large-black-666">显示全部</p>
       </div>
       <div
         class="base-horizontal-layout-center-item-center title_pto"
         style="width: 22.4vw;height: 7.4666vw;border-radius: 1.0666vw;background-color: #F5F5F5"
-        @click="chooseDatePicker"
-      >
+        @click="chooseDatePicker">
         <p class="base-text-details-large-black-666">{{isChooseTime ? chooseTimeStr : '选择时间'}}</p>
         <img :src="require('@/assets/notification/icon_bottom.png')" />
       </div>
@@ -58,35 +58,27 @@
         ref="myGateServiceScroll"
         :data="taskLogs"
         :options="myGateServiceScrollOptions"
-        :fade="true"
-      >
+        :fade="true">
         <div style="height: 1vw"></div>
         <div
           v-for="(item,index) in taskLogs"
           :key="index"
           class="base-horizontal-layout-space-between"
-          style="padding: 4vw 2.6666vw 4vw 4vw;margin-top:1.6vw;background-color: white"
-        >
+          style="padding: 4vw 2.6666vw 4vw 4vw;margin-top:1.6vw;background-color: white">
           <div class="base-horizontal-layout-general">
             <img :src="require('../icon-patrol.png')" style="width: 10.6666vw;height: 10.6666vw" />
             <div class="base-vertical-layout-space-between" style="margin-left: 2.1333vw">
               <div class="base-horizontal-layout-general-item-center">
                 <p class="base-text-title-normal-666" style="font-weight: bold">巡更消息</p>
-                <p
-                  :class="['base-text-title-normal-666']"
-                  class="my-gate-service-area-text"
-                >{{item.fsAreaName}}</p>
-                <div
-                  v-if="item.photo"
+                <p :class="['base-text-title-normal-666']"
+                  class="my-gate-service-area-text">{{item.fsAreaName}}</p>
+                <div v-if="item.photo"
                   class="base-horizontal-layout-general-item-center"
                   style="margin-left: 1.6666vw"
-                  @click="lookPic(item.photo)"
-                >
-                  <img
-                    :src="require('@/assets/icon/icon-cut-pic-colorful.png')"
+                  @click="lookPic(item.photo)">
+                  <img :src="require('@/assets/icon/icon-cut-pic-colorful.png')"
                     class="base-icon-normal-style"
-                    style="margin-right: 1.0666vw"
-                  />
+                    style="margin-right: 1.0666vw"/>
                 </div>
               </div>
               <p class="base-text-details-large-black-666">
@@ -134,55 +126,85 @@ export default {
   },
   computed: {
     ...mapState({
-      mAreaTypesList: state => state.user.areaTypesList,
-      mUserInfo: state => state.user.userInfo
+      'mAreaTypesList': state => state.user.areaTypesList,
+      'mUserInfo': state => state.user.userInfo,
+
+      'mIsUntreated': state => state.layout.isUntreated,
+      'mIndexPageTabKey': state => state.layout.indexPageTabKey,
     })
+  },
+  watch: {
+    mIndexPageTabKey() {
+      if(this.mIndexPageTabKey==="Gate") {
+        setTimeout(()=>{
+          this.getIconInfo();
+        },500);
+      }
+    }
   },
   created() {
     this.chooseTimeStr = utils.timetrans(new Date().getTime(), "yymmdd");
-
-    let menuList1 = [
-      {
-        value: "社区审核",
-        icon: require("./icon-community.png")
-      },
-      {
-        value: "车辆审核",
-        icon: require("./icon-car.png")
-      },
-      {
-        value: "业主反馈",
-        icon: require("./icon-feedback.png")
-      },
-      {
-        value: "通知发布",
-        icon: require("./icon-notification.png")
-      }
-    ];
-    let menuList2 = [
-      {
-        value: "社区审核",
-        icon: require("./icon-community.png")
-      },
-      {
-        value: "业主反馈",
-        icon: require("./icon-feedback.png")
-      },
-      {
-        value: "通知发布",
-        icon: require("./icon-notification.png")
-      }
-    ];
-    if (this.mUserInfo.infos.propertyManageParkId) {
-      this.menuList = [...menuList1];
-    } else {
-      this.menuList = [...menuList2];
-    }
   },
   mounted() {
-    this.getTaskLogs();
+    let self = this;
+    self.getTaskLogs();
+    self.getIconInfo();
   },
   methods: {
+    getIconInfo() {
+      let menuList1 = [
+        {
+          key: "plot",
+          value: "社区审核",
+          icon: require("./icon-community.png")
+        },
+        {
+          key: "car",
+          value: "车辆审核",
+          icon: require("./icon-car.png")
+        },
+        {
+          key: "feedback",
+          value: "业主反馈",
+          icon: require("./icon-feedback.png")
+        },
+        {
+          value: "通知发布",
+          icon: require("./icon-notification.png")
+        }
+      ];
+      let menuList2 = [
+        {
+          key: "plot",
+          value: "社区审核",
+          icon: require("./icon-community.png")
+        },
+        {
+          key: "feedback",
+          value: "业主反馈",
+          icon: require("./icon-feedback.png")
+        },
+        {
+          value: "通知发布",
+          icon: require("./icon-notification.png")
+        }
+      ];
+      if (this.mUserInfo.infos.propertyManageParkId) {
+        this.menuList = menuList1;
+        if(this.mUserInfo.infos.propertyManagePlotNumber) {
+          this.menuList[0].isUntreated = this.mIsUntreated.gatePlotApplyIsUntreated;
+          this.menuList[1].isUntreated = this.mIsUntreated.gateCarApplyIsUntreated;
+          this.menuList[2].isUntreated = this.mIsUntreated.gateFeedbackIsUntreated;
+        }
+      } else {
+        this.menuList = menuList2;
+        if(this.mUserInfo.infos.propertyManagePlotNumber) {
+          this.menuList[0].isUntreated = this.mIsUntreated.gatePlotApplyIsUntreated;
+          this.menuList[1].isUntreated = this.mIsUntreated.gateFeedbackIsUntreated;
+        }
+      }
+    },
+
     addActiveCls(e) {
       addClass(e.currentTarget, "item_active");
     },
@@ -335,28 +357,27 @@ export default {
 }
 
 .menu-item {
-  height: 18.667vw;
+  height: 23.6667vw;
   display: flex;
   background: #fff;
   justify-content: space-around;
 
   .item {
     display: flex;
+    flex: 1;
     flex-flow: column;
     justify-content: center;
     align-items: center;
-    padding: 0 4vw;
 
     img {
       width: 5.333vw;
       height: 5.333vw;
-      margin-bottom: 1.6vw;
+      margin-bottom: 2.667vw;
     }
 
     span {
-      font-size: 3.2vw;
+      font-size:4vw;
       color: #666666;
-      line-height: 3.733vw;
     }
 
     &.item_active {

@@ -9,9 +9,10 @@
       <div class="base-horizontal-layout-space-between-item-center" style="height: 10.67vw">
         <div style="width: 7.47vw;height: 7.47vw;margin-left: 2.67vw"></div>
         <p style="font-size: 4.27vw;color: #666666;text-align: center">选择城区</p>
-        <img :src="require('./icon_close-gray.png')"
-             @click="closePoppup"
-             style="width: 7.47vw;height: 7.47vw;margin-right: 2.67vw">
+        <div @click="closePoppup">
+          <img :src="require('./icon_close-gray.png')"
+               style="width: 7.47vw;height: 7.47vw;margin-right: 2.67vw">
+        </div>
       </div>
       <div class="base-horizontal-layout-general" style="padding: 2.67vw 0 0 5.33vw" v-show="popListState>1">
         <div class="base-vertical-layout-general-item-center" style="margin-top: 1vw">
@@ -26,10 +27,10 @@
             <div v-if="popListState===3" style="width: 2.4vw;height: 2.4vw;border: 0.27vw solid rgba(51,136,255,1);border-radius: 50%"></div>
             <div v-else style="width: 2.4vw;height: 2.4vw;background-color: #3388FF;border-radius: 50%"></div>
           </div>
-          <div v-show="popListState>3" class="base-vertical-layout-general-item-center">
-            <div style="width: 0;height: 6.8vw;border: 0.27vw solid rgba(51,136,255,1)"></div>
-            <div style="width: 2.4vw;height: 2.4vw;border: 0.27vw solid rgba(51,136,255,1);border-radius: 50%"></div>
-          </div>
+          <!--<div v-show="popListState>3" class="base-vertical-layout-general-item-center">-->
+            <!--<div style="width: 0;height: 6.8vw;border: 0.27vw solid rgba(51,136,255,1)"></div>-->
+            <!--<div style="width: 2.4vw;height: 2.4vw;border: 0.27vw solid rgba(51,136,255,1);border-radius: 50%"></div>-->
+          <!--</div>-->
         </div>
         <div style="margin-left: 2.67vw;font-size: 3.73vw">
           <p style="margin-bottom: 6.4vw;width: 80vw"
@@ -41,9 +42,9 @@
              style="margin-bottom: 6.2vw"
              @click="returnChooseCity(3)"
              :class="{'pop-list-text-color' : popListState===3}">{{popListTitleArea.name}}</p>
-          <p v-show="popListState>3"
-             style="margin-bottom: 6.4vw"
-             :class="{'pop-list-text-color' : popListState===4}">{{popListTitleStreet.name}}</p>
+          <!--<p v-show="popListState>3"-->
+             <!--style="margin-bottom: 6.4vw"-->
+             <!--:class="{'pop-list-text-color' : popListState===4}">{{popListTitleStreet.name}}</p>-->
         </div>
       </div>
       <cube-scroll
@@ -51,15 +52,15 @@
         :style="defaultStyle">
         <div style="padding: 5vw 5.33vw 0 5.33vw">
           <p style="font-size: 3.2vw;color: #999999;margin-bottom: 3.33vw">{{popListTitle}}</p>
-          <div v-show="popListState===4"
-               class="base-horizontal-layout-space-between-item-center"
-               style="height: 10vw"
-               @click="chooseCity(popListState,0,-1)">
-            <p style="font-size: 4.27vw;color: #3388FF"
-               :style="cityData.isChooseStreet ? {color: '#333333'} : {color: '#3388FF'}">（暂不选择）</p>
-            <img v-if="!cityData.isChooseStreet" :src="require('./icon_gou-color.png')"
-                 style="width: 6vw;height: 4vw">
-          </div>
+          <!--<div v-show="popListState===4"-->
+               <!--class="base-horizontal-layout-space-between-item-center"-->
+               <!--style="height: 10vw"-->
+               <!--@click="chooseCity(popListState,0,-1)">-->
+            <!--<p style="font-size: 4.27vw;color: #3388FF"-->
+               <!--:style="cityData.isChooseStreet ? {color: '#333333'} : {color: '#3388FF'}">（暂不选择）</p>-->
+            <!--<img v-if="!cityData.isChooseStreet" :src="require('./icon_gou-color.png')"-->
+                 <!--style="width: 6vw;height: 4vw">-->
+          <!--</div>-->
           <div v-for="(item,index) in popList" :key="index"
                class="base-horizontal-layout-space-between-item-center"
                style="height: 9.666666vw" @click="chooseCity(popListState,1,index)">
@@ -81,6 +82,13 @@
 
 <script>
   import basePopup from '_c/popup/base-popup';
+  import { Toast } from 'cube-ui';
+  const toastLoading = Toast.$create({
+    // txt: '请稍后...',
+    type: 'loading',
+    time: 3000,
+    mask: true
+  });
 
   export default {
     name: "address-popup",
@@ -155,11 +163,11 @@
           self.popListTitleStreet = {id:self.cityData.valueId4,name:self.cityData.value4};
           self.isChooseId = self.cityData.valueId3;
           self.popListTitleArea.id = self.cityData.valueId3;
-          if (self.cityData.isChooseStreet) {
-            self.returnChooseCity(4)
-          } else {
+          // if (self.cityData.isChooseStreet) {
+          //   self.returnChooseCity(4)
+          // } else {
             self.returnChooseCity(3)
-          }
+          // }
         }
       });
     },
@@ -191,7 +199,8 @@
         self.$emit('cityStrOnClick',
           {cityStr: "", isPopShow: this.isPopShow});
       },
-      chooseCity(popListState,isChooseStreet,index) {//todo 弄个蒙层让用户点不了
+      chooseCity(popListState, isChooseStreet, index) {
+        toastLoading.show();
         setTimeout(() => {
           let self = this;
           this.isChooseId = -1;
@@ -203,6 +212,7 @@
                 self.popList = [...res.data.list];
                 self.popListTitleCity = {id:-1,name:"请选择市"};
               });
+              toastLoading.hide();
               break;
             case 2:
               this.popListTitleCity = this.popList[index];
@@ -210,30 +220,22 @@
                 self.popList = [...res.data.list];
                 self.popListTitleArea = {id:-1,name:"请选择区/县"};
               });
+              toastLoading.hide();
               break;
             case 3:
               this.popListTitleArea = this.popList[index];
-              self.$post("com","/street",{areaId: this.popListTitleArea.id}).then((res)=>{
-                self.popList = [...res.data.list];
-                self.popListTitleStreet = {id:-1,name:"请选择街道"};
-                self.cityData.isChooseStreet = false;
-              });
-              break;
-            case 4:
-              this.popListTitleStreet = this.popList[index];
               this.isPopShow = false;
-              if (isChooseStreet===0) {
-                this.city =
-                  {province:this.popListTitleProvince,city:this.popListTitleCity,
-                    area:this.popListTitleArea,street:{id:-1,name:""}};
-              } else {
-                this.city =
-                  {province:this.popListTitleProvince,city:this.popListTitleCity,
-                    area:this.popListTitleArea,street:this.popListTitleStreet};
-              }
+              // self.$post("com","/street",{areaId: this.popListTitleArea.id}).then((res)=>{
+              //   self.popList = [...res.data.list];
+              //   self.popListTitleStreet = {id:-1,name:"请选择街道"};
+              //   self.cityData.isChooseStreet = false;
+              // });
+              this.city =
+                {province:this.popListTitleProvince,city:this.popListTitleCity,
+                  area:this.popListTitleArea,street:{id:-1,name:""}};
               self.$emit('cityStrOnClick',
                 {
-                  cityStr: this.city.province.name+" "+this.city.city.name+" "+this.city.area.name+" "+this.city.street.name,
+                  cityStr: this.city.province.name+" "+this.city.city.name+" "+this.city.area.name+" ",
                   province: this.city.province,
                   city: this.city.city,
                   area: this.city.area,
@@ -241,6 +243,31 @@
                   isPopShow: this.isPopShow
                 });
               this.popListState = 0;
+              toastLoading.hide();
+              break;
+            case 4:
+              // this.popListTitleStreet = this.popList[index];
+              // this.isPopShow = false;
+              // if (isChooseStreet===0) {
+              //   this.city =
+              //     {province:this.popListTitleProvince,city:this.popListTitleCity,
+              //       area:this.popListTitleArea,street:{id:-1,name:""}};
+              // } else {
+              //   this.city =
+              //     {province:this.popListTitleProvince,city:this.popListTitleCity,
+              //       area:this.popListTitleArea,street:this.popListTitleStreet};
+              // }
+              // self.$emit('cityStrOnClick',
+              //   {
+              //     cityStr: this.city.province.name+" "+this.city.city.name+" "+this.city.area.name+" "+this.city.street.name,
+              //     province: this.city.province,
+              //     city: this.city.city,
+              //     area: this.city.area,
+              //     street: this.city.street,
+              //     isPopShow: this.isPopShow
+              //   });
+              // this.popListState = 0;
+              // toastLoading.hide();
               break;
             default:
               break;

@@ -1,30 +1,38 @@
 <template>
   <div class="wrapper">
-    <return-head title="问题反馈" @rightBtnOnClick="toAddFeedback">
-      <div slot="menu" class="feed-hand">
-        <div class="icon">
-          <i class="iconfont icon_edit"></i>
-        </div>
-      </div>
+    <return-head title="问题反馈"><!--@rightBtnOnClick="toAddFeedback"-->
+      <!--<div slot="menu" class="feed-hand">-->
+        <!--<div class="icon">-->
+          <!--<i class="iconfont icon_edit"></i>-->
+        <!--</div>-->
+      <!--</div>-->
     </return-head>
-    <div v-if="feedbackList.length>0" class="scroll-wrapper-addition-title">
-      <cube-scroll
-        ref="feedbackScroll"
-        class="scroll-wrapper-text-style"
-        :options="options"
-        :fade="true"
-        :data="feedbackList"
-        @pulling-down="onPullingDown"
-        @pulling-up="onPullingUp">
-        <div v-for="(item,index) in feedbackList" :key="index">
-          <feedback-item :feedback="item" :index="index" @deleteFeedback="deleteFeedback" @pathLinkPage='pathLink(index)'></feedback-item>
-        </div>
-        <p v-if="isNotLoading" class="base-text-title-normal-gray" style="margin-top: 4vw;text-align: center">—————我是有底线的—————</p>
-      </cube-scroll>
+
+    <div style="flex: 1">
+      <div v-if="feedbackList.length>0" class="scroll-wrapper-addition-title">
+        <cube-scroll
+          ref="feedbackScroll"
+          class="scroll-wrapper-text-style"
+          :options="options"
+          :data="feedbackList"
+          @pulling-down="onPullingDown"
+          @pulling-up="onPullingUp">
+          <div v-for="(item,index) in feedbackList" :key="index">
+            <feedback-item :feedback="item" :index="index" @deleteFeedback="deleteFeedback" @pathLinkPage='pathLink(index)'></feedback-item>
+          </div>
+          <p v-if="isNotLoading" class="base-text-title-normal-gray" style="margin-top: 4vw;text-align: center">—————我是有底线的—————</p>
+          <!--TODO 支撑高度-->
+          <div style="height: 20vw"></div>
+        </cube-scroll>
+      </div>
+      <div v-else class="base-vertical-layout-center-item-center" style="width: 100%">
+        <img :src="require('./blank-doll.png')" style="width: 43.2vw;height: 43.47vw;margin-top: 8.53vw">
+        <p class="base-text-title-normal-gray">暂无问题反馈</p>
+      </div>
     </div>
-    <div v-else class="base-vertical-layout-center-item-center" style="width: 100%">
-      <img :src="require('./blank-doll.png')" style="width: 43.2vw;height: 43.47vw;margin-top: 8.53vw">
-      <p class="base-text-title-normal-gray">暂无问题反馈</p>
+
+    <div class="base-button-fixed-bottom-bk-gray">
+      <button-main text="添加反馈" @btnOnclick="addFeedback"></button-main>
     </div>
 
     <base-popup v-if="isPopShow"
@@ -48,11 +56,13 @@
   import utils from '_libs/utils';
   import returnHead from "_c/head/return-head";
   import FeedbackItem from "_c/service/feedback-item";
+  import buttonMain from '_c/button/button-main';
   import basePopup from '_c/popup/base-popup';
+  import { mapState } from "vuex";
 
   export default {
     name: "serviceFeedback",
-    components: { FeedbackItem, returnHead, basePopup },
+    components: { FeedbackItem, returnHead, buttonMain, basePopup },
     data() {
       return {
         options: {
@@ -94,6 +104,13 @@
           localStorage.removeItem("feedbackChange");
         }
       }
+    },
+    computed: {
+      ...mapState({
+        'mUserHasProprietor': state => state.user.userHasProprietor,
+        'mUserPlotList': state => state.user.userPlotList,
+        'mIsPlotBlankDomicile': state => state.plot.isPlotBlankDomicile
+      })
     },
     mounted() {
       let self = this;
@@ -154,8 +171,22 @@
         this.popPlainText = "";
       },
 
-      toAddFeedback() {
-        this.$router.push({path: '/service-index/feedback/addFeedback'});
+      addFeedback() {
+        if(this.mUserHasProprietor) {
+          if(this.mUserPlotList.length>0 && this.mIsPlotBlankDomicile) {
+            this.$router.push({path: '/service-index/feedback/addFeedback'});
+          } else {
+            this.$createToast({
+              type: "warn",
+              txt: "您的社区已被禁用，需要解禁才能使用"
+            }).show();
+          }
+        } else {
+          this.$createToast({
+            type: "warn",
+            txt: "需要先加入社区，才能使用此功能"
+          }).show();
+        }
       },
 
       onPullingDown() {
@@ -195,7 +226,7 @@
       },
       pathLink(num){
         let feedbackID = this.feedbackList[num].feedbackId;
-        this.$router.push({ path: "/service-index/feedback-apply-list/feedback-apply-audit", query: {feedbackID, page: 'feedback'}});
+        this.$router.push({ path: "/service-index/feedback/feedback-apply-audit", query: {feedbackID, page: 'feedback'}});
       }
     }
   };

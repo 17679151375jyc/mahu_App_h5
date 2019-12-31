@@ -4,27 +4,31 @@
 
 <template>
   <div class="pattern-of-payment">
-    <div class="base-horizontal-layout-space-between-item-center pattern-of-payment-item"
+    <div class="pattern-of-payment-item"
          @click="handoverPayment('支付宝')">
-      <div class="base-horizontal-layout-center-item-center">
-        <img :src="require('./aliPay.png')" class="base-icon-large-style" style="margin-right: 2.6666vw">
-        <div class="">
-          <p class="base-text-details-large-black-666">支付宝</p>
-          <p class="base-text-details-normal-black-666" style="margin-top: 1.0666vw">数亿用户都在用，安全可托付</p>
+      <div class="base-horizontal-layout-space-between-item-center pattern-of-payment-item-item">
+        <div class="base-horizontal-layout-center-item-center">
+          <img :src="require('./aliPay.png')" class="base-icon-large-style" style="margin-right: 2.6666vw">
+          <div class="">
+            <p class="base-text-details-large-black-666">支付宝</p>
+            <p class="base-text-details-normal-black-666" style="margin-top: 1.0666vw">数亿用户都在用，安全可托付</p>
+          </div>
         </div>
+        <img :src="paymentType==='支付宝'? require('./icon_selectd.png') : require('./icon_unselect.png')" class="base-icon-large-style">
       </div>
-      <img :src="paymentType==='支付宝'? require('./icon_selectd.png') : require('./icon_unselect.png')" class="base-icon-large-style">
     </div>
-    <div class="base-horizontal-layout-space-between-item-center pattern-of-payment-item"
+    <div class="pattern-of-payment-item"
          @click="handoverPayment('微信支付')">
-      <div class="base-horizontal-layout-center-item-center">
-        <img :src="require('./wxPay.png')" class="base-icon-large-style" style="margin-right: 2.6666vw">
-        <div class="">
-          <p class="base-text-details-large-black-666">微信支付</p>
-          <p class="base-text-details-normal-black-666" style="margin-top: 1.0666vw">微信安全支付</p>
+      <div class="base-horizontal-layout-space-between-item-center pattern-of-payment-item-item">
+        <div class="base-horizontal-layout-center-item-center">
+          <img :src="require('./wxPay.png')" class="base-icon-large-style" style="margin-right: 2.6666vw">
+          <div class="">
+            <p class="base-text-details-large-black-666">微信支付</p>
+            <p class="base-text-details-normal-black-666" style="margin-top: 1.0666vw">微信安全支付</p>
+          </div>
         </div>
+        <img :src="paymentType==='微信支付'? require('./icon_selectd.png') : require('./icon_unselect.png')" class="base-icon-large-style">
       </div>
-      <img :src="paymentType==='微信支付'? require('./icon_selectd.png') : require('./icon_unselect.png')" class="base-icon-large-style">
     </div>
     <div style="height: 1.6vw"></div>
   </div>
@@ -55,11 +59,15 @@
   .pattern-of-payment {
     margin-top: 3vw;
     background-color: white;
-    padding: 0 8vw;
+    /*padding: 0 0 0 8vw;*/
     box-sizing: border-box;
   }
   .pattern-of-payment-item {
-    padding: 2.6666vw 0 3.4666vw 0;
+    padding: 2.6666vw 0 0 0;
+  }
+  .pattern-of-payment-item-item {
+    margin: 0 8vw;
+    padding-bottom: 3.4666vw;
     border-bottom: 1px solid #eeeeee;
   }
 </style>

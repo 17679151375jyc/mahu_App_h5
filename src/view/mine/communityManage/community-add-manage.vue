@@ -15,8 +15,12 @@
           @applyCommunityOnClick="changeApplyCommunity">
         </community-add-manage-item>
         <!--<button-add style="margin-top: 2.9vw" text="添加申请" @btnOnClick="addApplyCommunity"></button-add>-->
+        <div style="height: 20.7333vw"></div>
       </cube-scroll>
-      <div style="height: 2.9vw"></div>
+    </div>
+
+    <div class="base-button-fixed-bottom-bk-white">
+      <button-main text="加入社区" @btnOnclick="addApplyCommunity"></button-main>
     </div>
 
     <transition name="slide-fade">
@@ -29,13 +33,15 @@
   import returnHead from '_c/head/return-head';
   import communityAddManageItem from '_c/mine/community/community-add-manage-item';
   import buttonAdd from '_c/button/button-add';
+  import buttonMain from '_c/button/button-main';
 
   export default {
     name: "community-add-manage",
     components: {
       returnHead,
       communityAddManageItem,
-      buttonAdd
+      buttonAdd,
+      buttonMain
     },
     data() {
       return {
@@ -45,10 +51,16 @@
     watch: {
       // 监听路由变化
       $route(to, from) {
-        if(localStorage.getItem("communityChange")) {
+        if(to.path=='/mine/myPlot/community-add-manage'){
+          this.getApplyCommunityList();
+        }
+       /* if(localStorage.getItem("communityChange")) {
           this.getApplyCommunityList();
           localStorage.removeItem("communityChange");
         }
+        if(localStorage.getItem("communityChangeAdd")) {
+          this.getApplyCommunityList();
+        }*/
       }
     },
     created() {
@@ -59,16 +71,22 @@
     methods: {
       getApplyCommunityList() {
         let self = this;
-        self.$post("community","/myapply",{}).then((res)=>{
+        self.$post("community","/myNewApply",{}).then((res)=>{
           self.applyCommunityList = [...res.data.list];
         });
       },
 
       addApplyCommunity() {
-        this.$router.push({path: "/mine/myPlot/community-add-manage/community-add"});
+        this.$router.push({path: "/mine/myPlot/community-add-manage/community-add",
+          query: {
+            chooseCityPath: '/mine/myPlot/community-add-manage/community-add/choose-city',
+            choosePlotPath: '/mine/myPlot/community-add-manage/community-add/choose-plot'}});
       },
       changeApplyCommunity(e) {
-        this.$router.push({path: "/mine/myPlot/community-add-manage/community-add", query: {applyID: e.applyID}});
+        this.$router.push({path: "/mine/myPlot/community-add-manage/community-add",
+          query: {applyID: e.applyID,
+            chooseCityPath: '/mine/myPlot/community-add-manage/community-add/choose-city',
+            choosePlotPath: '/mine/myPlot/community-add-manage/community-add/choose-plot'}});
       }
     }
   }

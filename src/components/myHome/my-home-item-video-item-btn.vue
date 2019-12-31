@@ -9,7 +9,7 @@
        @touchstart="videoItemTouch"
        @touchend="videoItemTouchEnd">
     <div class="home-item-video-item-btn-name" :class="['base-vertical-layout-center-item-center']">
-      <p class="base-text-details-large-white">{{videoInfo.name}}</p>
+      <p class="base-text-details-large-white but_text_line_height">{{videoInfo.name}}</p>
     </div>
     <div class="base-horizontal-layout-space-between-item-center"
          style="width: 35.7333vw;padding: 0 4.2666vw;box-sizing: border-box">
@@ -17,17 +17,17 @@
            :class="['base-vertical-layout-center-item-center']"
            @click="play"
            @touchstart="playTouch"
-           @touchend="playTouchEnd(yingShiAccessToken, videoInfo.deviceNumber)">
+           @touchend="playTouchEnd(videoInfo.yingShiToken, videoInfo.deviceNumber)">
         <img :src="require('@/assets/icon/icon-play.png')" class="base-icon-normal-style" style="margin-bottom: 1.0666vw">
-        <p class="base-text-details-large-white">直播</p>
+        <p class="base-text-details-large-white but_text_line_height">直播</p>
       </div>
       <div class="home-item-video-item-btn-play"
            :class="['base-vertical-layout-center-item-center']"
            @click="playBack"
            @touchstart="playBackTouch"
-           @touchend="playBackTouchEnd(yingShiAccessToken, videoInfo.deviceNumber)">
+           @touchend="playBackTouchEnd(videoInfo.yingShiToken, videoInfo.deviceNumber)">
         <img :src="require('@/assets/icon/icon-play-back.png')" class="base-icon-normal-style" style="margin-bottom: 1.0666vw">
-        <p class="base-text-details-large-white">回放</p>
+        <p class="base-text-details-large-white but_text_line_height">回放</p>
       </div>
     </div>
   </div>
@@ -69,6 +69,8 @@
       playTouch() {
       },
       playTouchEnd(accessToken,deviceNumber) {
+        console.log("视频直播Token",accessToken);
+        console.log("视频直播deviceNumber",deviceNumber);
         utils.openLiveVideo(accessToken,deviceNumber);
       },
       playBack() {

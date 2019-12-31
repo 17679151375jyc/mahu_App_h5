@@ -4,7 +4,7 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: #F5F5F5;
+  background: #F2F2F2;
   z-index: 10;
 }
 .wrapper-white {
@@ -28,6 +28,7 @@
   top: 11.733333vw;
   bottom: 0;
   left: 0;
+  background: #fff;
   right: 0;
 }
 .scroll-wrapper-head-and-bottom {
@@ -39,6 +40,9 @@
 }
 .scroll-wrapper-page-title {
   height: calc(100vh - 11.733333vw);
+}
+.scroll-wrapper-page-title-tab {
+  height: calc(100vh - 11.733333vw - 13.3333vw);
 }
 .scroll-wrapper-page-index {
   height: calc(100vh - 11.733333vw - 3.7333vw - 3.7333vw - 7.5vw);
@@ -73,6 +77,12 @@
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
+}
+.base-vertical-layout-start-item-start {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-start;
 }
 .base-vertical-layout-center {
   display: flex;
@@ -120,7 +130,7 @@
 .base-horizontal-layout-end-item-center {
   display: flex;
   flex-direction: row;
-  justify-content: flex-end
+  justify-content: flex-end;
   align-items: center;
 }
 .base-horizontal-layout-general-item-center-flex-wrap {
@@ -209,13 +219,43 @@
   font-size: 4.2666vw;
   color: #3388FF;
 }
-.base-text-title-normal-gray {
+.base-text-title-normal-orange {
   font-size: 4.2666vw;
-  color: #999999;
+  color: #FD8813;
+}
+.base-text-title-normal-red {
+  font-size: 4.2666vw;
+  color: #D72A25;
+}
+.base-text-title-normal-gray {
+  font-size: 3.2666vw;
+  color: rgba(102,102,102,5);
+}
+.lx_no_more::before {
+  content: " ";
+  width: 25vw;
+  height: .3vw;
+  display: inline-block;
+  background: #DDDDDD;
+  margin-bottom: 1.3vw;
+  margin-right: 4.2666vw;
+}
+.lx_no_more::after {
+  display: inline-block;
+  content: "";
+  width: 25vw;
+  height: .3vw;
+  background: #DDDDDD;
+  margin-bottom: 1.3vw;
+  margin-left: 3.2666vw;
 }
 .base-text-title-normal-white {
   font-size: 4.2666vw;
   color: white;
+}
+.base-text-title-normal-black-light {
+  font-size: 4.2666vw;
+  color: #4D4D4D;
 }
 .base-text-details-large-black {
   font-size: 3.7333vw;
@@ -249,9 +289,19 @@
   font-size: 3.7333vw;
   color: #D72A25;
 }
+.base-text-details-large-orange {
+  font-size: 3.7333vw;
+  color: #FD8813;
+}
 .base-text-details-large-white {
   font-size: 3.7333vw;
   color: white;
+
+  overflow:hidden ;
+  word-wrap: keep-all;
+  word-break: normal;
+  text-overflow: ellipsis;
+  white-space:nowrap;
 }
 .base-text-details-normal-black {
   font-size: 3.2vw;
@@ -322,6 +372,14 @@
   display: inline-block;
 }
 
+.base-text-overflow {
+  overflow: hidden;
+  /* 文本不会换行 */
+  white-space: nowrap;
+  /* 当文本溢出包含元素时，以省略号表示超出的文本 */
+  text-overflow: ellipsis;
+}
+
 .base_text_details_normal_line-clamp-1 {
   display: -webkit-box;
   display: -moz-box;
@@ -367,7 +425,7 @@
 .popup-text {
   width: 100%;
   margin-top: 6.4vw;
-  font-size: 3.47vw;
+  font-size: 4.2666vw;
   color: #4D4D4D;
   line-height: 5vw;
   text-align: center;
@@ -378,7 +436,7 @@
   margin-top: 4vw;
   background-color: #F2F3F5;
   border-radius: 6vw;
-  font-size: 3.47vw;
+  font-size: 4.2666vw;
   color: #666;
   text-align: center;
 }

@@ -1,6 +1,6 @@
 <template>
   <div class="wrapper-white">
-    <return-head title="用户信息编辑" rightText="保存" @rightBtnOnClick="saveOnClick"></return-head>
+    <return-head title="用户信息编辑"></return-head>
       <div class="test" v-if='cancasDiv'>
         <div class="base-horizontal-layout-space-between-item-center div_box_header">
           <div class="close" @click="closeClick">取消</div>
@@ -25,26 +25,32 @@
       <div class="userManage-item-box div_box">
         <input @change='updataImg($event)' type="file" class="test_img" accept="image/*" >
         <div class=" base-horizontal-layout-space-between-item-center img_css">
-          <p>用户头像</p>
+          <p class="base-text-title-normal-666">用户头像</p>
           <div style="width: 70vw;" class="base-horizontal-layout-right-item-center" >
-            <div class="img_box">
-              <img :src="imgUrl" @click="bigImg()">
+            <div class="img_box"  @click="bigImg()">
+              <img :src="imgUrl? getImageUrl(imgUrl):require('./../icon-avatar.png')">
             </div>
+              <img :src="require('@/assets/icon/icon_arrow-right-2.png')" alt="" class="arrow-right"  />
           </div>
         </div>
       </div>
-
     <div v-for="(item,index) in userInfo" :key="index"
          class="userManage-item-box">
       <div class="base-horizontal-layout-space-between-item-center"
            style="height: 13.3333vw;border-bottom: 1px solid rgba(221,221,221,0.3)">
-        <p>{{item.title}}</p>
-        <input style="width:70vw;text-align: end;border:none;resize:none;outline:none;"
+        <p class="base-text-title-normal-666">{{item.title}}</p>
+        <input class="base-text-title-normal-666"
+               style="width:70vw;text-align: end;border:none;resize:none;outline:none;"
                v-model="item.value"
                :maxlength="item.maxLength"
                :placeholder="item.placeholder"/>
       </div>
     </div>
+
+    <div class="base-button-fixed-bottom">
+      <button-main text="保存" @btnOnclick="saveOnClick"></button-main>
+    </div>
+
     <base-popup v-if="isPopShow"
                 :refId="refId"
                 :popTitle="popTitle"
@@ -64,6 +70,7 @@
   import { mapActions } from 'vuex';
   import returnHead from '_c/head/return-head';
   import Input from "cube-ui/src/components/input/input";
+  import buttonMain from '_c/button/button-main';
   import basePopup from '_c/popup/base-popup';
   import { VueCropper } from 'vue-cropper'
   import COS from "cos-js-sdk-v5";
@@ -73,6 +80,7 @@
     components: {
       Input,
       returnHead,
+      buttonMain,
       basePopup,
       VueCropper
     },
@@ -95,6 +103,7 @@
     },
     data() {
       return {
+        urlPath: '/family/img/icon-avatar.63c40b3d.png',
         tipShow: true,
         imgUrl: null,
         cancasDiv: false,
@@ -103,7 +112,7 @@
         },
         userInfo: [
           {title: "用户昵称", value: "", placeholder: "请限制在13个字符以内", maxLength: 13},
-          {title: "真实姓名", value: "", placeholder: "请输入您的真实姓名", maxLength: -1},
+          {title: "真实姓名", value: "", placeholder: "请输入您的真实姓名", maxLength: 6},
           {title: "证件号码", value: "", placeholder: "请输入您的身份证件号", maxLength: -1},
         ],
 
@@ -153,6 +162,9 @@
       ...mapActions(
         ['setUserNickName','setUserRealName','setUserPhone', 'setUserIdCard']
       ),
+      getImageUrl(url){
+        return utils.getImageUrl(url,40,40);
+      },
       saveOnClick() {
         let self = this;
         if (!self.userInfo[2].value || utils.numberVerification("identityCard",self.userInfo[2].value)) {
@@ -173,7 +185,7 @@
       rightBtnPoppup() {
         let self = this;
         self.$post("clientUpdate","/user",{
-          head: self.imgUrl,
+          head: self.imgUrl == self.urlPath?'':self.imgUrl,
           nickName: self.userInfo[0].value,
           realName: self.userInfo[1].value,
           idcard: self.userInfo[2].value
@@ -184,6 +196,7 @@
             txt: "保存成功！"
           });
           toast.show();
+          this.$store.commit('setUserHeadPortraitNative', this.imgUrl);
 
           self.$post("common","/infos",{
           }).then((infoRes)=>{
@@ -235,7 +248,6 @@
                 console.log("上传完成", err, data);
                 toast.hide();
                 this.imgUrl = "https://" + data.Location;
-                this.$store.commit('setUserHeadPortraitNative', this.imgUrl);
                 this.cancasDiv = false;
                 this.example2.img = null;
               }
@@ -278,7 +290,10 @@
   }
 </script>
 
-<style scoped>
+<style>
+.cube-image-preview-counter{
+  opacity: 0!important;
+}
   .userManage-item-box {
     width: 100%;
     background-color: white;
@@ -290,19 +305,19 @@
 
   input::-webkit-input-placeholder, textarea::-webkit-input-placeholder {
     color: #CCCCCC;
-    font-size: 3.47vw;
+    font-size: 4.2vw;
   }
   input:-moz-placeholder, textarea:-moz-placeholder {
     color: #CCCCCC;
-    font-size: 3.47vw;
+    font-size: 4.2vw;
   }
   input::-moz-placeholder, textarea::-moz-placeholder {
     color: #CCCCCC;
-    font-size: 3.47vw;
+    font-size: 4.2vw;
   }
   input:-ms-input-placeholder, textarea:-ms-input-placeholder {
     color: #CCCCCC;
-    font-size: 3.47vw;
+    font-size: 4.2vw;
   }
   .img_css{
     height: 13.3333vw;
@@ -363,5 +378,10 @@
   .tailoring_css{
     background-color: #000;
     background-image: none!important;
+  }
+  .arrow-right {
+    width: 2vw;
+    height : 3vw;
+    margin-left: 3vw;
   }
 </style>

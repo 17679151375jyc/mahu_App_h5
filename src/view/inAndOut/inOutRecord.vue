@@ -251,7 +251,7 @@
   }
 
   .slide-fade-leave-active {
-    transition: all 0.8s cubic-bezier(1, 0.5, 0.8, 1);
+    transition: all 0.3s ease;
   }
 
   .slide-fade-enter, .slide-fade-leave-to

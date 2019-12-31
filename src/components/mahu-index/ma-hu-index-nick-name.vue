@@ -3,6 +3,7 @@
 <!--@File  : ma-hu-index-nick-name.vue-->
 
 <template>
+  <div></div>
   <!--<div class="base-horizontal-layout-space-between-item-center"-->
        <!--style="padding: 5.3333vw 5.3333vw 2.1333vw 5.3333vw;background-color: white">-->
     <!--<div class="user-nick-name-box" :class="['base-horizontal-layout-center-item-center']" >-->
@@ -10,15 +11,15 @@
     <!--</div>-->
     <!--<p class="base-text-details-large-blue" @click="toNearbyOnClick">我的附近</p>-->
   <!--</div>-->
-  <div class="item">
-    <div class="left">{{getNickName()}}</div>
+  <!-- <div class="item"> -->
+    <!-- <div class="left">{{getNickName()}}</div> -->
     <!--<div-->
       <!--class="right"-->
       <!--@click="toNearbyOnClick"-->
       <!--@touchstart="addActiveCls"-->
       <!--@touchend="removeActiveCls"-->
     <!--&gt;我的附近</div>-->
-  </div>
+  <!-- </div> -->
 </template>
 <!--background-color: #FAF8BE;-->
 

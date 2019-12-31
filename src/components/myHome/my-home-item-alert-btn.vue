@@ -10,8 +10,8 @@
        @touchstart="alarmTouch(machineInfo.status)"
        @touchend="alarmTouchEnd(machineInfo.status)">
     <img :src="buttonAlarmAlarmIcon(machineInfo.status)" style="width: 3.7333vw;height: 4.2666vw;margin-bottom: 2vw">
-    <p :class="{'base-text-details-large-white' : machineInfo.status==='撤防',
-            'base-text-details-large-blue' : (machineInfo.status==='布防' || machineInfo.status==='留守布防')}">{{buttonAlarmAlarmText(machineInfo.status)}}</p>
+    <p :class="{'base-text-details-large-white but_text_line_height' : machineInfo.status==='撤防',
+            'base-text-details-large-blue but_text_line_height' : (machineInfo.status==='布防' || machineInfo.status==='留守布防')}">{{buttonAlarmAlarmText(machineInfo.status)}}</p>
   </div>
 </template>
 

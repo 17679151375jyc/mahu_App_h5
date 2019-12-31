@@ -303,9 +303,9 @@
 
 
       onWxPay(res) {
-        if (res) {
-          console.log("onWxPay",res);
-          this.isPaySuccess = (res=="" ? true : false);
+        console.log("onWxPay121212",res);
+        if (res || res==0) {
+          this.isPaySuccess = (res=="0" ? true : false);
           if(res=="-2") {
             this.$createToast({
               type: 'correct',

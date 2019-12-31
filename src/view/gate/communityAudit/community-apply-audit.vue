@@ -17,19 +17,19 @@
             <p>{{item.title}}</p>
             <div v-if="item.title==='所在城区'"
                  class="base-horizontal-layout-center-item-center">
-              <p class="form-item-placeholder-text">{{ formList.provinceName }}&nbsp;&nbsp;{{formList.cityName}}&nbsp;&nbsp;{{formList.areaName}}</p>
+              <p class="form-item-placeholder-text fonColor">{{ formList.provinceName }}&nbsp;&nbsp;{{formList.cityName}}&nbsp;&nbsp;{{formList.areaName}}</p>
             </div>
             <div v-else-if="item.title==='社区名称'"
                  class="base-horizontal-layout-center-item-center">
-              <p class="form-item-placeholder-text">{{ formList.plotName }}</p>
+              <p class="form-item-placeholder-text fonColor">{{ formList.plotName }}</p>
             </div>
             <div v-else-if="item.title==='座号'"
                  class="base-horizontal-layout-center-item-center">
-              <p class="form-item-placeholder-text">{{ formList.buildingName }}</p>
+              <p class="form-item-placeholder-text fonColor">{{ formList.buildingName }}</p>
             </div>
             <div v-else-if="item.title==='门号'"
                  class="base-horizontal-layout-center-item-center">
-              <p class="form-item-placeholder-text">{{ formList.doorName }}</p>
+              <p class="form-item-placeholder-text fonColor">{{ formList.doorName }}</p>
             </div>
             <!-- <div v-else-if="item.title==='座号'" class="base-horizontal-layout-center-item-center">
               <p class="form-item-placeholder-text"
@@ -40,11 +40,11 @@
             </div> -->
             <div v-else-if="item.title==='真实姓名'"
                  class="base-horizontal-layout-center-item-center">
-              <p class="form-item-placeholder-text">{{ formList.realName }}</p>
+              <p class="form-item-placeholder-text fonColor">{{ formList.realName }}</p>
             </div>
             <div v-else-if="item.title==='性别'"
                  class="base-horizontal-layout-center-item-center">
-              <p class="form-item-placeholder-text">{{ formList.sex ? '男': '女' }}</p>
+              <p class="form-item-placeholder-text fonColor">{{ formList.sex ? '男': '女' }}</p>
             </div>
             <!-- <div v-else-if="item.title==='性别'" class="gender">
               <div
@@ -54,11 +54,11 @@
             </div> -->
             <div v-else-if="item.title==='证件号'"
                  class="base-horizontal-layout-center-item-center">
-              <p class="form-item-placeholder-text">{{formList.identityCard}}</p>
+              <p class="form-item-placeholder-text fonColor">{{formList.identifyCard}}</p>
             </div>
             <div v-else-if="item.title==='联系电话'"
                  class="base-horizontal-layout-center-item-center">
-              <p class="form-item-placeholder-text">{{formList.phone}}</p>
+              <p class="form-item-placeholder-text fonColor">{{formList.phone}}</p>
             </div>
             <div v-else-if="item.title==='通讯地址'"
                  class="base-horizontal-layout-center-item-center">
@@ -170,7 +170,7 @@
           cityName: '',
           date: '',
           doorName: '',
-          identityCard: '',
+          identifyCard: '111',
           phone: '',
           plotName: '',
           provinceName: '',
@@ -187,13 +187,26 @@
         popPlainText: '',
         popCancelText: '',
         popSureText: '',
-
-        isSummit: false
+        isSummit: false,
+        classList: [
+          {
+            value: 0,
+            text: '资料不足或不符'
+          },
+          {
+            value:1,
+            text: '无法确认信息真实性'
+          },
+          {
+            value:2,
+            text: '其他原因，请自行联系物管'
+          }
+        ]
       }
     },
     mounted() {
+      console.log(this.list)
       this.formList = this.list;
-      console.log(this.formList)
     },
     methods: {
       rightBtnPoppup(){
@@ -226,15 +239,27 @@
       push(){
         this.$router.push({ path: "/service-index/community-apply-list/community-apply-audit", query: {}});
       },
+      queryCilck(selectedVal, selectedIndex, selectedText){
+        this.formList.feedBack = selectedText[0];
+        let val = 2;
+        let selectedTexts = selectedText[0]
+        this.examine({val, selectedTexts})
+      },
       passClick(val) {
         let self = this;
         this.feedBack = "";
-        if(val === 2) {
-          this.isPopShow = true;
+        if(val === 2) {          
+          // this.isPopShow = true;
+          this.$createPicker({
+            title: "不通过原因",
+            data: [this.classList],
+            onSelect: this.queryCilck
+          }).show();
           //   this.dialog = this.$createDialog({
           //   type: 'prompt',
           //   title: '拒绝理由',
           //   prompt: {
+          //     value: '',
           //     value: '',
           //     placeholder: '请填写拒绝理由',
           //     style:{
@@ -250,7 +275,8 @@
         } else {
           this.dialog = this.$createDialog({
             type: 'confirm',
-            title: '是否通过该申请',
+            title: '提示',
+            content: '是否通过该申请',
             confirmBtn: {
               text: '确定',
               active: true,
@@ -272,21 +298,21 @@
           }).show()
         }
       },
-      examine({val, promptValue}) {
+      examine({val, selectedTexts}) {
+        console.log(val, selectedTexts)
         let self = this;
         if(!self.isSummit) {
           self.isSummit = true;
-          console.log(val, promptValue)
-          if(promptValue || val === 1){
+          if(selectedTexts || val == 1){
             this.$post('base', '/FamilyJava/client/community/auditapply', {
               applyId: self.formList.applyId,
-              feedback: promptValue,
+              feedback: selectedTexts,
               audit: val
             }).then(({data, errorCode})=>{
               if(errorCode === 0){
                 self.$createToast({
                   type: 'txt',
-                  txt: "审核成功"
+                  txt: val===2?"拒绝成功":"审核成功"
                 }).show();
                 setTimeout(() => {
                   self.$router.goBack(-1);
@@ -295,7 +321,11 @@
                 }, 700);
               }
             })
+            setTimeout(() => {
+              self.isSummit = false;
+            }, 2000);//todo 防止重复添加
           } else {
+            console.log(val, selectedTexts)
             self.$createToast({
               type: 'txt',
               txt: "请输入不通过的原因"
@@ -314,9 +344,6 @@
 </script>
 
 <style lang="stylus" scoped>
-*{
-  font-family: '微软';
-}
   .title {
     display: flex;
     justify-content: space-between;
@@ -410,5 +437,9 @@
   input:-ms-input-placeholder, textarea:-ms-input-placeholder {
     color: #B3B3B3;
     font-size: 3.2vw;
+  }
+  .fonColor{
+    color #666;
+    font-size 100%;
   }
 </style>

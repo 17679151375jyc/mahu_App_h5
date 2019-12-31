@@ -35,6 +35,10 @@
         self.$emit('onDotClick', {});
       }
     }
+    ,
+    created() {
+     // console.log(this.num);
+    }
   };
 </script>
 

@@ -45,15 +45,12 @@
                       @alertRequestOnClick="alertRequest"
                       @alarmOnClick="toAlarm"
                       @stayAlarmOnClick="toStayAlarm"
-
                       @showMsgCollectList="showMsgCollectList"
                       @alertMsgAlertOnClick="alertMsgAlertOnClick"
                       @misAlertMsgAlertOnClick="misAlertMsgAlertOnClick"
                       @alertMsgMaintainOnClick="alertMsgMaintainOnClick"
                       @misAlertMsgMaintainOnClick="misAlertMsgMaintainOnClick"
-
                       @callAlertPersonnelOnClick="callAlertPersonnelOnClick"
-
                       @closeMsgOnClick="closeMsgOnClick">
         </my-home-item>
         <!--@notificationMessageOnClick="showMessage"-->

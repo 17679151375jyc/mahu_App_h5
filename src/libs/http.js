@@ -46,6 +46,8 @@ const aMMessageAmassUrl = '/family/server/aMMessageAmass'; //接口路径-消息
 const cameraUrl = '/family/server/camera'; //接口路径-摄像头模块
 const dutyRangeUrl = '/family/server/dutyRange'; //接口路径-巡更模块
 const userCarUrl = '/family/server/userCar'; //接口路径-车辆模块
+const comUserCouponUrl = '/family/server/comUserCoupon'; //接口路径-优惠券模块
+const couponUrl = '/FamilyJava/client/coupon'; //接口路径-获取优惠券模块
 const backModifyStatusUrl = '/family/back/domicile/modifyStatus'; //接口路径-后台社区模块
 
 const baseUrl = ''; //
@@ -54,7 +56,7 @@ const commonUrlTest = '/family/client/common'; //接口路径-账号模块
 const entryUrlTest = '/family/client/entry'; //接口路径-出入模块
 const apiModuleUrl = ['/common', '/entry']; //模块-账号、出入
 const toastLoading = Toast.$create({
-    txt: '请稍后...',
+   // txt: '请稍后...',
     type: 'loading',
     time: 3000,
     mask: false
@@ -155,10 +157,11 @@ axios.interceptors.response.use(
         //   pending.push({ u: response.url + '&' + response.method, f: c});
         // });
 
-        console.log("拦截器", response);
+       // console.log("拦截器", response);
         checkHttpData(response);
         return response;
     }, error => {
+
         checkHttpData(error.response);
         return Promise.reject(error)
     }
@@ -200,9 +203,13 @@ function checkHttpData(response) {
             }
 
         } else if (response.data.errorCode != 0) {
-            const dialog = Dialog.$create({
+          var optionJson = response.config.headers['cyj-option'];
+          if(optionJson && JSON.parse(optionJson).returnAll){
+            return true;
+          }
+            Dialog.$create({
                 type: 'alert',
-                title: `错误提示`,
+                title: `温馨提示`,
                 content: response.data.errorMsg || '未知错误',
                 icon: ''
             }).show()
@@ -252,13 +259,20 @@ function checkHttpData(response) {
             // message = error+"出现了一个错误,请稍后再试！"
             message = "网络超时，请稍后再试！"
         }
-        const dialog = Dialog.$create({
-            type: 'alert',
-            title: '网络故障',
-            content: message,
-            icon: '' //fa fa-times-circle-o
-        }).show()
+
+     Dialog.$create({
+        type: 'alert',
+        title: '服务器错误',
+        content: message,
+        icon: '' //fa fa-times-circle-o
+      }).show();
     }
+ /* const dialog = Dialog.$create({
+    type: 'alert',
+    title: '网络故障',
+    content: message,
+    icon: '' //fa fa-times-circle-o
+  }).show()*/
 }
 
 /**
@@ -286,9 +300,10 @@ export function fetch(params = {}) {
  * 封装post请求
  * @param url
  * @param data
+ * option 为对像，目前只定义option.returnAll,返回所有信息
  * @returns {Promise}
  */
-export function post(portUrl, url, data = {}) {
+export function post(portUrl, url, data = {},option) {
     let mApi = { api: "", apiHome: "" };
     let mUrl = "",
         api = process.env.VUE_APP_ApiUrl,
@@ -400,6 +415,12 @@ export function post(portUrl, url, data = {}) {
         case "userCar":
             mUrl = apiHome + userCarUrl + url;
             break;
+        case "comUserCoupon":
+            mUrl = apiHome + comUserCouponUrl + url;
+            break;
+        case "coupon":
+          mUrl = apiHome + couponUrl + url;
+          break;
         case "backModifyStatus":
             mUrl = apiHome + backModifyStatusUrl + url;
             break;
@@ -411,7 +432,9 @@ export function post(portUrl, url, data = {}) {
         default:
             break;
     }
-
+    if(option){
+      headers['cyj-option']=JSON.stringify(option);
+    }
     if (!isJson) {
         transformRequest.push(function(data) {
 
@@ -482,7 +505,6 @@ export function post(portUrl, url, data = {}) {
             }
         }
 
-        toastLoading;
         toastLoading.show();
         axios.post(mUrl, data, { headers: headers, transformRequest: transformRequest }) //config
             // axios.post(api+apiBaseUrl+apiAppUrl+url, data)
@@ -499,8 +521,7 @@ export function post(portUrl, url, data = {}) {
             //------------------------------------------------------------------------------------------
             // removePending(response.config); //在一个ajax响应后再执行一下取消操作，把已经完成的请求从pending中移除
             //-------------------------------------------------------------------------------------------
-
-            if (response.data.errorCode === 0) {
+            if (response.data.errorCode === 0 || (option && option.returnAll)) {
                 resolve(response.data);
 
                 //emojiContent = window.unescape(response.data.replace(/\\u/g,"%u"));//todo 接收表情包

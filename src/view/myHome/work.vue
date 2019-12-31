@@ -417,7 +417,7 @@
       //监听路由变化
       $route( to , from ) {
         let self = this;
-        if (this.$route.path === "/my-home/work") {
+        if (this.$route.path === "/ma-hu-index/work") {
           self.page = 0;
           self.getAlertWorkInfoList(self.mMyHomeWork.alertTab);
           self.getMaintainWorkInfoList(self.mMyHomeWork.maintainTab);
@@ -810,7 +810,18 @@
   };
 </script>
 
-<style scoped>
+<style lang="stylus" scoped>
+>>>.base-vertical-layout-general{
+  width: 42vw;
+  line-height: 5vw;
+}
+>>>.my-home-work-item-text{
+  line-height: 4.1vw;
+}
+>>>.base-text-details-normal-gray-light{
+  width: 40vw;
+  text-align: right;
+}
   .my-home-work-title-tab-box {
     width: 48.07vw;
     /*width: 33.07vw;*/

@@ -1,14 +1,25 @@
+/*
+ * @Descripttion:
+ * @version:
+ * @Author: Vencent Lum
+ * @Date: 2019-12-13 15:05:40
+ * @LastEditors: Vencent Lum
+ * @LastEditTime: 2019-12-16 17:42:47
+ */
 import { throws } from "assert";
 
 // import { resolve } from "url";
-// import { rejects } from "assert";
+// import { reject } from "assert";
 
 import axios from 'axios';
 import COS from "cos-js-sdk-v5";
-const version = '201911150835';
+const version = 'v201912251759';
 
-import store from '@/store';
+import store from "@/store/index";
 import router from '@/router';
+import user from "../store/module/user";
+import layout from "../store/module/layout";
+import plot from "../store/module/plot";
 
 const typeFamily = 0;
 const typeBusiness = 1;
@@ -19,11 +30,11 @@ let utils = {
      *  获取cookie
      */
     cookie() {
-        return new Promise((resolve, rejects) => {
+        return new Promise((resolve, reject) => {
             try {
                 resolve(CYJ.cookie());
             } catch (e) {
-                resolve(e);
+              reject(e);
             }
         })
     },
@@ -32,12 +43,12 @@ let utils = {
      *  显示原生Tab蒙层
      */
     maskTabShow(...args) {
-        return new Promise((resolve, rejects) => {
+        return new Promise((resolve, reject) => {
             try {
                 // CYJ.maskTabShow(37, 38, 45, 0.4);
                 resolve("ok");
             } catch (e) {
-                resolve(e)
+              reject(e)
             }
         })
     },
@@ -45,12 +56,12 @@ let utils = {
      *  隐藏原生Tab蒙层
      */
     maskTabHide() {
-        return new Promise((resolve, rejects) => {
+        return new Promise((resolve, reject) => {
             try {
                 // CYJ.maskTabHide();
                 resolve("ok");
             } catch (e) {
-                resolve(e)
+              reject(e)
             }
         })
     },
@@ -58,12 +69,12 @@ let utils = {
      *  显示原生Tab
      */
     showTab() {
-        return new Promise((resolve, rejects) => {
+        return new Promise((resolve, reject) => {
             try {
                 // CYJ.showTab();
                 resolve('ok');
             } catch (e) {
-                resolve(e);
+              reject(e);
             }
         })
     },
@@ -71,23 +82,23 @@ let utils = {
      *  隐藏原生Tab
      */
     hideTab() {
-        return new Promise((resolve, rejects) => {
+        return new Promise((resolve, reject) => {
             try {
                 // CYJ.hideTab();
                 resolve('ok');
             } catch (e) {
-                resolve(e);
+              reject(e);
             }
         })
     },
 
     registerOnBackPressCallback(callback) {
-        return new Promise((resolve, rejects) => {
+        return new Promise((resolve, reject) => {
             try {
                 CYJ.registerOnBackPressCallback(callback);
                 resolve('ok');
             } catch (e) {
-                resolve(e);
+              reject(e);
             }
         })
     },
@@ -96,14 +107,14 @@ let utils = {
      *  微信分享方法
      */
     shareUrl(url, title, desc) {
-        return new Promise((resolve, rejects) => {
-            try {
-                CYJ.shareUrl(url, title, desc); //todo 之后要加个判断是否有安装微信
-                resolve('ok');
-            } catch (e) {
-                resolve(e);
-            }
-        })
+      return new Promise((resolve, reject) => {
+        try {
+          CYJ.shareUrl(url, title, desc); //todo 之后要加个判断是否有安装微信
+          resolve('ok');
+        } catch (e) {
+          reject(e);
+        }
+      })
     },
 
     /**
@@ -142,7 +153,7 @@ let utils = {
      *  获取用户ID
      */
     getUserId() {
-        return new Promise((resolve, rejects) => {
+        return new Promise((resolve, reject) => {
             try {
                 resolve(CYJ.userID());
             } catch (e) {
@@ -152,10 +163,37 @@ let utils = {
     },
 
     /**
+     *  获取用户通讯录
+     */
+    checkContacts() {
+      return new Promise((resolve, reject) => {
+        try {
+          CYJ.checkContacts();
+          resolve('ok');
+        } catch (e) {
+          reject(e);
+        }
+      })
+    },
+    /**
+     *  获取用户通讯录
+     */
+    openContacts() {
+      return new Promise((resolve, reject) => {
+        try {
+          CYJ.openContacts();
+          resolve('ok');
+        } catch (e) {
+          resolve(e);
+        }
+      })
+    },
+
+    /**
      *  获取定位纬度
      */
     getLatitude() {
-        return new Promise((resolve, rejects) => {
+        return new Promise((resolve, reject) => {
             try {
                 resolve(CYJ.getLatitude());
             } catch (e) {
@@ -167,7 +205,7 @@ let utils = {
      *  获取定位经度
      */
     getLontitude() {
-        return new Promise((resolve, rejects) => {
+        return new Promise((resolve, reject) => {
             try {
                 resolve(CYJ.getLontitude());
             } catch (e) {
@@ -180,7 +218,7 @@ let utils = {
      *  启动人脸添加界面
      */
     openFace() {
-        return new Promise((resolve, rejects) => {
+        return new Promise((resolve, reject) => {
             try {
                 CYJ.openFace();
                 resolve('ok');
@@ -194,7 +232,7 @@ let utils = {
      *  启动备城门人脸添加界面
      */
     openFaceProp() {
-        return new Promise((resolve, rejects) => {
+        return new Promise((resolve, reject) => {
             try {
                 CYJ.openFaceProp();
                 resolve('ok');
@@ -208,7 +246,7 @@ let utils = {
      *  警情一分钟视频
      */
     openAlertVideo(accessToken, deviceNum, startTime, endTime) {
-        return new Promise((resolve, rejects) => {
+        return new Promise((resolve, reject) => {
             try {
                 CYJ.openAlertVideo(accessToken, deviceNum, startTime, endTime);
                 resolve('ok');
@@ -222,7 +260,7 @@ let utils = {
      *  启动萤石视频
      */
     openLiveVideo(accessToken, deviceNum) {
-        return new Promise((resolve, rejects) => {
+        return new Promise((resolve, reject) => {
             try {
                 CYJ.openLiveVideo(accessToken, deviceNum);
                 resolve('ok');
@@ -235,7 +273,7 @@ let utils = {
      *  启动萤石视频回放
      */
     openBackVideo(accessToken, deviceNum) {
-        return new Promise((resolve, rejects) => {
+        return new Promise((resolve, reject) => {
             try {
                 CYJ.openBackVideo(accessToken, deviceNum);
                 resolve('ok');
@@ -248,7 +286,7 @@ let utils = {
      *  启动萤石视频播放列表
      */
     openLiveVideoList(jsonString) {
-        return new Promise((resolve, rejects) => {
+        return new Promise((resolve, reject) => {
             try {
                 CYJ.openLiveVideoList(jsonString);
                 resolve('ok');
@@ -262,7 +300,7 @@ let utils = {
      *  获取自己的小区列表
      */
     comnunities() {
-        return new Promise((resolve, rejects) => {
+        return new Promise((resolve, reject) => {
             try {
                 resolve(CYJ.comnunities());
             } catch (e) {
@@ -272,10 +310,23 @@ let utils = {
     },
 
     /**
+     *  启动二维码扫描
+     */
+    openScan() {
+      return new Promise((resolve, reject) => {
+        try {
+          CYJ.openScan();
+        } catch (e) {
+          resolve(e);
+        }
+      })
+    },
+
+    /**
      *  启动防盗主机配网
      */
     openMainframeConfig() {
-        return new Promise((resolve, rejects) => {
+        return new Promise((resolve, reject) => {
             try {
                 CYJ.openWifiConfig();
                 resolve('ok');
@@ -289,7 +340,7 @@ let utils = {
      *  启动摄像头配网
      */
     openCameraConfig() {
-        return new Promise((resolve, rejects) => {
+        return new Promise((resolve, reject) => {
             try {
                 CYJ.openYSConfig();
                 resolve('ok');
@@ -303,7 +354,7 @@ let utils = {
    *  调用原生支付接口
    */
   wxPay(mDataJson) {
-    return new Promise((resolve, rejects) => {
+    return new Promise((resolve, reject) => {
       let JSONDataJson = JSON.stringify(mDataJson);
       try {
         CYJ.wxPay(JSONDataJson);
@@ -317,7 +368,7 @@ let utils = {
     })
   },
   onWxPay(status) {
-    return new Promise((resolve, rejects) => {
+    return new Promise((resolve, reject) => {
       try {
         window.onWxPay(status);
         resolve('ok');
@@ -327,7 +378,7 @@ let utils = {
     })
   },
   zfPay(mDataJson) {
-    return new Promise((resolve, rejects) => {
+    return new Promise((resolve, reject) => {
       try {
         CYJ.zfPay(mDataJson);
         resolve('ok');
@@ -338,7 +389,7 @@ let utils = {
     })
   },
   onZfPay(status) {
-    return new Promise((resolve, rejects) => {
+    return new Promise((resolve, reject) => {
       try {
         window.onZfPay(status);
         resolve('ok');
@@ -353,7 +404,7 @@ let utils = {
      */
     getDataSize() {
         CYJ.getDataSize();
-        // return new Promise((resolve,rejects)=>{
+        // return new Promise((resolve,reject)=>{
         //   try{
         //     CYJ.getDataSize();
         //     resolve('ok');
@@ -367,7 +418,7 @@ let utils = {
      */
     getDataSizeStr() {
         CYJ.getDataSizeStr();
-        // return new Promise((resolve,rejects)=>{
+        // return new Promise((resolve,reject)=>{
         //   try{
         //     CYJ.getDataSizeStr();
         //     resolve('ok');
@@ -380,7 +431,7 @@ let utils = {
      *  清除app缓存
      */
     clearAppCache() {
-        return new Promise((resolve, rejects) => {
+        return new Promise((resolve, reject) => {
             try {
                 CYJ.clearAppCache();
                 resolve('ok');
@@ -394,7 +445,7 @@ let utils = {
      *  检查更新
      */
     checkUpdate() {
-        return new Promise((resolve, rejects) => {
+        return new Promise((resolve, reject) => {
             try {
                 CYJ.checkUpdate();
                 resolve('ok');
@@ -408,7 +459,7 @@ let utils = {
      *  启动帮助页面
      */
     openUserHelperConfig() {
-        return new Promise((resolve, rejects) => {
+        return new Promise((resolve, reject) => {
             try {
                 CYJ.openUserHelper();
                 resolve('ok');
@@ -422,7 +473,7 @@ let utils = {
      *  初始化推送方法
      */
     setPushAlias(phone, plotID) {
-        return new Promise((resolve, rejects) => {
+        return new Promise((resolve, reject) => {
             try {
                 CYJ.setPushAlias(phone, plotID);
                 resolve('ok');
@@ -436,7 +487,7 @@ let utils = {
      *  传路由地址给原生
      */
     changePage(path) {
-        return new Promise((resolve, rejects) => {
+        return new Promise((resolve, reject) => {
             try {
                 CYJ.changePage(path);
                 resolve('ok');
@@ -450,16 +501,25 @@ let utils = {
      *  退出方法
      */
     logout() {
-      return new Promise((resolve, rejects) => {
+
+      // store.dispatch('setAreaTypesList', []);
+
+      store.replaceState({user:{}, layout:{}, plot:{}});
+      window.localStorage.clear();
+
+      return new Promise((resolve, reject) => {
         try {
           if (CYJ && CYJ.logout) {
+            // store.dispatch('setApp', 'app');
             CYJ.setPushAlias("", ""); //清空推送
-            setTimeout(() => {
-              CYJ.logout();
-            },200)
+            // setTimeout(() => {
+            //   CYJ.logout();
+            // },200)
+            CYJ.logout();
           } else {
-            store.dispatch('setUserToken', '');
-            router.push('login');
+            if(window.location.hash==null || window.location.hash.indexOf("login")===-1){
+              window.location.reload();
+            }
           }
             resolve('ok');
           } catch (e) {
@@ -473,7 +533,7 @@ let utils = {
      *  退出顶部Activity
      */
     finishTop() {
-        return new Promise((resolve, rejects) => {
+        return new Promise((resolve, reject) => {
             try {
                 CYJ.finishTop();
                 resolve('ok');
@@ -498,6 +558,8 @@ let utils = {
             return `${year}-${month}`
         } else if (obj == "yymmdd") {
             return `${year}-${month}-${date}`
+        } else if (obj == "YYMMDD") {
+          return `${year}年${month}月${date}日`
         } else if (obj == "hhmmss") {
             return `${hour}:${minute}:${second}`
         } else if (obj == "yymmddhhmm") {
@@ -554,6 +616,22 @@ let utils = {
         }
         return i;
     },
+
+  /**
+   *  url解析
+   */
+  urlParse(urlStr){
+    let obj = {};
+    let reg = /[?&][^?&]+=[^?&%]+/g;
+    let arr = urlStr.match(reg);
+    arr.forEach((item) => {
+      let tempArr = item.substring(1).split('=');
+      let key = decodeURIComponent(tempArr[0]);
+      let val = decodeURIComponent(tempArr[1]);
+      obj[key] = val;
+    });
+    return obj;
+  },
 
     /**
      *  获取文件的base64编码
@@ -649,26 +727,25 @@ let utils = {
      *  号码验证
      */
     numberVerification(type, value) {
-        let identityCardReg = /^[1-9]\d{7}((0\d)|(1[0-2]))(([0|1|2]\d)|3[0-1])\d{3}$|^[1-9]\d{5}[1-9]\d{3}((0\d)|(1[0-2]))(([0|1|2]\d)|3[0-1])\d{3}([0-9]|X|x)$/;
-        // let identityCardReg = /(^[1-9]\d{5}(18|19|([23]\d))\d{2}((0[1-9])|(10|11|12))(([0-2][1-9])|10|20|30|31)\d{3}[0-9Xx]$)|(^[1-9]\d{5}\d{2}((0[1-9])|(10|11|12))(([0-2][1-9])|10|20|30|31)\d{2}$)/;
-        // let telephoneReg = /^1([38][0-9]|4[579]|5[0-3,5-9]|6[6]|7[0135678]|9[89])\d{8}$/;
-        let telephoneReg = /^1[3|4|5|6|7|8][0-9]{9}$/;
-        // let telephoneReg = /^1[3|4|5|8][0-9]\d{4,8}$/;
-        // let passwordReg = /^(?![^a-zA-Z]+$)(?!\D+$){6,18}/;
-        let passwordReg = /^(?=.*[0-9])(?=.*[a-zA-Z])(.{6,18})$/; //配合java
-        // let passwordReg = /^[0-9a-zA-Z]{6,18}$/;
-        // let carNumberReg = /^[京津沪渝冀豫云辽黑湘皖鲁新苏浙赣鄂桂甘晋蒙陕吉闽贵粤青藏川宁琼使领A-Z]{1}[A-Z]{1}[A-HJ-NP-Z0-9]{4}[A-HJ-NP-Z0-9挂学警港澳使领]{1}$/;
-        // let carNumberReg = /(^[京津沪渝冀豫云辽黑湘皖鲁新苏浙赣鄂桂甘晋蒙陕吉闽贵粤青藏川宁琼使领]{1}[A-Z0-9]{6}$)|(^[A-Z]{2}[A-Z0-9]{2}[A-Z0-9京津沪渝冀豫云辽黑湘皖鲁新苏浙赣鄂桂甘晋蒙陕吉闽贵粤青藏川宁琼使领]{1}[A-Z0-9]{4}$)|(^[京津沪渝冀豫云辽黑湘皖鲁新苏浙赣鄂桂甘晋蒙陕吉闽贵粤青藏川宁琼使领]{1}[A-Z0-9]{5}[挂学警军港澳]{1}$)|(^[A-Z]{2}[0-9]{5}$)|(^(08|38){1}[A-Z0-9]{4}[A-Z0-9挂学警军港澳]{1}$)/;
+      let identityCardReg = /^[1-9]\d{7}((0\d)|(1[0-2]))(([0|1|2]\d)|3[0-1])\d{3}$|^[1-9]\d{5}[1-9]\d{3}((0\d)|(1[0-2]))(([0|1|2]\d)|3[0-1])\d{3}([0-9]|X|x)$/;
+      // let identityCardReg = /(^[1-9]\d{5}(18|19|([23]\d))\d{2}((0[1-9])|(10|11|12))(([0-2][1-9])|10|20|30|31)\d{3}[0-9Xx]$)|(^[1-9]\d{5}\d{2}((0[1-9])|(10|11|12))(([0-2][1-9])|10|20|30|31)\d{2}$)/;
+      // let telephoneReg = /^1([38][0-9]|4[579]|5[0-3,5-9]|6[6]|7[0135678]|9[89])\d{8}$/;
+      let telephoneReg = /^1[3|4|5|6|7|8|9][0-9]{9}$/;
+      // let telephoneReg = /^1[3|4|5|8][0-9]\d{4,8}$/;
+      // let passwordReg = /^(?![^a-zA-Z]+$)(?!\D+$){6,18}/;
+      let passwordReg = /^(?=.*[0-9])(?=.*[a-zA-Z])(.{6,18})$/; //配合java
+      // let passwordReg = /^[0-9a-zA-Z]{6,18}$/;
+      // let carNumberReg = /^[京津沪渝冀豫云辽黑湘皖鲁新苏浙赣鄂桂甘晋蒙陕吉闽贵粤青藏川宁琼使领A-Z]{1}[A-Z]{1}[A-HJ-NP-Z0-9]{4}[A-HJ-NP-Z0-9挂学警港澳使领]{1}$/;
+      // let carNumberReg = /(^[京津沪渝冀豫云辽黑湘皖鲁新苏浙赣鄂桂甘晋蒙陕吉闽贵粤青藏川宁琼使领]{1}[A-Z0-9]{6}$)|(^[A-Z]{2}[A-Z0-9]{2}[A-Z0-9京津沪渝冀豫云辽黑湘皖鲁新苏浙赣鄂桂甘晋蒙陕吉闽贵粤青藏川宁琼使领]{1}[A-Z0-9]{4}$)|(^[京津沪渝冀豫云辽黑湘皖鲁新苏浙赣鄂桂甘晋蒙陕吉闽贵粤青藏川宁琼使领]{1}[A-Z0-9]{5}[挂学警军港澳]{1}$)|(^[A-Z]{2}[0-9]{5}$)|(^(08|38){1}[A-Z0-9]{4}[A-Z0-9挂学警军港澳]{1}$)/;
       let carNumberReg = /(^[\u4E00-\u9FA5]{1}[A-Z0-9]{6}$)|(^[A-Z]{2}[A-Z0-9]{2}[A-Z0-9\u4E00-\u9FA5]{1}[A-Z0-9]{4}$)|(^[\u4E00-\u9FA5]{1}[A-Z0-9]{5}[挂学警军港澳]{1}$)|(^[A-Z]{2}[0-9]{5}$)|(^(08|38){1}[A-Z0-9]{4}[A-Z0-9挂学警军港澳]{1}$)/;
-        let xCarNumberReg = /^[京津沪渝冀豫云辽黑湘皖鲁新苏浙赣鄂桂甘晋蒙陕吉闽贵粤青藏川宁琼使领A-Z]{1}[A-Z]{1}(([0-9]{5}[DF]$)|([DF][A-HJ-NP-Z0-9][0-9]{4}$))/;
+      let xCarNumberReg = /^[京津沪渝冀豫云辽黑湘皖鲁新苏浙赣鄂桂甘晋蒙陕吉闽贵粤青藏川宁琼使领A-Z]{1}[A-Z]{1}(([0-9]{5}[DF]$)|([DF][A-HJ-NP-Z0-9][0-9]{4}$))/;
 
-      let carNumberReg1 = /^$/;
-      let carNumberReg2 = /^$/;
-      let carNumberReg3 = /^$/;
-      let carNumberReg4 = /^$/;
-      let carNumberReg5 = /^$/;
-      let carNumberReg6 = /^$/;
-
+      let carNumberReg1 = /[京津冀晋蒙辽吉黑沪苏浙皖闽赣鲁豫鄂湘粤桂琼川贵云渝藏陕甘青宁新使]{1}[A-Z]{1}[A-HJ-NP-Z0-9]{5}$/;
+      let carNumberReg2 = /[京津冀晋蒙辽吉黑沪苏浙皖闽赣鲁豫鄂湘粤桂琼川贵云渝藏陕甘青宁新]{1}[A-Z]{1}[A-HJ-NP-Z0-9]{4}[挂警学领港澳]{1}$/;
+      let carNumberReg3 = /^WJ[京津冀晋蒙辽吉黑沪苏浙皖闽赣鲁豫鄂湘粤桂琼川贵云渝藏陕甘青宁新]?[A-HJ-NP-Z0-9]{5}$/;
+      let carNumberReg4 = /[A-HJ-NP-Z]{2}[0-9]{5}$/;
+      let carNumberReg5 = /[京津冀晋蒙辽吉黑沪苏浙皖闽赣鲁豫鄂湘粤桂琼川贵云渝藏陕甘青宁新]{1}[A-Z]{1}[DF]{1}[A-HJ-NP-Z0-9]{5}$/;
+      let carNumberReg6 = /[京津冀晋蒙辽吉黑沪苏浙皖闽赣鲁豫鄂湘粤桂琼川贵云渝藏陕甘青宁新]{1}[A-Z]{1}[A-HJ-NP-Z0-9]{5}[DF]{1}$/;
 
         if (type === "identityCard") { //todo 中国大陆居民身份证 15位和18位
             return identityCardReg.test(value);
@@ -678,7 +755,9 @@ let utils = {
             return passwordReg.test(value);
         } else if (type === "carNumber") {
           let isCarNumber = false;
-          if(carNumberReg.test(value) || xCarNumberReg.test(value)) {
+          console.log(carNumberReg1.test(value), carNumberReg.test(value))
+          if(carNumberReg1.test(value) || carNumberReg2.test(value) || carNumberReg3.test(value) ||
+            carNumberReg4.test(value) || carNumberReg5.test(value) || carNumberReg6.test(value)) {
             isCarNumber = true;
             return isCarNumber;
           }
@@ -825,7 +904,7 @@ let utils = {
     // }
 
     getAppVersion() {
-      return new Promise((resolve, rejects) => {
+      return new Promise((resolve, reject) => {
         try {
           CYJ.getAppVersion();
           resolve('ok');
@@ -848,7 +927,60 @@ let utils = {
     },
     returnTypeGate() {
         return typeGate;
-    }
+    },
+    /**
+     * @name: 对象属性安全调用
+     * @msg:  判断一个对象里面是否含有某个属性，并且输出成希望的数据类型
+     * @param {target<Object>,key<String>,outputType<string|number>, defaultOutput:缺省值}
+     * @return: 希望的数据类型
+     */
+    safetyInvoke(target = null, key = 'unknow', outputType, defaultOutput='unknow'){
+       if(!target){
+          return defaultOutput;
+       }
+       else if(target instanceof Object && target.hasOwnProperty(key) ){
+            if(typeof target[key] == outputType){
+                return target[key];
+            }else {
+                 let output = defaultOutput;
+                 switch (outputType) {
+                     case 'string':
+                         try {
+                            output = target[key].toString();
+                         } catch (error) {
+                            output = defaultOutput;
+                            console.error('object :', error);
+                         }
+                         break;
+                     case 'number':
+                        try {
+                            output = isNaN(parseInt(target[key]))? defaultOutput : parseInt(target[key]);
+                         } catch (error) {
+                            output = defaultOutput;
+                            console.error('object :', error);
+                         }
+                         break;
+                     default:
+                         break;
+                 }
+                 return output;
+            }
+        }else {
+            return defaultOutput
+        }
+    },
+
+    getImageUrl(url,w,h){
+      w = w || 64;
+      h= h|| 64;
+      if(url &&url.length>0 &&  url.indexOf('family-1257195390.cos.ap-guangzhou.myqcloud.com')!=-1){
+        return url.replace('family-1257195390.cos.ap-guangzhou.myqcloud.com','family-1257195390.picgz.myqcloud.com')+'?imageMogr2/thumbnail/'+(w +'x'+h);
+      }
+      return url;
+    },
+
+
+
 }
 
 export default utils

@@ -11,18 +11,18 @@
         packagesPayInfo.areaType===2 ? require('@/assets/equipment/icon-gate.png') : ''"
              class="base-icon-large-style"
              style="width:6.07vw;margin-right: 1.0666vw">
-        <p class="base-text-details-large-black" style="font-weight: bold">{{packagesPayInfo.areaName}}</p>
+        <p class="base-text-title-normal-black" style="font-weight: bold">{{packagesPayInfo.areaName}}</p>
       </div>
       <div class="base-horizontal-layout-general-item-center" style="margin: 3.2vw 2.6666vw 0 9.8666vw">
         <p v-if="getSituation(packagesPayInfo.effectiveTime)"
-           class="base-text-details-normal-black-666">套餐情况：<span style="color: #3388FF">正常有效</span></p>
-        <p v-else class="base-text-details-normal-black-666">套餐情况：<span style="color: #D72A25">已过期</span></p>
-        <p class="base-text-details-normal-black-666" style="margin-left: 5.3333vw"
+           class="base-text-details-large-black-666">套餐情况：<span style="color: #3388FF">正常有效</span></p>
+        <p v-else class="base-text-details-large-black-666">套餐情况：<span style="color: #D72A25">已过期</span></p>
+        <p class="base-text-details-large-black-666" style="margin-left: 5.3333vw"
         >到期时间：<span style="color: #3388FF">{{getEffectiveTime(packagesPayInfo.effectiveTime)}}</span></p>
       </div>
-      <div class="base-horizontal-layout-general-item-center" style="margin: 2vw 2.6666vw  0 9.8666vw">
-        <p class="base-text-details-normal-black-666">账户余额：<span style="color: #3388FF">¥ {{getDeposit(packagesPayInfo.deposit)}}</span></p>
-      </div>
+      <!--<div class="base-horizontal-layout-general-item-center" style="margin: 2vw 2.6666vw  0 9.8666vw">-->
+        <!--<p class="base-text-details-large-black-666">账户余额：<span style="color: #3388FF">¥ {{getDeposit(packagesPayInfo.deposit)}}</span></p>-->
+      <!--</div>-->
     </div>
     <div class="base-horizontal-layout-space-between-item-center" style="margin-top: 3vw">
       <div class="base-vertical-layout-center-item-center packages-pay-button packages-pay-button-1"
@@ -39,7 +39,7 @@
            @touchstart="payImmediatelyTouch"
            @touchend="payImmediatelyTouchEnd">
         <img :src="require('./iocn-payImmediately.png')" style="width: 5.3333vw;height: 3.6666vw;margin-bottom: 1vw">
-        <p class="base-text-title-normal-white">马上充值</p>
+        <p class="base-text-title-normal-white">延长服务期</p>
       </div>
     </div>
   </div>
@@ -92,7 +92,8 @@
         return parseFloat(deposit).toFixed(2);
       },
       getEffectiveTime(effectiveTime) {
-        return utils.timetrans(effectiveTime, "yymmddhhmm");
+        // return utils.timetrans(effectiveTime, "yymmddhhmm");
+        return utils.timetrans(effectiveTime, "yymmdd");
       }
     }
   }

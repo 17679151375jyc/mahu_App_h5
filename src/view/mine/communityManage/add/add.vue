@@ -15,18 +15,20 @@
           <div v-if="status===2"
                class="base-vertical-layout-center"
                :class="['form-item-line']"
-               style="height: 10.5333vw;margin: 0 8vw">
+               style="height: 10.5333vw;margin: 0 6vw">
             <p style="font-size: 3.7333vw;color: #D72A25">原因:{{feedBack}}---审核人:{{serverUserName}}</p>
           </div>
           <div v-for="(item,index) in fromFields" :key="index"
                class="base-horizontal-layout-space-between-item-center"
                :class="{'form-item':true,'form-item-line':index<fromFields.length-1}">
-            <p v-if="index===0" style="align-self: flex-start;padding-top: 4.533333vw">{{item.title}}</p>
-            <p v-else>{{item.title}}</p>
-            <div v-if="item.title==='所在城区'"
-                 class="base-horizontal-layout-center-item-center"
+            <p v-if="index===0" style="align-self: flex-start;padding-top: 4.533333vw"><span style="color: #FF0000">* </span>{{item.title}}</p>
+            <p v-else><span style="color: #FF0000">* </span>{{item.title}}</p>
+            <div v-if="item.title==='所在城市'"
+                 class="base-horizontal-layout-right-item-center"
+                 style="width: 55vw;padding-right: 6vw"
                  @click="chooseAddress">
-              <p v-if="item.value3===''" class="form-item-placeholder-text">{{item.placeholder}}</p>
+              <!--<p v-if="item.value3===''" class="form-item-placeholder-text">{{item.placeholder}}</p>-->
+              <p v-if="item.value2===''" class="form-item-placeholder-text">{{item.placeholder}}</p>
               <div v-else style="text-align: right;padding: 4.533333vw 0">
                 <p>{{item.value1}}</p>
                 <p style="margin-top: 1.6vw">{{item.value2}}</p>
@@ -36,33 +38,40 @@
               <img :src="require('@/assets/icon/icon_arrow-right-small.png')" class="base-icon-small-style">
             </div>
             <div v-else-if="item.title==='社区名称'"
-                 class="base-horizontal-layout-center-item-center"
+                 class="base-horizontal-layout-right-item-center"
+                 style="width: 55vw;height: 10vw;padding-right: 6vw"
                  @click="choosePlot">
               <p v-if="item.value===''" class="form-item-placeholder-text">{{item.placeholder}}</p>
               <p v-else>{{item.value}}</p>
               <img :src="require('@/assets/icon/icon_arrow-right-small.png')" class="base-icon-small-style">
             </div>
-            <div v-else-if="item.title==='座号'" class="base-horizontal-layout-center-item-center">
-              <p v-if="item.value1===''"
-                 class="form-item-placeholder-text"
-                 :class="{'form-item-choose-box':true}"
-                 @click="chooseBuilding">{{item.placeholder1}}</p>
-              <p v-else :class="{'form-item-choose-box':true}"
-                 @click="chooseBuilding">{{item.value1}}</p>
-              <p v-if="item.value2===''" class="form-item-placeholder-text"
-                 :class="{'form-item-choose-box':true}"
-                 style="margin-left: 1.87vw"
-                 @click="chooseDoor">{{item.placeholder2}}</p>
-              <p v-else :class="{'form-item-choose-box':true}"
-                 style="margin-left: 1.87vw"
-                 @click="chooseDoor">{{item.value2}}</p>
+            <div v-else-if="item.title==='座号'" class="base-horizontal-layout-center-item-center" style="padding-right: 6vw">
+              <!--<div class="base-horizontal-layout-center-item-center">-->
+                <!--<p v-if="item.value1===''"-->
+                   <!--class="form-item-placeholder-text form-item-choose-box"-->
+                   <!--@click="chooseBuilding">{{item.placeholder1}}适当方式的方式的</p>-->
+              <!--</div>-->
+              <div class="base-horizontal-layout-space-between-item-center form-item-choose"
+                   @click="chooseBuilding">
+                <p v-if="item.value1===''"
+                   class="form-item-choose-box form-item-placeholder-text">{{item.placeholder1}}</p>
+                <p v-else class="form-item-choose-box">{{item.value1}}</p>
+                <img :src="require('@/assets/icon/icon_arrow-down.png')" style="width: 2.6666vw;height: 1.6666vw">
+              </div>
+              <div class="base-horizontal-layout-space-between-item-center form-item-choose"
+                   style="margin-left: 1.87vw"
+                   @click="chooseDoor">
+                <p v-if="item.value2===''"
+                   class="form-item-placeholder-text form-item-choose-box">{{item.placeholder2}}</p>
+                <p v-else
+                   class="base-horizontal-layout-center-item-center form-item-choose-box">{{item.value2}}</p>
+                <img :src="require('@/assets/icon/icon_arrow-down.png')" style="width: 2.6666vw;height: 1.6666vw">
+              </div>
             </div>
-            <div v-else-if="item.title==='性别'" class="gender">
-              <div
-                :class="['option', item.value === 1 ? 'selected' : '']"
+            <div v-else-if="item.title==='性别'" class="gender" style="padding-right: 6vw">
+              <div :class="['option', item.value === 1 ? 'selected' : '']"
                 @click="setGender(1)">男</div>
-              <div
-                :class="['option', item.value === 0 ? 'selected-girl' : '']"
+              <div :class="['option', item.value === 0 ? 'selected-girl' : '']"
                 @click="setGender(0)">女</div>
             </div>
             <div v-else class="base-horizontal-layout-center-item-center" >
@@ -75,15 +84,16 @@
                       @blur="lostInputFocus"
                       @focus="getInputFocus(index)">
             </textarea>
-              <p v-else-if="item.title==='真实姓名' && isMUserRealName">{{item.value}}</p>
-              <p v-else-if="item.title==='身份证号' && isMUserIdCard">{{item.value}}</p>
-              <p v-else-if="item.title==='联系电话' && isMUserPhone">{{item.value}}</p>
+              <!--<p v-else-if="item.title==='真实姓名' && isMUserRealName" style="color: #333;padding-right: 6vw">{{item.value}}</p>-->
+              <!--<p v-else-if="item.title==='身份证号' && isMUserIdCard" style="color: #333;padding-right: 6vw">{{item.value}}</p>-->
+              <!--<p v-else-if="item.title==='联系电话' && isMUserPhone" style="color: #333;padding-right: 6vw">{{item.value}}</p>-->
               <input v-else
                      :id="'plotInput'+index"
                      :type="item.title==='联系电话' ? 'tel' : 'text'"
-                     style="color: #666;text-align: right;border:none;resize:none;outline:none;height: 10vw"
+                     style="color: #666;text-align: right;border:none;resize:none;outline:none;height: 10vw;padding-right: 6vw"
                      :autofocus="false"
                      :placeholder="item.placeholder"
+                     :readonly="!checkEdit()"
                      v-model="item.value"
                      :maxlength="item.title==='真实姓名' ? '6' : item.title==='真实姓名'? '13' :item.title==='身份证号' ? '18' : ''"
                      @blur="lostInputFocus"
@@ -91,10 +101,11 @@
             </div>
           </div>
         </div>
+        <div style="height: 20vw"></div>
       </cube-scroll>
     </div>
 
-    <div class="base-button-fixed-bottom">
+    <div class="base-button-fixed-bottom" style="background-color: white" v-if="checkEdit()">
       <button-main text="完成" @btnOnclick="summit"></button-main>
     </div>
 
@@ -109,6 +120,10 @@
         <choose-text-list :list="popList" @itemOnClick="choosePlotItem"></choose-text-list>
       </div>
     </base-popup>
+
+    <transition name="slide-fade">
+      <router-view></router-view>
+    </transition>
   </div>
 </template>
 
@@ -122,6 +137,8 @@
   import Textarea from "cube-ui/src/components/textarea/textarea";
   import buttonMain from '_c/button/button-main';
   import { mapState } from 'vuex';
+
+  var isBack=false;
 
   export default {
     components: {
@@ -144,8 +161,8 @@
 
         fromFields: [
           {
-            title: "所在城区",
-            placeholder: "请选择所在城区",
+            title: "所在城市",
+            placeholder: "请选择所在城市",
             value1: "",
             value2: "",
             value3: "",
@@ -165,10 +182,10 @@
           },
           {//todo 有可能没有楼座
             title: "座号",
-            placeholder1: "请选择所在楼座",
+            placeholder1: "选择楼座",
             value1: "",
             value1Id: "",
-            placeholder2: "请选择所在门号",
+            placeholder2: "选择门号",
             value2: "",
             value2Id: ""
           },
@@ -186,11 +203,11 @@
             placeholder: "请填写您有效的身份证号",
             value: ""
           },
-          {
-            title: "联系电话",
-            placeholder: "请填写您有效的联系电话",
-            value: ""
-          },
+          // {
+          //   title: "联系电话",
+          //   placeholder: "请填写您有效的联系电话",
+          //   value: ""
+          // },
           // {
           //   title: "通讯地址",
           //   placeholder: "请填写您的通讯地址",
@@ -231,6 +248,44 @@
 
         // uploadIsLoading: false,
       };
+    },
+    watch: {
+      //监听路由变化
+      $route(to, from) {
+        if(window.localStorage.getItem("cityChoose")) {
+          let cityChooseInfo = JSON.parse(window.localStorage.getItem("cityChoose"));
+          this.fromFields[0].value2 = cityChooseInfo.cityName;
+          this.fromFields[0].valueId2 = cityChooseInfo.cityCode;
+          this.fromFields[1].value = "";
+          this.fromFields[1].valueId = "";
+          this.fromFields[2].value1 = "";
+          this.fromFields[2].value1Id = "";
+          this.fromFields[2].value2 = "";
+          this.fromFields[2].value2Id = "";
+          window.localStorage.removeItem("cityChoose");
+        }
+        if(window.localStorage.getItem("plotChoose")) {
+          let plotChooseInfo = JSON.parse(window.localStorage.getItem("plotChoose"));
+          this.fromFields[1].value = plotChooseInfo.plotName;
+          this.fromFields[1].valueId = plotChooseInfo.plotNumber;
+          this.fromFields[2].value1 = "";
+          this.fromFields[2].value1Id = "";
+          this.fromFields[2].value2 = "";
+          this.fromFields[2].value2Id = "";
+          window.localStorage.removeItem("plotChoose");
+        }
+      }
+    },
+    beforeRouteEnter (to, from, next) {
+      // 在渲染该组件的对应路由被 confirm 前调用
+      // 不！能！获取组件实例 `this`
+      // 因为当守卫执行前，组件实例还没被创建
+      if(from.path=='/mine/myPlot/community-add-manage'){
+        isBack=true;
+      }else{
+        isBack=false;
+      }
+      next();
     },
     created() {
       this.fromFields.forEach((item)=>{
@@ -283,15 +338,15 @@
           self.status = res.data.status;//取出状态 //todo 之后要优化
           self.fromFields.some(item =>{
             switch (item.title) {
-              case "所在城区":
-                item.valueId1 = applyObj.provinceCode;
+              case "所在城市":
+                // item.valueId1 = applyObj.provinceCode;
                 item.valueId2 = applyObj.cityCode;
-                item.valueId3 = applyObj.areaCode;
-                item.valueId4 = applyObj.streetCode;
-                item.value1 = applyObj.province;
+                // item.valueId3 = applyObj.areaCode;
+                // item.valueId4 = applyObj.streetCode;
+                // item.value1 = applyObj.province;
                 item.value2 = applyObj.city;
-                item.value3 = applyObj.area;
-                item.value4 = applyObj.street;
+                // item.value3 = applyObj.area;
+                // item.value4 = applyObj.street;
                 break;
               case "社区名称":
                 item.valueId = applyObj.plotNumber;
@@ -328,10 +383,20 @@
         });
 
       },
-
+      checkEdit(){
+        //审核中,或者审核通过,不能修改
+        if(this.status===1 || this.status===3){
+          return false;
+        }
+        return true;
+      },
       chooseAddress() {
-        this.mInputBlur();
-        this.isCityPopShow = true;
+        if(this.checkEdit()){
+          this.mInputBlur();
+          // this.isCityPopShow = true;
+          let self = this;
+          self.$router.push({path: self.$route.query.chooseCityPath, query: {}});
+        }
       },
       cityStrOnClick(e) {
         if (e.cityStr !== "")  {
@@ -363,112 +428,132 @@
       },
 
       choosePlot() {
-        this.mInputBlur();
-        let self = this;
-        console.log(this.fromFields[0].valueId3)
+        if(this.checkEdit()) {
+          this.mInputBlur();
+          let self = this;
 
-        let filterObj = {};
-        if (self.fromFields[0].valueId4 === 0) {
-          filterObj.filterArea = self.fromFields[0].valueId3;
-        } else {
-          filterObj.filterArea = self.fromFields[0].valueId3;
-          filterObj.filterStreet = self.fromFields[0].valueId4;
-        }
+          // let filterObj = {};
+          // if (self.fromFields[0].valueId4 === 0) {
+          //   filterObj.filterArea = self.fromFields[0].valueId3;
+          // } else {
+          //   filterObj.filterArea = self.fromFields[0].valueId3;
+          //   filterObj.filterStreet = self.fromFields[0].valueId4;
+          // }
 
-        if (this.fromFields[0].valueId3 > -1) {
-          self.$post("community","/plot", filterObj).then((res)=>{
-            self.plotList = [...res.data.list];
-            if (res.data.list.length===0) {
-              const toast = this.$createToast({
-                type: 'warn',
-                txt: "您所在的城区暂无社区"
-              });
-              toast.show();
-            } else {
-              self.isPopShow = true;
-              self.popTitle = "选择社区";
-              for(let count = 0; count < self.plotList.length; count++) {
-                self.plotList[count].value = self.plotList[count].name;
-                if (count===0) {
-                  self.plotList[count].isSeleted = true;
-                } else {
-                  self.plotList[count].isSeleted = false;
-                }
+          if (this.fromFields[0].valueId2 > 0) {//this.fromFields[0].valueId3 > 0
+            self.$post("community", "/newPlot", {
+              cityCode: self.fromFields[0].valueId2
+            }).then((res) => {
+              self.plotList = [...res.data];
+              if (res.data.length === 0) {
+                const toast = this.$createToast({
+                  type: 'warn',
+                  txt: "您所在的城市暂无社区"
+                });
+                toast.show();
+              } else {
+                self.$router.push({path: self.$route.query.choosePlotPath, query: {cityCode: self.fromFields[0].valueId2}});
               }
-              self.popList = [...self.plotList];
-              self.popListType = "plot";
-              self.fromFields[2].value1 = "";
-              self.fromFields[2].value1Id = "";
-              self.fromFields[2].value2 = "";
-              self.fromFields[2].value2Id = "";
-            }
-          });
-        } else {
-          const toast = this.$createToast({
-            type: 'warn',
-            txt: "请先选择所在城市"
-          });
-          toast.show();
+            });
+
+            // self.$post("community", "/plot", filterObj).then((res) => {
+            //   self.plotList = [...res.data.list];
+            //   if (res.data.list.length === 0) {
+            //     const toast = this.$createToast({
+            //       type: 'warn',
+            //       txt: "您所在的城市暂无社区"
+            //     });
+            //     toast.show();
+            //   } else {
+            //     self.isPopShow = true;
+            //     self.popTitle = "选择社区";
+            //     for (let count = 0; count < self.plotList.length; count++) {
+            //       self.plotList[count].value = self.plotList[count].name;
+            //       if (count === 0) {
+            //         self.plotList[count].isSeleted = true;
+            //       } else {
+            //         self.plotList[count].isSeleted = false;
+            //       }
+            //     }
+            //     self.popList = [...self.plotList];
+            //     self.popListType = "plot";
+            //     self.fromFields[2].value1 = "";
+            //     self.fromFields[2].value1Id = "";
+            //     self.fromFields[2].value2 = "";
+            //     self.fromFields[2].value2Id = "";
+            //   }
+            // });
+          } else {
+            const toast = this.$createToast({
+              type: 'warn',
+              txt: "请先选择所在城市"
+            });
+            toast.show();
+          }
         }
       },
       chooseBuilding() {
-        this.mInputBlur();
-        let self = this;
-        if (this.fromFields[1].valueId !== "") {
-          this.isPopShow = true;
-          this.popTitle = "选择楼座";
-          self.$post("community","/building",{
-            plotId: this.fromFields[1].valueId
-          }).then((res)=>{
-            self.buildingList = [...res.data.list];
-            for(let count = 0; count < self.buildingList.length; count++) {
-              self.buildingList[count].value = self.buildingList[count].name;
-              if (count===0) {
-                self.buildingList[count].isSeleted = true;
-              } else {
-                self.buildingList[count].isSeleted = false;
+        if(this.checkEdit()) {
+          this.mInputBlur();
+          let self = this;
+          if (this.fromFields[1].valueId !== "") {
+            this.isPopShow = true;
+            this.popTitle = "选择楼座";
+            self.$post("community", "/building", {
+              plotId: this.fromFields[1].valueId
+            }).then((res) => {
+              self.buildingList = [...res.data.list];
+              for (let count = 0; count < self.buildingList.length; count++) {
+                self.buildingList[count].value = self.buildingList[count].name;
+                if (count === 0) {
+                  self.buildingList[count].isSeleted = true;
+                } else {
+                  self.buildingList[count].isSeleted = false;
+                }
               }
-            }
-            self.popList = [...self.buildingList];
-            self.popListType = "building";
-            self.fromFields[2].value2 = "";
-            self.fromFields[2].value2Id = "";
-          });
-        } else {
-          const toast = this.$createToast({
-            type: 'warn',
-            txt: "请先选择所在社区"
-          });
-          toast.show();
+              self.popList = [...self.buildingList];
+              self.popListType = "building";
+              self.fromFields[2].value2 = "";
+              self.fromFields[2].value2Id = "";
+            });
+          } else {
+            const toast = this.$createToast({
+              type: 'warn',
+              txt: "请先选择所在社区"
+            });
+            toast.show();
+          }
         }
       },
       chooseDoor() {
-        this.mInputBlur();
-        let self = this;
-        if (this.fromFields[2].value1Id !== "") {
-          this.isPopShow = true;
-          this.popTitle = "选择门号";
-          self.$post("community","/door",{
-            buildingId: this.fromFields[2].value1Id
-          }).then((res)=>{
-            self.doorList = [...res.data.list];
-            for(let count = 0; count < self.doorList.length; count++) {
-              self.doorList[count].value = self.doorList[count].name;
-              if (count===0) {
-                self.doorList[count].isSeleted = true;
-              } else {
-                self.doorList[count].isSeleted = false;
+        if(this.checkEdit()) {
+          this.mInputBlur();
+          let self = this;
+          if (this.fromFields[2].value1Id !== "") {
+            this.isPopShow = true;
+            this.popTitle = "选择门号";
+            self.$post("community", "/door", {
+              buildingId: this.fromFields[2].value1Id
+            }).then((res) => {
+              self.doorList = [...res.data.list];
+              for (let count = 0; count < self.doorList.length; count++) {
+                self.doorList[count].value = self.doorList[count].name;
+                if (count === 0) {
+                  self.doorList[count].isSeleted = true;
+                } else {
+                  self.doorList[count].isSeleted = false;
+                }
               }
-            }
-            self.popList = [...self.doorList];
-            self.popListType = "door";
-          });
-        } else {
-          const toast = this.$createToast({
-            type: 'warn',
-            txt: "请先选择所在楼座"
-          });
-          toast.show();
+              self.popList = [...self.doorList];
+              self.popListType = "door";
+            });
+          } else {
+            const toast = this.$createToast({
+              type: 'warn',
+              txt: "请先选择所在楼座"
+            });
+            toast.show();
+          }
         }
       },
       choosePlotItem(e) {
@@ -502,8 +587,10 @@
       },
 
       setGender(value) {
-        this.fromFields[4].value = value;
-        this.mInputBlur();
+        if(this.checkEdit()){
+          this.fromFields[4].value = value;
+          this.mInputBlur();
+        }
       },
 
       lostInputFocus() {
@@ -519,163 +606,179 @@
       },
 
       summit() {
-        this.mInputBlur();
-        let self = this;
-        if (self.isSummit) {
-          self.$createToast({
-            type: 'warn',
-            txt: "请勿重复点击"
-          }).show();
-        } else {
-          self.isSummit = true;
-          let applyObj = {};
-          self.fromFields.some(item =>{
-            switch (item.title) {
-              case "所在城区":
-                applyObj.provinceCode = item.valueId1;
-                applyObj.cityCode = item.valueId2;
-                applyObj.areaCode = item.valueId3;
-                applyObj.streetCode = item.valueId4;
-                applyObj.province = item.value1;
-                applyObj.city = item.value2;
-                applyObj.area = item.value3;
-                applyObj.street = item.value4;
-                break;
-              case "社区名称":
-                applyObj.plotID = item.valueId;
-                applyObj.plotName = item.value;
-                break;
-              case "座号":
-                if(item.value2Id==="") {
-                  let toast = this.$createToast({
-                    type: 'warn',
-                    txt: "请选择座号"
-                  });
-                  toast.show();
-                  self.isSummit = false;
-                  return true;
-                } else {
-                  applyObj.buildingID = item.value1Id;
-                  applyObj.buildingName = item.value1;
-                  applyObj.doorID = item.value2Id;
-                  applyObj.doorName = item.value2;
-                }
-                break;
-              case "真实姓名":
-                if(item.value==="") {
-                  let toast = this.$createToast({
-                    type: 'warn',
-                    txt: "请填写您的真实姓名"
-                  });
-                  toast.show();
-                  self.isSummit = false;
-                  return true;
-                } else {
-                  applyObj.realName = item.value;
-                }
-                break;
-              case "性别":
-                applyObj.sex = item.value;
-                break;
-              case "身份证号":
-                if(utils.numberVerification("identityCard",item.value)) {
-                  applyObj.identityCard = item.value.toUpperCase();
-                } else {
-                  let toast = this.$createToast({
-                    type: 'warn',
-                    txt: "身份证号码出错，请检查"
-                  });
-                  toast.show();
-                  self.isSummit = false;
-                  return true;
-                }
-                break;
-              // case "联系电话":
-              //   if(utils.numberVerification("telephone",item.value)) {
-              //     applyObj.telephone = item.value;
-              //   } else {
-              //     let toast = this.$createToast({
-              //       type: 'warn',
-              //       txt: "手机号码出错，请填写正确的中国大陆号码"
-              //     });
-              //     toast.show();
-              //     self.isSummit = false;
-              //     return true;
-              //   }
-              //   break;
-              // case "通讯地址":
-              //   if(item.value==="") {
-              //     let toast = this.$createToast({
-              //       type: 'warn',
-              //       txt: "请填写您的通讯地址"
-              //     });
-              //     toast.show();
-              //     self.isSummit = false;
-              //     return true;
-              //   } else {
-              //     applyObj.address = item.value;
-              //   }
-              //   break;
-              case "车辆车牌 （选填）":
-                // if(item.value==="") {
-                //   return true;
-                // } else {
-                //   applyObj.carNumber = item.value;
-                // }
-                applyObj.carNumber = item.value;
-                break;
-              default:
-                break;
-            }
-          });
+        if(this.checkEdit()){
+          this.mInputBlur();
+          let self = this;
+          if (self.isSummit) {
+            self.$createToast({
+              type: 'warn',
+              txt: "请勿重复点击"
+            }).show();
+          } else {
+            self.isSummit = true;
+            let applyObj = {};
+            self.fromFields.some(item =>{
+              switch (item.title) {
+                case "所在城市":
+                  // applyObj.provinceCode = item.valueId1;
+                  applyObj.cityCode = item.valueId2;
+                  // applyObj.areaCode = item.valueId3;
+                  // applyObj.streetCode = item.valueId4;
+                  // applyObj.province = item.value1;
+                  applyObj.city = item.value2;
+                  // applyObj.area = item.value3;
+                  // applyObj.street = item.value4;
+                  break;
+                case "社区名称":
+                  applyObj.plotID = item.valueId;
+                  applyObj.plotName = item.value;
+                  break;
+                case "座号":
+                  if(item.value2Id==="") {
+                    let toast = this.$createToast({
+                      type: 'warn',
+                      txt: "请选择座号"
+                    });
+                    toast.show();
+                    self.isSummit = false;
+                    return true;
+                  } else {
+                    applyObj.buildingID = item.value1Id;
+                    applyObj.buildingName = item.value1;
+                    applyObj.doorID = item.value2Id;
+                    applyObj.doorName = item.value2;
+                  }
+                  break;
+                case "真实姓名":
+                  if(item.value==="") {
+                    let toast = this.$createToast({
+                      type: 'warn',
+                      txt: "请填写您的真实姓名"
+                    });
+                    toast.show();
+                    self.isSummit = false;
+                    return true;
+                  } else {
+                    applyObj.realName = item.value;
+                  }
+                  break;
+                case "性别":
+                  applyObj.sex = item.value;
+                  break;
+                case "身份证号":
+                  if(utils.numberVerification("identityCard",item.value)) {
+                    applyObj.identityCard = item.value.toUpperCase();
+                  } else {
+                    let toast = this.$createToast({
+                      type: 'warn',
+                      txt: "身份证号码出错，请检查"
+                    });
+                    toast.show();
+                    self.isSummit = false;
+                    return true;
+                  }
+                  break;
+                // case "联系电话":
+                //   if(utils.numberVerification("telephone",item.value)) {
+                //     applyObj.telephone = item.value;
+                //   } else {
+                //     let toast = this.$createToast({
+                //       type: 'warn',
+                //       txt: "手机号码出错，请填写正确的中国大陆号码"
+                //     });
+                //     toast.show();
+                //     self.isSummit = false;
+                //     return true;
+                //   }
+                //   break;
+                // case "通讯地址":
+                //   if(item.value==="") {
+                //     let toast = this.$createToast({
+                //       type: 'warn',
+                //       txt: "请填写您的通讯地址"
+                //     });
+                //     toast.show();
+                //     self.isSummit = false;
+                //     return true;
+                //   } else {
+                //     applyObj.address = item.value;
+                //   }
+                //   break;
+                case "车辆车牌 （选填）":
+                  // if(item.value==="") {
+                  //   return true;
+                  // } else {
+                  //   applyObj.carNumber = item.value;
+                  // }
+                  applyObj.carNumber = item.value;
+                  break;
+                default:
+                  break;
+              }
+            });
 
-          console.log(applyObj.plotID);
-          console.log(applyObj.buildingID);
-          console.log(applyObj.doorID);
-          console.log(applyObj.realName);
-          console.log(applyObj.identityCard);
-          // console.log(applyObj.telephone);
-          // console.log(applyObj.address);
-          // console.log(applyObj.carNumber);
+            // console.log(applyObj.plotID);
+            // console.log(applyObj.buildingID);
+            // console.log(applyObj.doorID);
+            // console.log(applyObj.realName);
+            // console.log(applyObj.identityCard);
+            // console.log(applyObj.telephone);
+            // console.log(applyObj.address);
+            // console.log(applyObj.carNumber);
 
-          if(applyObj.provinceCode && applyObj.cityCode && applyObj.areaCode && (applyObj.streetCode || applyObj.streetCode===0) &&
-            applyObj.province && applyObj.city && applyObj.area && (applyObj.street || applyObj.street==="") &&
-            applyObj.plotID && applyObj.buildingID && applyObj.doorID &&
-            applyObj.realName && applyObj.identityCard
+            if(applyObj.cityCode &&
+               applyObj.city &&
+              applyObj.plotID && applyObj.buildingID && applyObj.doorID &&
+              applyObj.realName && applyObj.identityCard
+            // applyObj.provinceCode && applyObj.areaCode && (applyObj.streetCode || applyObj.streetCode===0) &&
+            // applyObj.province && && applyObj.area && (applyObj.street || applyObj.street==="") &&
             // && applyObj.telephone && applyObj.address
             // && !applyObj.carNumber
-          ) {
-            if(self.applyID==="") {
-              self.$post("community","/apply",applyObj).then((res)=>{
-                localStorage.setItem("communityChangeOne","add");
-                localStorage.setItem("communityChange","add");
-                self.summitToast();
-              });
-            } else {
-              applyObj.applyNumber = self.applyID;
-              self.$post("community","/updateMyApply",applyObj).then((res)=>{
-                localStorage.setItem("communityChangeOne","change");
-                localStorage.setItem("communityChange","change");
-                self.summitToast();
-              });
+            ) {
+              if(self.applyID==="") {
+                self.$post("community","/apply",applyObj).then((res)=>{
+/*                  localStorage.setItem("communityChangeOne","add");
+                  localStorage.setItem("communityChange","add");
+                  localStorage.setItem("communityChangeAdd","add");*/
+                  self.summitToast("add");
+                });
+              } else {
+                applyObj.applyNumber = self.applyID;
+                self.$post("community","/updateMyApply",applyObj).then((res)=>{
+/*                  localStorage.setItem("communityChangeOne","change");
+                  localStorage.setItem("communityChange","change");*/
+                  self.summitToast("change");
+                });
+              }
+              setTimeout(() => {
+                self.isSummit = false;
+              }, 2000);//todo 防止重复添加
             }
-            setTimeout(() => {
-              self.isSummit = false;
-            }, 10000);
           }
+
         }
       },
-      summitToast() {
+      summitToast(type) {
         let self = this;
-        const toast = this.$createToast({
+        self.$createToast({
           type: 'correct',
           txt: "提交成功"
-        });
-        toast.show();
-        // self.$router.goBack();
+        }).show();
+        self.isSummit = false;
         setTimeout(() => {
-          self.$router.goBack();
-          self.isSummit = false;
+          // self.$router.goBack();
+          // if(type==="add") {
+          //   self.$router.push({path: "/mine/myPlot/community-add-manage"});
+          // } else if(type==="change") {
+          //   console.log("<><><><<><><><>11111",type);
+          //   self.$router.goBack();
+          // }
+          if(isBack){
+            self.$router.goBack();
+          }else{
+            self.$router.replace({path: "/mine/myPlot/community-add-manage"});
+          }
+
         }, 700);
       },
 
@@ -754,7 +857,7 @@
     margin-top: 2.6667vw;
   }
   .form-item {
-    margin: 0 8vw
+    margin: 0 0 0 6vw;
     min-height: 13.3333vw;
     font-size: 4.2666vw;
     color: #666;
@@ -763,13 +866,25 @@
     border-bottom: 1px solid rgba(237,238,240,0.3);
   }
   .form-item-placeholder-text {
-    font-size: 3.7333vw;
+    font-size: 4.2666vw;
     color: #CCC;
   }
-  .form-item-choose-box {
+
+  .form-item-choose {
     background-color: rgba(237,238,240,1);
     border-radius: 1.33vw;
     padding: 1.33vw 2.67vw;
+    height: 7.3333vw;
+    width 30vw;
+  }
+  .form-item-choose-box {
+    text-align: center;
+    line-height: 7.3333vw;
+    overflow: hidden;
+    /* 文本不会换行 */
+    white-space: nowrap;
+    /* 当文本溢出包含元素时，以省略号表示超出的文本 */
+    text-overflow: ellipsis;
   }
 
   .gender {
@@ -809,18 +924,18 @@
 
   input::-webkit-input-placeholder, textarea::-webkit-input-placeholder {
     color: #CCC;
-    font-size: 3.7333vw;
+    font-size: 4.2666vw;
   }
   input:-moz-placeholder, textarea:-moz-placeholder {
     color: #CCC;
-    font-size: 3.7333vw;
+    font-size: 4.2666vw;
   }
   input::-moz-placeholder, textarea::-moz-placeholder {
     color: #CCC;
-    font-size: 3.7333vw;
+    font-size: 4.2666vw;
   }
   input:-ms-input-placeholder, textarea:-ms-input-placeholder {
     color: #CCC;
-    font-size: 3.7333vw;
+    font-size: 4.2666vw;
   }
 </style>

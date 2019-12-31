@@ -33,6 +33,7 @@
             class="scroll-wrapper-text-style"
             :options="options"
             :fade="true"
+            v-if="hasSharing"
             :data="mineManageInfoList">
             <share-manage-item-share
               v-for="(item,index) in mineManageInfoList" :key="index"
@@ -40,6 +41,7 @@
               @editNameOnclick="changeName">
             </share-manage-item-share>
           </cube-scroll>
+          <img src="@/assets/icon/no-equirement.png" alt="" v-else class="no-data" />
         </cube-slide-item>
         <!-- 接受 -->
         <cube-slide-item>
@@ -48,6 +50,7 @@
             class="scroll-wrapper-text-style"
             :options="options"
             :fade="true"
+            v-if="hasMangeInfoData"
             :data="shareToManageInfoList">
             <share-manage-item-accept
               v-for="(item,index) in shareToManageInfoList" :key="index"
@@ -55,6 +58,7 @@
               @exitShareAcceptOnclick="exitShareAccept">
             </share-manage-item-accept>
           </cube-scroll>
+           <img src="@/assets/icon/no-equirement.png" alt="" v-else class="no-data" />
         </cube-slide-item>
       </cube-slide>
     </div>
@@ -150,6 +154,12 @@
       }
     },
     computed: {
+      hasSharing(){
+        return this.mineManageInfoList.length > 0
+      },
+      hasMangeInfoData(){
+        return this.shareToManageInfoList.length > 0
+      },
       initialIndex() {
         let index = 0;
         index = this.findIndex(
@@ -334,11 +344,12 @@
     width: 20vw;
     color: #b3b3b3;
     font-size: 4.2667vw;
-    font-weight: bold !important;
+    /*font-weight: bold !important;*/
     flex: 1;
 
-    &.cube-tab_active {
+    &.cube-tab_active div{
       color: #38F;
+      font-weight: bold;
     }
   }
 
@@ -355,5 +366,9 @@
     padding: 0 11.4667vw;
     box-sizing: border-box;
     display: flex;
+  }
+  .no-data {
+    width: 60vw;
+    margin: 15vw 20vw;
   }
 </style>

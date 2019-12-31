@@ -1,16 +1,23 @@
 <template>
-  <div>
+  <div class="base-popup-wrapper">
     <cube-popup type="my-popup"
                 :ref="refId"
-                v-show="popShow"
                 :position="popPosition"
-
+                :visible="popShow"
                 @mask-click="maskClick">
       <!--:maskClosable="true"-->
       <transition name="scale" >
         <div class="popup-container" :style="popupContainerStyle" v-show="popShow">
-          <h3 class="popup-title">{{popTitle}}</h3>
-          <slot>
+          <h3 v-show="!isShowCloseIcon" class="popup-title">{{popTitle}}</h3>
+          <div v-show="isShowCloseIcon" class="base-horizontal-layout-space-between-item-center">
+            <div style="width: 9.6vw;height: 9.6vw"></div>
+            <h3 class="popup-title">{{popTitle}}</h3>
+            <div @click="closePoppup(refId)">
+              <img :src="closeIcon" style="width: 9.6vw;height: 9.6vw" >
+            </div>
+
+          </div>
+          <slot :name="">
           </slot>
           <div v-show="isShowbtn" class="popup-footer">
             <div v-if="isOtherMsgChoose"
@@ -44,11 +51,11 @@
           <!--v-bind:class="{ 'popup-button-solid': isSolidSureBtn, 'popup-button-hollow': !isSolidSureBtn }"-->
         </div>
       </transition>
-      <p v-show="isShowCloseIcon" class="popup-close" :style="closeIconStyle">
-        <img :src="closeIcon"
-             class="popup-close-icon"
-             @click="closePoppup(refId)"/>
-      </p>
+      <!--<p v-show="isShowCloseIcon" class="popup-close" :style="closeIconStyle">-->
+        <!--<img :src="closeIcon"-->
+             <!--class="popup-close-icon"-->
+             <!--@click="closePoppup(refId)"/>-->
+      <!--</p>-->
     </cube-popup>
   </div>
 </template>
@@ -111,7 +118,8 @@
       },
     data() {
       return {
-        closeIcon: require('./icon_close.png'),
+        // closeIcon: require('./icon_close.png'),
+        closeIcon: require('./icon-close-right.png'),
         popShow: false,
       }
     },
@@ -146,10 +154,19 @@
   };
 </script>
 
-<style scoped>
+<style lang="stylus" scoped>
+  .base-popup-wrapper {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 11;
+  }
+
   .popup-container {
     width: 74vw;
-    padding: 5vw;
+    padding: 3vw 5vw 5vw 5vw;
     margin-bottom: 5vw;
     background: white;
     border-radius: 3vw;
@@ -173,7 +190,7 @@
     text-align: center;
     padding: 3vw 0 0 0;
     background: white;
-    font-size: 3.7333vw;
+    font-size: 4.2666vw;
   }
   .popup-button-solid {
     color: #FFFFFF;

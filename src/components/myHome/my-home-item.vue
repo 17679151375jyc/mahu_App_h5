@@ -36,7 +36,9 @@
                   >{{item.onLine?alarmStateText(item.status):'离线'}}</span></p>
                 </div>
               </div>
-              <img :src="require('./icon-home-set.png')" class="base-icon-large-style" @click="toDeviceManage">
+              <div @click="toDeviceManage">
+                <img :src="require('./icon-home-set.png')" class="base-icon-large-style">
+              </div>
             </div>
             <p v-if="item.shareUser"
                class="base-text-details-large-black-666">分享于：<span style="color: #E6782B"
@@ -271,6 +273,7 @@
         isVideoShowStart: false,
         isVideoShowStartStyle: {width: '73.06666vw',height: '47.7333vw',backgroundColor: 'white',borderRadius: '1.0666vw'},
         isVideoShow: false,
+        isVideoShowIndex: 0,
         defenceAreaList: [],
         // mPlayer: undefined,
         iframeUrl: '',
@@ -386,7 +389,7 @@
         }
 
         //todo 例子
-        let arr = [{
+/*        let arr = [{
           key: '01',
           value: '乐乐'
         }, {
@@ -410,7 +413,7 @@
             obj[arr[i].key] = true;
           }
         }
-        console.log("数组去重例子",result);
+        console.log("数组去重例子",result);*/
       },
       getVideoInfo() {
         this.videoValue = this.videoOptions[0];
@@ -505,6 +508,7 @@
       videoUnfoldOnClick(e) {
         // this.isVideoShowStart = true;
         this.machineShow = false;
+        this.isVideoShowIndex = e.index;
         this.isVideoShowStart = true;
         // this.isVideoShowStartStyle = {width: '73.06666vw',height: '47.7333vw',backgroundColor: 'white',borderRadius: '1.0666vw'};
         // this.isVideoShowStartStyle =
@@ -538,6 +542,7 @@
       videoCloseOnClick(e) {
         setTimeout(()=>{
           this.isVideoShow = e.isOpenCamera;
+          this.isVideoShowIndex = e.index;
           this.machineShow = true;
           //todo 还未完善
           // console.log(e.index,e.isOpenCamera);
@@ -813,8 +818,7 @@
 <style scoped>
   .home-item-wrapper {
     width: 100vw;
-    margin-bottom: 5vw;
-    /*background-color: white;*/
+    margin: 2.667vw 0;
     align-items: center;
   }
   .home-item-wrapper-padding {

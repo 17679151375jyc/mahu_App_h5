@@ -11,51 +11,41 @@
     </return-head>
 
     <div class="scroll-wrapper-addition-title">
-      <cube-scroll style="margin: 0 2.6666vw">
+      <cube-scroll style="margin: 0 2.6666vw"
+                :options = "options"
+                   ref="scroll"
+                   @pulling-up="onPullingUp()">
         <div
           v-for="(item,index) in visitorList"
           :key="index"
           class="visitor-index-item-box"
           :class="{'base-vertical-layout-space-between':true,
              'base-background-img-blue-light':item.valid,
-             'base-background-img-gray':!item.valid ||item.status==2 }"
-        >
+             'base-background-img-gray':!item.valid ||item.status==2 }">
           <!--'base-background-img-blue-light':(item.valid || (!item.valid && item.status===0)),-->
           <!--'base-background-img-gray':(!item.valid && item.status===1)}"-->
           <div :class="['name-info', !item.valid || item.status==2 ? '' : 'valid']">
             <div class="left">
-              <span class="name">{{item.vistorName}}</span>
-              <img
-                class="gender"
-                :src="item.vistorSex==='男' ? require('@/assets/icon/icon-male.png') : require('@/assets/icon/icon-female.png')"
-              />
+              <span class="name">{{item.vistorName ? item.vistorName : '匿名'}}</span>
+              <img class="gender"
+                :src="item.vistorSex==='男' ? require('@/assets/icon/icon-male.png') : require('@/assets/icon/icon-female.png')"/>
               <span class="phone">{{item.vistorPhone}}</span>
-              <span class="wechat" v-if="item.wxOpenId">(微信)</span>
             </div>
-            <!-- <div class="base-horizontal-layout-center-item-center">
-              <p v-if="item.valid && item.status!=2">{{item.vistorName}}</p>
-              <p v-else>{{item.vistorName}}</p>
-              <img
-                :src="item.vistorSex==='男' ? require('@/assets/icon/icon-male.png') : require('@/assets/icon/icon-female.png')"
-              />
-              <p>{{item.vistorPhone}}</p>
-              <p v-if="item.wxOpenId">(微信)</p>
-            </div>-->
             <div class="right">
-              <span v-if="!item.valid && item.status!=2">已过期</span>
-              <span v-if="item.status==2">已拒绝</span>
+              <!--已过期-->
+              <img v-if="!item.valid && item.status!==2" :src="require('./icon-expiration.png')" style="width: 12vw;height: 9.6vw">
+              <!--已拒绝-->
+              <img v-if="item.status===2" :src="require('./icon-refuse.png')" style="width: 12vw;height: 9.6vw">
             </div>
           </div>
 
           <div :class="['other-info', !item.valid || item.status==2 ? '' : 'valid']">
             <div class="left">
-              <!--<p>{{item.plotName}} 同行{{item.vistorNumbers}}人</p>-->
               <span class="name">{{`${item.plotName}-${item.buildingName}-${item.doorName}`}}</span>
               <span v-if="item.carNumber" class="carNumber">{{item.carNumber}}</span>
-              <span class="time">{{item.startTime}}</span>
-              <!-- <p>{{item.plotName}}{{item.buildingName}}-{{item.doorName}}</p> -->
-              <!-- <p v-if="item.carNumber">车牌号：{{item.carNumber}}</p> -->
-              <!-- <p>{{item.startTime}}</p> -->
+              <span class="time">
+                {{item.startTime}}<span>{{item.wxOpenId?'来源:微信':''}}</span>
+              </span>
             </div>
             <div class="right">
               <div
@@ -87,7 +77,7 @@
               </div>
               <div
                 v-if="item.valid && item.status===0"
-                class="visitor-btn re-btn"
+                class="visitor-btn"
                 @touchstart="addActiveCls"
                 @touchend="removeActiveCls"
                 @click="showPoppup('同意',index,item.vistorID)"
@@ -101,7 +91,7 @@
                 @touchend="removeActiveCls"
                 @click="useShare(item.vistorID)"
               >
-                <img :src="require('./icon_share.png')" class="base-icon-small-style" />
+                <img :src="require('./icon_qcode.png')" class="base-icon-small-style" />
                 <span>分享二维码</span>
               </div>
               <div
@@ -123,6 +113,12 @@
             </div>
           </div>
         </div>
+        <!-- <p
+          class="base-text-title-normal-gray lx_no_more"
+          style="margin: 4vw;text-align: center"
+          v-if="!options.pullUpLoad"
+        >没有更多了~</p> -->
+
         <button-add-quick
           v-if="visitorList.length===0"
           style="margin-top: 2.9vw"
@@ -132,6 +128,7 @@
         ></button-add-quick>
         <div style="height: 2.9vw"></div>
       </cube-scroll>
+      <pull-up-load  v-if="options.pullUpLoad"></pull-up-load>
     </div>
 
     <addVisitorPopup
@@ -165,13 +162,14 @@ import returnHead from "_c/head/return-head";
 import buttonAddQuick from "_c/button/button-add-quick";
 import addVisitorPopup from "_c/inAndOut/addVisitorPopup";
 import basePopup from "_c/popup/base-popup";
+import pullUpLoad from "_c/pullUpLoad";
 import { mapActions } from "vuex";
 import { mapState } from "vuex";
 import { addClass, removeClass } from "_libs/dom";
 
 export default {
   name: "visitor-index",
-  components: { returnHead, buttonAddQuick, addVisitorPopup, basePopup },
+  components: { returnHead, buttonAddQuick, addVisitorPopup, basePopup,pullUpLoad },
   data() {
     return {
       visitorList: [],
@@ -183,26 +181,43 @@ export default {
       popTitle: "",
       popPlainText: "",
       visitorID: "",
-      visitorStatus: 0
+      visitorStatus: 0,
+      page:1,
+      pageSize: 10,
+      options: {
+        observeDOM: true,
+        click: true,
+        probeType: 1,
+        scrollbar: false,
+        pullUpLoad: {
+          txt: { more: "没有更多", noMore: "没有更多" },
+          visible: true
+        }
+      }
+
     };
   },
   computed: {
     ...mapState({
-      mAppPath: state => state.user.appPath,
-      mPushInfo: state => state.user.pushInfo,
-      mUserHasProprietor: state => state.user.userHasProprietor,
-      mUserPlotList: state => state.user.userPlotList
+      'mAppPath': state => state.user.appPath,
+      'mPushInfo': state => state.user.pushInfo,
+      'mUserHasProprietor': state => state.user.userHasProprietor,
+
+      'mUserPlotList': state => state.user.userPlotList,
+      'mIsPlotBlankDomicile': state => state.plot.isPlotBlankDomicile
     })
   },
   watch: {
     //监听路由变化
     $route(to, from) {
       let self = this;
-      if (this.$route.path === "/ma-hu-index/visitor-index") {
-        if (localStorage.getItem("inAndOutChange")) {
-          self.getVisitorInfo();
-          localStorage.removeItem("inAndOutChange");
-        }
+      if (to.path === "/ma-hu-index/visitor-index") {
+        this.page=1;
+        self.getVisitorInfo();//todo 因为上一个页面已经removeItem了
+        // if (localStorage.getItem("inAndOutChange")) {
+        //   self.getVisitorInfo();
+        //   localStorage.removeItem("inAndOutChange");
+        // }
       }
     }
   },
@@ -220,25 +235,43 @@ export default {
     },
     getVisitorInfo() {
       let self = this;
-      self.$post("entry", "/vistor", {}).then(res => {
-        self.visitorList = [...res.data.list];
+      self.$post("entry", "/vistor", {page:this.page,pageSize: this.pageSize}).then(res => {
+        if(this.page==1){
+          self.visitorList = res.data.list;
+        }else{
+          self.visitorList=self.visitorList.concat(res.data.list);
+        }
+
+        if(!res.data.list || res.data.list.length<self.pageSize){
+          self.options.pullUpLoad=false;
+        }
+        setTimeout(()=>{
+          self.$refs.scroll.forceUpdate();
+          self.$refs.scroll.resetPullUpTxt();
+          self.$refs.scroll.refresh();
+        },100);
+
+
       });
     },
 
     /*** 添加访客 ***/
     addVisitor() {
-      if (this.mUserHasProprietor) {
-        // && this.mUserPlotList>0
-        this.setIsShowOtherPop(true);
-        // utils.maskTabShow().then((e)=>{
-        this.addVisitorPopup = true;
-        // })
+      if(this.mUserHasProprietor) {
+        if(this.mUserPlotList.length>0 && this.mIsPlotBlankDomicile) {
+          this.setIsShowOtherPop(true);
+          this.addVisitorPopup = true;
+        } else {
+          this.$createToast({
+            type: "warn",
+            txt: "您的社区已被禁用，需要解禁才能使用"
+          }).show();
+        }
       } else {
-        const toast = this.$createToast({
+        this.$createToast({
           type: "warn",
           txt: "需要先加入社区，才能使用此功能"
-        });
-        toast.show();
+        }).show();
       }
     },
     addVisitorPopupClose(ee) {
@@ -276,13 +309,8 @@ export default {
     // 重新激活
     editProfile(visitorInfo) {
       if (window.localStorage) {
-        window.localStorage.setItem("hideValue", "true");
         utils.localStorage("visitorInfo", visitorInfo);
         this.$router.push("/ma-hu-index/visitor-index/addVisitorInfo");
-      } else {
-        this.$router.push("/ma-hu-index/visitor-index/addVisitorInfo", {
-          hideValue: true
-        });
       }
     },
 
@@ -342,7 +370,14 @@ export default {
           self.isPopShow = false;
           self.getVisitorInfo();
         });
+    },
+    onPullingUp(){
+      setTimeout(() => {
+        this.page++;
+        this.getVisitorInfo();
+      }, 1000);
     }
+
   }
 };
 </script>
@@ -383,10 +418,10 @@ export default {
 
 .re-btn {
   color: #fff;
-  background: linear-gradient(180deg, rgba(48, 201, 255, 1) 0%, rgba(51, 136, 255, 1) 100%);
+  background: linear-gradient(135deg, rgba(48, 201, 255, 1) 0%, rgba(51, 136, 255, 1) 100%);
 
   &.active {
-    background: linear-gradient(180deg, darken(rgba(48, 201, 255, 1), 20%) 0%, darken(rgba(51, 136, 255, 1), 20%) 100%);
+    background: linear-gradient(135deg, darken(rgba(48, 201, 255, 1), 20%) 0%, darken(rgba(51, 136, 255, 1), 20%) 100%);
   }
 }
 
@@ -412,6 +447,9 @@ export default {
       font-weight: bold;
       margin-right: 1.867vw;
       word-break: break-all;
+      white-space: nowrap;
+      /* 当文本溢出包含元素时，以省略号表示超出的文本 */
+      text-overflow: ellipsis;
     }
 
     .gender {
@@ -432,7 +470,6 @@ export default {
   .right {
     span {
       font-size: 4vw;
-      font-weight: bold;
     }
   }
 }
@@ -453,10 +490,15 @@ export default {
     flex: 1;
     flex-flow: column;
     justify-content: space-between;
-    font-size: 4.267vw;
+    font-size: 4vw;
 
     .time {
       font-size: 3.733vw;
+
+      span {
+        margin-left: 1.867vw;
+        font-size: 3.2vw;
+      }
     }
   }
 

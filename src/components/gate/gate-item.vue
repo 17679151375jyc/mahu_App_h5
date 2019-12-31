@@ -34,12 +34,20 @@
         </div>
       </div>
       <div class="gate-item-door-box base-vertical-layout-center-item-center" @click="openDoorInOnClick">
-        <img :src="require('./icon-open-door-color.png')" class="base-icon-large-style" style="margin-bottom: 2vw">
-        <p class="base-text-details-large-blue" style="font-weight: bold">入口开门</p>
+        <img :src="isEntranceEnable?require('./icon-open-door-color.png'):require('./icon-open-door-unenable.png')"
+             class="base-icon-large-style" style="margin-bottom: 2vw">
+        <p class="base-text-details-large-blue" style="font-weight: bold"
+           :style="isEntranceEnable ? '' : 'color: rgba(0,0,0,0.3)'">入口开门</p>
+        <p v-if="!isEntranceEnable" class="base-text-details-large-blue" style="font-weight: bold"
+           :style="isEntranceEnable ? '' : 'color: rgba(0,0,0,0.3)'">（离线中）</p>
       </div>
       <div class="gate-item-door-box base-vertical-layout-center-item-center" @click="openDoorOutOnClick">
-        <img :src="require('./icon-open-door-color.png')" class="base-icon-large-style" style="margin-bottom: 2vw">
-        <p class="base-text-details-large-blue" style="font-weight: bold">出口开门</p>
+        <img :src="isExitEnable?require('./icon-open-door-color.png'):require('./icon-open-door-unenable.png')"
+             class="base-icon-large-style" style="margin-bottom: 2vw">
+        <p class="base-text-details-large-blue" style="font-weight: bold"
+           :style="isExitEnable ? '' : 'color: rgba(0,0,0,0.3)'">出口开门</p>
+        <p v-if="!isExitEnable" class="base-text-details-large-blue" style="font-weight: bold"
+           :style="isExitEnable ? '' : 'color: rgba(0,0,0,0.3)'">（离线中）</p>
       </div>
     </div>
 
@@ -106,13 +114,17 @@
     data() {
       return {
         gateSentryStatus: 0,
-        gateSentryUnStatus: 0
+        gateSentryUnStatus: 0,
+
+        isEntranceEnable: false,
+        isExitEnable: false,
       }
     },
     watch: {
       myHomeInfo() {
         this.getEffectiveTime();
         this.alarmStateText();
+        this.getDeviceRoleType();
       }
     },
     created() {
@@ -122,7 +134,8 @@
         } else {
           this.gateSentryUnStatus = this.gateSentryUnStatus + 1;
         }
-      })
+      });
+      this.getDeviceRoleType();
     },
     methods: {
       getEffectiveTime(effectiveTime) {
@@ -130,6 +143,23 @@
       },
       alarmStateText(status) {
         return "主机" + status + "中...";
+      },
+
+      getDeviceRoleType() {
+        this.myHomeInfo.doorDeviceList.forEach((item)=>{
+          console.log("><><><><><><><><><111111",item);
+          if(item.deviceRoleType === 0) {
+            if(item.onLine === 1) {
+              this.isEntranceEnable = true;
+            }
+            console.log("><><><><><><><><><22222222",this.isEntranceEnable);
+          } else if(item.deviceRoleType === 1) {
+            if(item.onLine === 1) {
+              this.isExitEnable = true;
+            }
+            console.log("><><><><><><><><><333333333",this.isEntranceEnable);
+          }
+        })
       },
 
       serviceMessageOnClick() {//点击服务消息
@@ -169,12 +199,14 @@
       },
 
       openDoorInOnClick(e) {
-        // this.$emit('openDoorInOnClick', {areaNumber: e.areaNumber});
-        this.$emit('openDoorInOnClick', {areaNumber: this.myHomeInfo.areaNumber});
+        if(this.isEntranceEnable) {
+          this.$emit('openDoorInOnClick', {areaNumber: this.myHomeInfo.areaNumber});
+        }
       },
       openDoorOutOnClick(e) {
-        // this.$emit('openDoorOutOnClick', {areaNumber: e.areaNumber});
-        this.$emit('openDoorOutOnClick', {areaNumber: this.myHomeInfo.areaNumber});
+        if(this.isExitEnable) {
+          this.$emit('openDoorOutOnClick', {areaNumber: this.myHomeInfo.areaNumber});
+        }
       }
     }
   }

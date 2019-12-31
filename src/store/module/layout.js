@@ -10,9 +10,20 @@ export default {
     myHomeWork: {alertTab: 0,maintainTab: 0},
     isDeleteShareMachine: false,//是否删除共享成员，用作两个页面刷新需要
     indexPageTabIndex: 0,
+    indexPageTabKey: "",
     indexFamilyPageTabIndex: 0,
 
-    isShowDoorListGatePop: false
+    isShowDoorListGatePop: false,
+    showVisitorPopList: [],//用户已看出入首页记录列表
+    isReadNoticeNumber: [],//用户已读社区通知记录列表
+
+    isUntreated: {
+      gatePlotApplyIsUntreated: false,
+      gateCarApplyIsUntreated: false,
+      gateFeedbackIsUntreated: false,
+      feedbackIsUntreated: false,
+      notificationIsUntreated: false,
+    }
   },
   mutations: {
     setIsImmersionNative(state, isImmersion) {
@@ -27,6 +38,9 @@ export default {
     setIndexPageTabIndexNative(state, indexPageTabIndex) {
       state.indexPageTabIndex = indexPageTabIndex
     },
+    setIndexPageTabKeyNative(state, indexPageTabKey) {
+      state.indexPageTabKey = indexPageTabKey
+    },
     setIndexFamilyPageTabIndexNative(state, indexFamilyPageTabIndex) {
       state.indexFamilyPageTabIndex = indexFamilyPageTabIndex
     },
@@ -34,7 +48,16 @@ export default {
     setIsShowDoorListGatePopNative(state, isShowDoorListGatePop) {
       state.isShowDoorListGatePop = isShowDoorListGatePop
     },
+    setShowVisitorPopListNative(state, showVisitorPopInfo) {
+      state.showVisitorPopList.push(showVisitorPopInfo);
+    },
 
+    setIsUntreatedNative(state, isUntreatedInfo) {
+      if(state.isUntreated){
+        state.isUntreated[isUntreatedInfo.key] = isUntreatedInfo.value
+      }
+
+    }
   },
   getters: {
 
@@ -52,6 +75,9 @@ export default {
     setIndexPageTabIndex({ commit }, indexPageTabIndex) {
       commit('setIndexPageTabIndexNative', indexPageTabIndex);
     },
+    setIndexPageTabKey({ commit }, indexPageTabKey) {
+      commit('setIndexPageTabKeyNative', indexPageTabKey);
+    },
     setIndexFamilyPageTabIndex({ commit }, indexFamilyPageTabIndex) {
       commit('setIndexFamilyPageTabIndexNative', indexFamilyPageTabIndex);
     },
@@ -59,5 +85,12 @@ export default {
     setIsShowDoorListGatePop({ commit }, isShowDoorListGatePop) {
       commit('setIsShowDoorListGatePopNative', isShowDoorListGatePop);
     },
+    setShowVisitorPopList({ commit }, showVisitorPopInfo) {
+      commit('setShowVisitorPopListNative', showVisitorPopInfo);
+    },
+
+    setIsUntreated({ commit }, isUntreatedInfo) {
+      commit('setIsUntreatedNative', isUntreatedInfo);
+    }
   }
 }

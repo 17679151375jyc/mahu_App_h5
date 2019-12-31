@@ -46,17 +46,47 @@
     <!--'font-size: 5.2666vw;color: #ccc;'"-->
     <!--@click="tabOnClick(index,item.label)">{{item.label}}</p>-->
     <!--</div>-->
-    <div v-if="myHomeInfoList.length>0" style="font-size: 4.2666vw">
+    <div v-if="isMyHomeInfoListLen>0"
+         style="flex:1;display: flex;flex-flow: column;overflow: hidden">
       <cube-tab-bar
+        class="border-bottom-1px"
         v-model="selectedLabel"
         show-slider
         :use-transition="tabDisabled"
         ref="myFamilyIndexTabNav"
         :data="tabLabels"
-      ></cube-tab-bar>
+        style="flex: 0 0 13.3333vw"
+        @click="tabOnClick">
+      </cube-tab-bar>
+      <cube-tab-panels v-model="selectedLabel" class="home-tab">
+        <cube-tab-panel label="出入管理" style="overflow: auto">
+          <cube-scroll class="scroll-wrapper-service-page">
+            <in-and-out-index
+              @openDoor="openDoor"
+              @ignoreVisitor="ignoreVisitor"
+              @wxVisitor="wxVisitor"
+            ></in-and-out-index>
+          </cube-scroll>
+        </cube-tab-panel>
+        <cube-tab-panel label="我的设备" style="overflow: auto">
+          <cube-scroll class="scroll-wrapper-service-page">
+            <my-home-item
+              v-for="(item,index) in myHomeInfoList"
+              :key="index"
+              :index="index"
+              :myHomeInfo="item"
+              @serviceMessageOnClick="serviceMessageOnClick"
+              @failureToDeclareOnClick="failureToDeclare"
+              @alarmOnClick="toAlarmBusiness"
+              @stayAlarmOnClick="toStayAlarmBusiness">
+            </my-home-item>
+          </cube-scroll>
+        </cube-tab-panel>
+      </cube-tab-panels>
     </div>
-    <div v-if="myHomeInfoList.length>0" class="container-wrapper">
-      <div style="background: #F5F5F5">
+
+    <!-- <div v-if="myHomeInfoList.length>0" class="container-wrapper">
+      <div>
         <cube-slide
           ref="slide"
           :loop="loop"
@@ -65,13 +95,14 @@
           :show-dots="showDots"
           :options="slideOptions"
           @scroll="slideScroll"
-          @change="changePage">
+          @change="changePage"
+        >
           <cube-slide-item>
             <in-and-out-index
               @openDoor="openDoor"
               @ignoreVisitor="ignoreVisitor"
-              @wxVisitor="wxVisitor">
-            </in-and-out-index>
+              @wxVisitor="wxVisitor"
+            ></in-and-out-index>
           </cube-slide-item>
 
           <cube-slide-item>
@@ -102,14 +133,14 @@
           </cube-slide-item>
         </cube-slide>
       </div>
-    </div>
+    </div>-->
     <in-and-out-index
-      v-else
+      v-else-if="isMyHomeInfoListLen===0"
       :isMyHomeInfoListLen="myHomeInfoList.length"
       @openDoor="openDoor"
       @ignoreVisitor="ignoreVisitor"
-      @wxVisitor="wxVisitor">
-    </in-and-out-index>
+      @wxVisitor="wxVisitor"
+    ></in-and-out-index>
 
     <base-popup
       v-if="isPopShow"
@@ -141,10 +172,12 @@ import equipmentEmpty from "_c/blank/equipment-empty";
 import basePopup from "_c/popup/base-popup";
 import { mapActions } from "vuex";
 import { mapState } from "vuex";
+import Scroll from "cube-ui/src/components/scroll/scroll";
 
 export default {
   name: "my-family-index",
   components: {
+    Scroll,
     alertMsg,
     swiper,
     swiperSlide,
@@ -159,7 +192,7 @@ export default {
   data() {
     return {
       selectedLabel: "",
-      tabDisabled: false,
+      tabDisabled: true,
       tabLabels: [
         {
           label: "出入管理",
@@ -226,6 +259,7 @@ export default {
       },
 
       myHomeInfoList: [],
+      isMyHomeInfoListLen: -1,
 
       // 弹窗属性
       isPopShow: false,
@@ -259,10 +293,6 @@ export default {
   watch: {
     //监听路由变化
     $route(to, from) {
-      console.log(
-        "workListworkListworkListworkList",
-        localStorage.getItem("workListFamily")
-      );
       if (localStorage.getItem("workListFamily")) {
         this.getMyHomeInfoList();
         localStorage.removeItem("workListFamily");
@@ -286,12 +316,15 @@ export default {
     this.tabLabels[this.mIndexFamilyPageTabIndex].isHighlight = true;
   },
   mounted() {
-    this.mAreaTypesList.forEach(item => {
-      if (item === utils.returnTypeFamily()) {
-        this.getHomeMsgList();
-        this.getMyHomeInfoList();
-      }
-    });
+    this.isMyHomeInfoListLen = 0;//为了显示in-and-out-index
+    if (this.mAreaTypesList && this.mAreaTypesList.length>0) {
+      this.mAreaTypesList.forEach(item => {
+        if (item === utils.returnTypeFamily()) {
+          this.getHomeMsgList();
+          this.getMyHomeInfoList();
+        }
+      });
+    }
   },
   methods: {
     ...mapActions([
@@ -334,7 +367,11 @@ export default {
       return index;
     },
 
-    tabOnClick(index, label) {
+    tabOnClick(label) {
+      let index = this.findIndex(
+        this.tabLabels,
+        item => item.label === label
+      );
       this.tabLabels.forEach(item => {
         item.isHighlight = false;
       });
@@ -342,35 +379,41 @@ export default {
       this.selectedLabel = label;
       this.setIndexFamilyPageTabIndex(index);
     },
+    // tabOnClick(index, label) {
+    //   this.tabLabels.forEach(item => {
+    //     item.isHighlight = false;
+    //   });
+    //   this.tabLabels[index].isHighlight = true;
+    //   this.selectedLabel = label;
+    //   this.setIndexFamilyPageTabIndex(index);
+    // },
 
     getHomeMsgList() {
       let self = this;
-      self
-        .$post("alertMessage", "/getHomePageList", {
+      self.$post("alertMessage", "/getHomePageList", {
+        statusList: [0, 2, 3, 4, 5],
+        type: utils.returnTypeFamily()
+      }).then(res => {
+        self.myHomeMegList = [...res.data];
+        self.$post("maintainMessage", "/getHomePageList", {
           statusList: [0, 2, 3, 4, 5],
           type: utils.returnTypeFamily()
         })
-        .then(res => {
-          self.myHomeMegList = [...res.data];
-          self
-            .$post("maintainMessage", "/getHomePageList", {
-              statusList: [0, 2, 3, 4, 5],
-              type: utils.returnTypeFamily()
-            })
-            .then(res => {
-              res.data.forEach(item => {
-                self.myHomeMegList.push(item);
-              });
+          .then(res => {
+            res.data.forEach(item => {
+              self.myHomeMegList.push(item);
             });
-        });
+          });
+      });
     },
     getMyHomeInfoList() {
       let self = this;
       // setTimeout(() => {//todo 操作的才要加延时
       self.$post("hArea", "/getMyAreaLists", {
-        type: utils.returnTypeFamily()
-      }).then(res => {
-          // self.myHomeInfoList = [...res.data];
+          type: utils.returnTypeFamily()
+        }).then(res => {
+          self.myHomeInfoList = [...res.data];
+          self.isMyHomeInfoListLen = self.myHomeInfoList.length;
           console.log("my-family接口", "/getMyAreaLists");
         });
       // }, 3000);
@@ -544,6 +587,16 @@ export default {
 </script>
 
 <style lang="stylus" scoped>
+.home-tab {
+  >>>.cube-tab-panels-group{
+    height: 100%;
+  }
+
+  >>>.cube-tab-panels-group .cube-tab-panel{
+    height: 100%;
+  }
+}
+
 .family-wrapper {
   display: flex;
   position: absolute;
@@ -553,9 +606,12 @@ export default {
   bottom: 0;
   flex-flow: column;
 
+  &>.item {
+    flex: 0 0 10.667vw;
+  }
+
   .container-wrapper {
     flex: 1;
-    background: red;
   }
 }
 
@@ -580,11 +636,11 @@ export default {
 }
 
 >>>.cube-tab-bar-slider {
-  background: linear-gradient(to left, #42DBC4, #30C9FF);
-  width: 2vw !important;
-  margin: 0 0 1.6vw 16vw;
+  width: 8vw !important;
+  height: 0.533vw;
+  bottom: 1.6vw;
+  background: linear-gradient(270deg, rgba(48, 201, 255, 1) 0%, rgba(51, 136, 255, 1) 100%);
+  left: 25%;
+  margin-left: -4vw;
 }
-</style>
-
-<style scoped>
 </style>

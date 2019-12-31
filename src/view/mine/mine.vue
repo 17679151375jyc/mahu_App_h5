@@ -3,20 +3,16 @@
     <index-head
       title="我的"
       :rightTextRightIcon="require('./head-setting.png')"
-      @rightOnClick="toSetting"
-    ></index-head>
+      @rightOnClick="toSetting">
+    </index-head>
 
-    <div class="scroll-wrapper-addition-title">
+    <div style="overflow: scroll;">
       <!--<div class="base-horizontal-layout-general-item-center mine-user-box-animate"-->
-      <div
-        class="base-horizontal-layout-general-item-center"
+      <div class="base-horizontal-layout-general-item-center"
         style="margin: 7vw 5.3333vw 6.6666vw 5.3333vw"
-        @click="toUserManage"
-      >
-        <img
-          :src="isHeadPortrait ? mUserHeadPortrait : require('./icon-avatar.png')"
-          class="mine-top-head-portrait"
-        />
+        @click="toUserManage">
+        <img :src="isHeadPortrait ? getImageUrl(mUserHeadPortrait) : require('./icon-avatar.png')"
+          class="mine-top-head-portrait"/>
         <div class="base-vertical-layout-space-between" style="margin-left: 3.2vw">
           <p class="base-text-title-large-xx-black">{{getNickName()}}</p>
           <p class="base-text-details-large-black" style="margin-top: 1.1vw">{{getPhoneNumber()}}</p>
@@ -24,7 +20,7 @@
       </div>
 
       <!--<div class="set-info mine-set-box-animate">-->
-      <div class="set-info">
+      <div v-if="isShowFamily" class="set-info">
         <div class="item" @click="packagesPaySetting">
           <img :src="require('./icon-packages-pay.png')" />
           <span>我的套餐</span>
@@ -41,79 +37,57 @@
 
       <!--社区设置-->
       <!--<div class="base-vertical-layout-general mine-community-box-animate"-->
-      <div
+      <div v-if="isShowPlotFamily && isShowPlot"
         class="base-vertical-layout-general"
-        :style="mUserHasProprietor ? 'margin: 6.6666vw 5.3333vw 4.3333vw 5.3333vw' : 'margin: 6.6666vw 5.3333vw 2.6666vw 5.3333vw'"
-      >
-        <p
-          class="base-text-details-large-black-666"
+        :style="mUserHasProprietor ? 'margin: 6.6666vw 5.3333vw 4.3333vw 5.3333vw' : 'margin: 6.6666vw 5.3333vw 2.6666vw 5.3333vw'">
+        <p class="base-text-details-large-black-666"
         >{{menuList.communityMenuList.title}}</p>
-        <div
-          v-if="mUserHasProprietor"
+        <div v-if="mUserHasProprietor"
           class="base-horizontal-layout-space-between-item-center"
-          style="margin-top: 2.6666vw"
-        >
-          <div
-            v-for="(item,index) in menuList.communityMenuList.details"
+          style="margin-top: 2.6666vw">
+          <div v-for="(item,index) in menuList.communityMenuList.details"
             :key="index"
             class="base-vertical-layout-center-item-center setItem"
             style="width: 21.8666vw;height: 18.6666vw"
-            @click="menuOnClick(item.title)"
-          >
-            <img
-              :src="(!isPark&&item.title==='车辆管理')?item.disableIcon:item.icon"
-              style="width: 6vw;height: 5.3333vw;margin-bottom: 2.1333vw"
-            />
+            @click="menuOnClick(item.title)">
+            <img :src="(!isPark&&item.title==='车辆管理')?item.disableIcon:item.icon"
+              style="width: 6vw;height: 5.3333vw;margin-bottom: 2.1333vw"/>
             <!--:style="!isPark?{filter: '#999',filter: 'grayscale(100%)'}:{}"-->
-            <p
-              class="base-text-details-normal-black-666"
-              :class="{'base-text-details-normal-gray':(!isPark&&item.title==='车辆管理')}"
-            >{{item.title}}</p>
+            <p class="base-text-details-normal-black-666"
+              :class="{'base-text-details-normal-gray':(!isPark&&item.title==='车辆管理')}">{{item.title}}</p>
           </div>
         </div>
         <div v-else>
-          <div
-            class="base-horizontal-layout-center-item-center"
+          <div class="base-horizontal-layout-center-item-center"
             :class="applyCommunityInfo.status===2 ? 'mine-set-community-btn-disable-no-pass' :
-             applyCommunityInfo.status===3 ? 'mine-set-community-btn-disable' :
-             'mine-set-community-btn'"
-            style="margin-top: 2.6666vw"
-          >
-            <div v-if="applyCommunityLen===0" class="base-horizontal-layout-center-item-center">
-              <img
-                :src="require('./icon-community-join-first.png')"
+             applyCommunityInfo.status===3 ? 'mine-set-community-btn-disable' : 'mine-set-community-btn'"
+            style="margin-top: 2.6666vw">
+            <div v-if="applyCommunityLen===0 || (applyCommunityLen>0 && applyCommunityInfo.status===1)"
+                 class="base-horizontal-layout-center-item-center">
+              <img :src="require('./icon-community-join-first.png')"
                 class="base-icon-large-style"
-                style="margin-right: 2.1333vw"
-              />
-              <p class="base-text-details-normal-white">加入社区</p>
+                style="margin-right: 2.1333vw"/>
+              <p class="base-text-title-normal-white">加入社区</p>
             </div>
-            <div
-              v-else-if="applyCommunityLen===1 && (applyCommunityInfo.status===0 || applyCommunityInfo.status===2)"
-              class="base-horizontal-layout-center-item-center"
-            >
-              <p
-                class="base-text-details-large-white"
+            <div v-else-if="applyCommunityLen>0 && (applyCommunityInfo.status===0 || applyCommunityInfo.status===2)"
+              class="base-horizontal-layout-center-item-center">
+              <p class="base-text-title-normal-white"
               >当前进程：{{applyCommunityInfo.status===0?'未审核':applyCommunityInfo.status===2?'不通过':''}}</p>
               <p class="base-text-details-large-white" style="margin-left: 8vw">修改信息</p>
             </div>
-            <div
-              v-else-if="applyCommunityLen===1 && applyCommunityInfo.status===3"
-              class="base-horizontal-layout-center-item-center"
-            >
-              <p class="base-text-details-large-white">当前进程：审核中</p>
+            <div v-else-if="applyCommunityLen>0 && applyCommunityInfo.status===3"
+              class="base-horizontal-layout-center-item-center">
+              <p class="base-text-details-large-white" style="color: #999999">当前进程：审核中</p>
             </div>
           </div>
-          <div
-            style="position: relative;bottom: 21.3333vw;left: 0"
+          <div style="position: relative;bottom: 21.3333vw;left: 0"
             @click="addCommunity(applyCommunityLen===0?-1:applyCommunityInfo.status)"
             @touchstart="addCommunityTouch"
-            @touchend="addCommunityTouchEnd"
-          >
-            <div
-              class="base-horizontal-layout-center-item-center"
+            @touchend="addCommunityTouchEnd">
+            <div class="base-horizontal-layout-center-item-center"
               style="position: absolute;width: 88.3333vw;height: 21.3333vw;border-radius: 1.33vw"
-              :style="isOnTouch ? 'background-color: rgba(0,0,0,0.1)' : ''"
-            ></div>
+              :style="isOnTouch ? 'background-color: rgba(0,0,0,0.1)' : ''">
+            </div>
           </div>
         </div>
       </div>
@@ -124,10 +98,9 @@
           :class="['item', item.subTitle ? 'item-large' : '']"
           v-for="(item,index) in menuList.otherMenuList.details"
           :key="index"
-          @click="menuOnClick(item.title)"
-        >
+          @click="menuOnClick(item.title)">
           <div class="icon">
-            <img :src="item.icon" />
+            <img :src="item.icon"/>
           </div>
           <div class="text">
             <div class="title">{{item.title}}</div>
@@ -220,6 +193,10 @@ export default {
         otherMenuList: {
           title: "",
           details: [
+            {
+              title: "我的优惠券包",
+              icon: require("./icon-mine-cardBag.png")
+            },
             // {
             //   title: "社区人员认证",
             //   icon: require('./icon-mine-gate-renlian.png')
@@ -257,26 +234,42 @@ export default {
       applyCommunityLen: 0,
       applyCommunityInfo: {},
 
-      isShowPlotFamily: false
+      isShowFamily: false,
+      isShowPlotFamily: false,
+      isShowPlot: false,
     };
   },
   computed: {
     ...mapState({
-      mUserNickName: state => state.user.userNickName,
-      mUserHeadPortrait: state => state.user.userHeadPortrait,
-      mUserPhone: state => state.user.userPhone,
-      mUserHasProprietor: state => state.user.userHasProprietor,
-      mUserPlotList: state => state.user.userPlotList,
-      mAreaTypesList: state => state.user.areaTypesList
+      'mUserNickName': state => state.user.userNickName,
+      'mUserHeadPortrait': state => state.user.userHeadPortrait,
+      'mUserPhone': state => state.user.userPhone,
+      'mUserHasProprietor': state => state.user.userHasProprietor,
+      'mUserPlotList': state => state.user.userPlotList,
+      'mFamilyPlotList': state => state.plot.familyPlotList,
+      'mAreaTypesList': state => state.user.areaTypesList,
+
+      'mIsPlotBlankDomicile': state => state.plot.isPlotBlankDomicile
     })
   },
   created() {
     console.log("mine", "/mine");
-
-    if(this.mAreaTypesList && !this.mUserHasProprietor && this.mAreaTypesList.indexOf(2)!=-1) {
+    if(!this.mUserHasProprietor && this.mAreaTypesList && this.mAreaTypesList.indexOf(2)!==-1) {
       this.isShowPlotFamily = false;
     } else {
       this.isShowPlotFamily = true;
+    }
+
+    if(!this.mUserHasProprietor && this.mAreaTypesList && this.mAreaTypesList.indexOf(1)!==-1) {
+      this.isShowPlot = false;
+    } else {
+      this.isShowPlot = true;
+    }
+
+    if(this.mAreaTypesList.length>0) {
+      this.isShowFamily = true;
+    } else {
+      this.isShowFamily = false;
     }
 
     let communityMenuList1 = [
@@ -311,36 +304,43 @@ export default {
         icon: require("./icon-community.png")
       }
     ];
-    let isPark = false;
-    this.mUserPlotList.forEach((item, index) => {
-      if (item.parkId) {
-        isPark = true;
-      }
-      if (index === this.mUserPlotList.length - 1) {
-        if (isPark) {
-          this.isPark = true;
-          // this.menuList.communityMenuList.details = [...communityMenuList1];
-        } else {
-          this.isPark = false;
-          // this.menuList.communityMenuList.details = [...communityMenuList2];
-        }
+
+    // let isPark = false;
+    this.mFamilyPlotList.forEach((item)=> {
+      if(item.parkId) {
+        this.isPark = true;
       }
     });
+    // this.mUserPlotList.forEach((item, index) => {
+    //   if (item.parkId) {
+    //     isPark = true;
+    //   }
+    //   if (index === this.mUserPlotList.length - 1) {
+    //     if (isPark) {
+    //       this.isPark = true;
+    //       // this.menuList.communityMenuList.details = [...communityMenuList1];
+    //     } else {
+    //       this.isPark = false;
+    //       // this.menuList.communityMenuList.details = [...communityMenuList2];
+    //     }
+    //   }
+    // });
   },
   watch: {
     // 监听路由变化
     $route(to, from) {
-      console.log("watch mine", this.$route.path);
+     /* console.log("watch mine", this.$route.path);
       if (localStorage.getItem("communityChangeOne")) {
         this.getApplyCommunity();
         localStorage.removeItem("communityChangeOne");
-      }
+      }*/
+     if(to.path=='/mine'){
+       this.init();
+     }
     }
   },
   mounted() {
-    let self = this;
-    this.getApplyCommunity();
-    this.getHeadPortrait();
+    this.init();
     this.mAreaTypesList.forEach(item => {
       if (item === 0) {
         this.typeIsFamily = true;
@@ -352,34 +352,8 @@ export default {
         });
       }
     });
-
-    self.$post("common", "/infos", {}).then(res => {
-      self.setUserHasProprietor(res.data.infos.hasProprietor);
-      let plots = [...res.data.plots];
-      self.setUserPlotList(plots);
-      let familyPlotList = [];
-      for (let count = 0; count < plots.length; count++) {
-        familyPlotList.push({
-          value: plots[count].plotID,
-          text: plots[count].plotName,
-          plotId: plots[count].plotID
-        });
-      }
-      self.setFamilyPlotList(familyPlotList);
-      let areaTypes = [];
-      res.data.infos.areaTypes.forEach(item => {
-        if (item === 0) {
-          areaTypes.push(0);
-        } else if (item === 1) {
-          areaTypes.push(1);
-        }
-      });
-      if (res.data.infos.propertyManage === 1) {
-        areaTypes.push(2);
-      }
-      self.setAreaTypesList(areaTypes);
-    });
   },
+
   methods: {
     ...mapActions([
       "setIsShowMinePop",
@@ -388,6 +362,64 @@ export default {
       "setFamilyPlotList",
       "setAreaTypesList"
     ]),
+    getImageUrl(url){
+      return utils.getImageUrl(url,80,80);
+    },
+    init(){
+      let self = this;
+      this.getApplyCommunity();
+      this.getHeadPortrait();
+
+      self.$post("common", "/infos", {}).then(res => {
+        self.setUserHasProprietor(res.data.infos.hasProprietor);
+        res.data.plots.forEach((item)=>{
+          if(item.domicile) {
+            item.domicile.forEach((domicileItem,index,arr)=>{
+              if(domicileItem.effectiveStatus === 1) {
+                arr.splice(index,1)
+              }
+            });
+          }
+        });
+        let plots = [...res.data.plots];
+        self.setUserPlotList([...plots]);
+
+        let familyPlotList = [];
+        for (let count = 0; count < plots.length; count++) {
+          familyPlotList.push({
+            value: plots[count].plotID,
+            text: plots[count].plotName,
+            plotId: plots[count].plotID,
+            parkId: plots[count].parkId,
+            temporaryCount: plots[count].temporaryCount
+          });
+        }
+        self.setFamilyPlotList([...familyPlotList]);
+
+        let areaTypes = [],areaTypesIndex = 0;
+        res.data.infos.areaTypes.forEach((item,index)=>{
+          if(item === 0) {
+            areaTypes.push(0);
+          } else if(item === 1){
+            areaTypes.push(1);
+          }
+          areaTypesIndex = index;
+        });
+        if(res.data.infos.areaTypes && res.data.infos.areaTypes.length>0) {
+          if((areaTypesIndex+1) === res.data.infos.areaTypes.length) {
+            if(res.data.infos.propertyManage && res.data.infos.propertyManage===1) {
+              areaTypes.push(2);
+              self.setAreaTypesList([...areaTypes]);
+            }
+          }
+        } else {
+          if(res.data.infos.propertyManage && res.data.infos.propertyManage===1) {
+            areaTypes.push(2);
+            self.setAreaTypesList([...areaTypes]);
+          }
+        }
+      });
+    },
     getNickName() {
       //获取昵称
       let str = ""; //的家
@@ -403,17 +435,21 @@ export default {
     },
     getPhoneNumber() {
       //获取电话号码
-      return this.mUserPhone;
-      // return utils.hiddenPhoneNum(this.mUserPhone);
+      // return this.mUserPhone;
+      return utils.hiddenPhoneNum(this.mUserPhone);
     },
 
     getApplyCommunity() {
       //获取申请社区信息
       let self = this;
-      self.$post("community", "/myapply", {}).then(res => {
-        self.applyCommunityLen = [...res.data.list].length;
-        if (self.applyCommunityLen === 1) {
-          self.applyCommunityInfo = [...res.data.list][0];
+      self.$post("community", "/myNewApply", {}).then(res => {
+        if(res.data.list) {
+          self.applyCommunityLen = [...res.data.list].length;
+          if (self.applyCommunityLen > 0) {
+            self.applyCommunityInfo = [...res.data.list][0];
+          } else {//todo
+            self.applyCommunityInfo = {};
+          }
         }
       });
     },
@@ -453,7 +489,7 @@ export default {
           } else {
             const toast = this.$createToast({
               type: "warn",
-              txt: "该社区未加入车辆管理"
+              txt: "车辆管理不可用"
             });
             toast.show();
           }
@@ -474,6 +510,11 @@ export default {
           break;
         case "社区人员认证":
           utils.openFaceProp();
+          break;
+        case "我的优惠券包":
+          this.$router.push({
+            path: "/mine/card-bag"
+          });
           break;
         case "修改登录密码":
           this.$router.push({
@@ -497,7 +538,14 @@ export default {
     toPersonnelManage() {
       //出入人员认证
       if (this.mUserHasProprietor) {
-        utils.openFace();
+        if(this.mUserPlotList.length > 0 && this.mIsPlotBlankDomicile) {
+          utils.openFace();
+        } else {
+          this.$createToast({
+            type: "warn",
+            txt: "您的社区已被禁用，需要解禁才能使用"
+          }).show();
+        }
       } else {
         const dialog = this.$createDialog({
           type: "confirm",
@@ -538,11 +586,18 @@ export default {
     toCarManage() {
       //车辆管理
       let self = this;
-      if (self.mUserPlotList.length > 0) {
-        self.$router.push({
-          path: "/mine/myCar"
-        });
-        //   self.changeIsPopShowFalse();
+      if(this.mUserHasProprietor) {
+        if (self.mUserPlotList.length > 0 && self.mIsPlotBlankDomicile) {
+          self.$router.push({
+            path: "/mine/myCar"
+          });
+          //   self.changeIsPopShowFalse();
+        } else {
+          this.$createToast({
+            type: "warn",
+            txt: "您的社区已被禁用，需要解禁才能使用"
+          }).show();
+        }
       } else {
         const toast = this.$createToast({
           type: "warn",
@@ -554,11 +609,9 @@ export default {
     toCommunityManage() {
       //社区管理
       let self = this;
-      if (self.mUserPlotList.length > 0) {
-        self.$router.push({
-          path: "/mine/myPlot"
-        });
-        //   self.changeIsPopShowFalse();
+      if (self.mUserHasProprietor) {
+        self.$router.push({path: "/mine/myPlot"});
+        //self.changeIsPopShowFalse();
       } else {
         const toast = this.$createToast({
           type: "warn",
@@ -572,28 +625,38 @@ export default {
       let self = this;
       switch (type) {
         case -1:
-          self.$router.push({ path: "/mine/community-add" });
+          self.$router.push({ path: "/mine/community-add",
+            query: { chooseCityPath: '/mine/community-add/choose-city',
+              choosePlotPath: '/mine/community-add/choose-plot' }});
           break;
         case 0:
-          self.$router.push({
-            path: "/mine/community-add",
-            query: { applyID: self.applyCommunityInfo.applyID }
-          });
+          self.$router.push({path: "/mine/community-add",
+            query: { applyID: self.applyCommunityInfo.applyID,
+              chooseCityPath: '/mine/community-add/choose-city',
+              choosePlotPath: '/mine/community-add/choose-plot'}});
+          break;
+        case 1://todo 已审核通过，不过被禁用
+          self.$router.push({ path: "/mine/community-add",
+            query: { chooseCityPath: '/mine/community-add/choose-city',
+              choosePlotPath: '/mine/community-add/choose-plot'}});
           break;
         case 2:
-          self.$router.push({
-            path: "/mine/community-add",
-            query: { applyID: self.applyCommunityInfo.applyID }
-          });
+          self.$router.push({path: "/mine/community-add",
+            query: { applyID: self.applyCommunityInfo.applyID,
+              chooseCityPath: '/mine/community-add/choose-city',
+              choosePlotPath: '/mine/community-add/choose-plot' }});
           break;
         case 3:
-          const toast = this.$createToast({
+          this.$createToast({
             type: "warn",
             txt: "物管审核中，请耐心等待..."
-          });
-          toast.show();
+          }).show();
           break;
         default:
+          this.$createToast({
+            type: "warn",
+            txt: "后台异常"
+          }).show();
           break;
       }
     },
@@ -849,10 +912,6 @@ export default {
     -webkit-transform: translateY(0vw);
     opacity: 1;
   }
-}
-
-.scroll-wrapper-addition-title {
-  overflow: scroll;
 }
 
 .wrapper-white {

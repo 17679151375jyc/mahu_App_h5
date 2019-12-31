@@ -8,9 +8,10 @@
       <img :src="require('./icon_share-title.png')"
            style="margin-right: 2.6666vw;width: 8.5333vw;height: 8.5333vw">
       <p class="share-manage-page-share-title-text">{{mineManageInfo.areaName}}</p>
-      <img :src="require('./icon_share-manage-edit_w.png')"
-           class="share-manage-item-share-edit-icon"
-           @click="editName('家庭',mineManageInfo.id,mineManageInfo.areaName)">
+      <div @click="editName('家庭',mineManageInfo.id,mineManageInfo.areaName)">
+        <img :src="require('./icon_share-manage-edit_w.png')"
+             class="share-manage-item-share-edit-icon">
+      </div>
     </div>
     <div v-if="mineManageInfo.machineList" class="share-manage-page-share-content">
       <!-- 主机 -->
@@ -22,9 +23,10 @@
             <div class="base-horizontal-layout-space-between-item-center">
               <div class="base-horizontal-layout-general-item-center">
                 <p class="share-manage-page-share-content-item-title-machine">{{item.name}}</p>
-                <img :src="require('./icon_share-manage-edit_t.png')"
-                     class="share-manage-item-share-edit-icon"
-                     @click="editName('主机',item.id,item.name)">
+                <div @click="editName('主机',item.id,item.name)">
+                  <img :src="require('./icon_share-manage-edit_t.png')"
+                       class="share-manage-item-share-edit-icon">
+                </div>
               </div>
               <div class="base-horizontal-layout-general-item-center" @click="toShareManageMember(item)">
                 <img :src="require('./icon_share-manage-add.png')"
@@ -60,9 +62,10 @@
             <img :src="require('./icon_share-manage-camera.png')"
                  style="width: 5.3vw;height: 4.9666vw;margin-right: 2.6666vw">
             <p class="share-manage-page-share-content-item-title-machine">{{cItem.name}}</p>
-            <img :src="require('./icon_share-manage-edit_t.png')"
-                 class="share-manage-item-share-edit-icon"
-                 @click="editName('摄像头',cItem.id,cItem.name)">
+            <div @click="editName('摄像头',cItem.id,cItem.name)">
+              <img :src="require('./icon_share-manage-edit_t.png')"
+                   class="share-manage-item-share-edit-icon">
+            </div>
           </div>
         </div>
       </div>

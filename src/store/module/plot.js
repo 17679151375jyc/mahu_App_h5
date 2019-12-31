@@ -10,6 +10,8 @@ export default {
 
       propertyManagePlotNumber: "",//备城门社区number
       propertyManagePlotName: "",//备城门社区名称
+
+      isPlotBlankDomicile: true,
     },
     mutations: {
       setFamilyPlotListNative(state, familyPlotList) {
@@ -20,6 +22,9 @@ export default {
       },
       setPropertyManagePlotNameNative(state, propertyManagePlotName) {
         state.propertyManagePlotName = propertyManagePlotName
+      },
+      setIsPlotBlankDomicileNative(state, isPlotBlankDomicile) {
+        state.isPlotBlankDomicile = isPlotBlankDomicile
       }
     },
     getters: {
@@ -34,6 +39,9 @@ export default {
       },
       setPropertyManagePlotName({ commit }, propertyManagePlotName) {
         commit('setPropertyManagePlotNameNative', propertyManagePlotName);
+      },
+      setIsPlotBlankDomicile({ commit }, isPlotBlankDomicile) {
+        commit('setIsPlotBlankDomicileNative', isPlotBlankDomicile);
       },
     }
 }

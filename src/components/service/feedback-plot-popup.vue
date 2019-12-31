@@ -3,7 +3,7 @@
     <cube-popup type="feedback-plot-popup" ref="mFeedbackPlotPopup">
       <transition name="scale">
         <div class="container" v-show="popShow">
-          <p class="feedback-plot-popup-title" style="margin-top: 3vw">请选择提交的小区</p>
+          <p class="feedback-plot-popup-title" style="margin-top: 3vw">请选择提交的住宅</p>
           <plot-choose-text :list="plotList" @itemOnClick="choosePlot"></plot-choose-text>
           <div class="footer">
             <button type="button" @click="cancle">取消</button><!--class="dengji"-->
@@ -98,7 +98,7 @@
 <style lang="stylus">
   .feedback-plot-popup-title {
     text-align: center;
-    font-size: 4.27vw;
+    font-size: 4.8vw;
     color: #333333;
     margin-bottom: 4vw;
   }
@@ -149,7 +149,7 @@
           outline: none;
           text-align: center;
           background: rgba(255, 255, 255, 1);
-          font-size: 3.47vw;
+          font-size: 4.2666vw;
           &:first-child {
             color: rgba(77, 98, 128, 1);
             border-right: 1px solid #E9EEF5;

@@ -127,12 +127,12 @@
     },
     watch: {
       //监听路由变化
-      $route(to, from) {
+     /* $route(to, from) {
         if(localStorage.getItem("communityChange")) {
           this.getInfo();
           localStorage.removeItem("communityChange");
         }
-      }
+      }*/
     },
     methods: {
       add() {
@@ -142,7 +142,7 @@
       },
       getInfo() {
         let self = this;
-        self.$post("community","/myapply",{}).then((res)=>{
+        self.$post("community","/myNewApply",{}).then((res)=>{
           self.communityList = [...res.data.list];
           self.communityList.forEach(item => {
             item.mCommunityList = [];

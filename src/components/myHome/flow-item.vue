@@ -14,7 +14,7 @@
         <div class="flow-item-line1-style" v-bind:class="{'flow-item-line2-style' : locationIndex===2}"></div>
       </div>
       <p class="base-text-details-large-black-light"
-         style="line-height: 6.4vw;margin-left: 5vw">{{item.role}}
+         style="line-height: 6.4vw;margin-left: 5vw;min-width:84vw">{{item.role}}
         <span style="color: #3388FF;text-decoration: underline">{{item.name}}</span>
         {{actionStr}}</p>
     </div>
@@ -28,18 +28,18 @@
         <div><!--v-if="item.messageType!=='install'"-->
           <div v-if="item.flowType==='being' || item.flowType==='complete'"
                class="base-text-details-normal-black-light"
-               style="width: 78.66vw;border-radius: 1.33vw;background-color: #F2F3F5;padding: 2.67vw">
+               style="width: 78.66vw;border-radius: 1.33vw;background-color: #F2F3F5;padding: 2.67vw;word-break:break-all">
             <p v-if="item.info.hasOwnProperty('location')">地点 {{item.info.location}}</p>
             <div v-if="item.info.hasOwnProperty('location') && (item.info.hasOwnProperty('matter') || item.info.hasOwnProperty('combo'))"></div>
             <p v-if="item.info.hasOwnProperty('matter')" style="margin-top: 2vw">{{item.messageType==='alert' ? '警情' : '故障'}} {{item.info.matter}}</p>
             <p v-if="item.info.hasOwnProperty('content')" style="margin-top: 2vw">详情 {{item.info.content}}</p>
             <p v-if="item.info.hasOwnProperty('feedbackType')" style="margin-top: 2vw"
             >{{item.messageType==='alert' ? '警情类型' : '故障类型'}} {{item.info.feedbackType}}</p>
-            <p v-if="item.info.hasOwnProperty('feedback')" style="margin-top: 2vw"
+            <div v-if="item.info.hasOwnProperty('feedback')" style="margin-top: 2vw"
             >{{item.messageType==='alert' ? '警情汇报' : '故障汇报'}}
               <span style="color: #CCC">{{(item.info.feedback===null || item.info.feedback==='')
               ?(item.role+'暂无汇报'):item.info.combo}}</span>
-              {{item.info.feedback}}</p>
+              {{item.info.feedback}}</div>
             <p v-if="item.info.hasOwnProperty('combo')">内容 {{item.info.combo}}</p>
           </div>
         </div>
@@ -54,7 +54,7 @@
                style="padding: 2.67vw;border-style: solid;border-width: 0.27vw 0 0 0;border-color: #E3E4E6">
             <p class="base-text-details-normal-black-light"
                :style="(item.info.evaluateDetails===null||item.info.evaluateDetails==='')?'color: #CCC':''"
-               style="line-height: 4.8vw" v-html="evaluateDetails"></p>
+               style="line-height: 4.8vw;" v-html="evaluateDetails"></p>
           </div>
         </div>
         <p class="base-text-details-normal-gray-dark" style="margin: 2.67vw 0 0 0">{{timeStr}}</p>

@@ -13,15 +13,15 @@
         :options="options">
         <div class="base-horizontal-layout-space-between-item-center weChat-index-title-box">
           <div class="base-horizontal-layout-center-item-center">
-            <p class="base-text-details-large-black-666">绑定微信号</p>
+            <p class="base-text-title-normal-black">绑定微信号</p>
           </div>
           <div v-if="wxInfo.flag" class="base-horizontal-layout-center-item-center" @click="cancelBinding">
             <img :src="wxInfo.wxHeadImgUrl" style="width: 4.2666vw;height: 4.2666vw;border-radius: 50%;border: 1px solid #999">
-            <p class="base-text-details-large-black-666" style="margin: 0 1.0666vw">{{wxInfo.wxNickname}}</p>
+            <p class="base-text-title-normal-black" style="margin: 0 1.0666vw">{{wxInfo.wxNickname}}</p>
             <img :src="require('@/assets/icon/icon_arrow-right-2.png')" style="width: 2.6666vw;height: 4.2666vw">
           </div>
           <div v-else class="base-horizontal-layout-center-item-center">
-            <p class="base-text-details-large-gray">未绑定</p>
+            <p class="base-text-title-normal-gray">未绑定</p>
           </div>
         </div>
 

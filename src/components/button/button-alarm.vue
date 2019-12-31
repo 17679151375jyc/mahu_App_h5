@@ -13,7 +13,7 @@
          @touchend="touchEnd">
       <div class="base-horizontal-layout-center-item-center"
            style="position: absolute;width: 16vw;height: 12.8vw;border-radius: 1vw"
-           :style="isTouch?'background-color: rgba(0,0,0,0.1)':''">
+           :style="isTouch?'background-color: #F5F5F5':''">
       </div>
     </div>
   </div>

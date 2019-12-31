@@ -17,10 +17,10 @@
         <div class="base-horizontal-layout-general-item-center">
           <img :src="titleIcon" class="base-icon-large-style" style="margin-right: 1.33vw">
           <p class="base-text-title-normal-white"
-             style="margin: 0.2vw 1vw 0 0">{{messageInfo.name}}</p>
-          <label-msg  :labelBoxStyle="stateBoxStyle"
-                      :labelTextStyle="stateTextStyle"
-                      :labelText="stateStr">
+             style="max-width:32vw;margin: 0.2vw 1vw 0 0">{{messageInfo.name}}</p>
+          <label-msg :labelBoxStyle="stateBoxStyle"
+                     :labelTextStyle="stateTextStyle"
+                     :labelText="stateStr">
           </label-msg>
         </div>
       </div>
@@ -239,7 +239,7 @@
         }
       },
       getMessageInfo() {
-        this.msgNumStr = this.messageInfo.messageCount > 99 ? "99+" : this.messageInfo.messageCount;
+        this.msgNumStr = this.messageInfo.messageCount ;
         if (this.messageInfo.messageType === "报警") {
           this.messageTypeStrSome(require('./icon_alarm-msg-alert.png'),"报警",
             this.messageInfo.type==='一般'?{fontSize: '3.2vw',color: '#E6782B'}:
@@ -262,13 +262,13 @@
               this.isCall = true;
               break;
             case "出警完成":
-              this.statusStrSome(this.messageInfo.completeTime,"出警完成","评价出警","关闭消息","");
+              this.statusStrSome(this.messageInfo.completeTime,"完成","评价","关闭","");
               break;
             default:
               break;
           }
         } else if (this.messageInfo.messageType === "维保") {
-          this.messageTypeStrSome(require('./icon_alarm-msg-fault.png'),"维保",{fontSize: '3.2vw',color: '#24B3B3'});
+          this.messageTypeStrSome(require('./icon_alarm-msg-fault.png'),"维保",{fontSize: '3.2vw',color: '#3388FF'});//#24B3B3
           switch (this.messageInfo.status) {
             case "未处理":
               this.statusStrSome(this.messageInfo.createTime,"未处理","申报维修","忽略","");
@@ -285,7 +285,7 @@
               this.isCall = true;
               break;
             case "已完成":
-              this.statusStrSome(this.messageInfo.completeTime,"维保完成","维保评价","关闭消息","");
+              this.statusStrSome(this.messageInfo.completeTime,"完成","评价","关闭","");
               break;
             default:
               break;

@@ -1,14 +1,16 @@
 <template>
   <div class="day-record-wrapper">
     <p class="title" v-if="showTitle">
-      <span>出入日况</span>
-      <span>{{selectDate}}
+      <span>出入状况</span>
+      <span>
+        {{selectDate}}
         <!--<p type="button">{{selectDate}}</p>-->
       </span>
-      <span @click="toRecord"
-            @touchstart="touchStart"
-            @touchend="touchEnd"
-            :style="isTouch?'text-decoration: underline':''"
+      <span
+        @click="toRecord"
+        @touchstart="touchStart"
+        @touchend="touchEnd"
+        :style="isTouch?'text-decoration: underline':''"
       >出入记录</span>
     </p>
 
@@ -17,60 +19,86 @@
         <div class="date" v-if="showDate && item.itemType===2">
           <p>{{item.todayMonth}}月{{item.monthOfDay}}号 {{item.weekDesc}}</p>
         </div>
-        <div class="list" v-if="(showDate && item.itemType===1) || !showDate">
+        <div
+          class="dayRecord-item border-bottom-1px"
+          @click="item.url ? lookPic(item.url) : ''"
+          v-if="(showDate &&  item.itemType===1) || !showDate"
+        >
           <div class="left">
-            <p>
+            <div class="info-wrapper">
+              <img v-if="item.openType===10"
+                :src="(item.relation === '本人' || item.relation === '朋友' || item.relation === '家人') ? require('./icon_car.png') : require('./icon_other_car.png')"
+              />
+              <img v-else
+                :src="(item.relation === '本人' || item.relation === '朋友' || item.relation === '家人') ? require('./icon_user.png') : require('./icon_other_user.png')"
+              />
               <span class="name">{{item.recordName}}</span>
               <span class="limit">{{item.relation}}</span>
-            </p>
-            <div class="base-horizontal-layout-center-item-center"
-                 style="height: 6.67vw;width: fit-content;background-color: #EDEEF0;border-radius: 3.73vw;padding: 0 2.67vw;margin-top: 2.67vw">
-              <img style="width: 3.20vw;height: 3.20vw;margin-right: 1.33vw" :src="require('@/assets/icon/icon_position.png')">
-              <span style="color: #666666;font-size: 3.2vw"
-              >{{item.plotName}}{{item.buildingName}}{{item.positionName?'-':''}}{{item.positionName}}</span>
             </div>
+            <div
+              class="address" style="margin-bottom: 2vw"
+            >门禁类型：{{item.openType===0?'人脸识别':item.openType===1?'刷二维码':item.openType===2?'按门铃':item.openType===3?'临时密码':item.openType===4?'刷卡':item.openType===10?'车牌识别':'其它'}}</div>
+            <div
+              class="address"
+            >{{item.plotName}}{{item.buildingName}}{{item.positionName?'-':''}}{{item.positionName}}</div>
           </div>
-          <div class="right-right" :style="item.openType===2 ? 'justify-content: space-between' : ''">
-            <!--<div v-if="item.openType===2" class="base-horizontal-layout-space-between-item-center">-->
-              <!--<div class="base-horizontal-layout-center-item-center" -->
-                   <!--@click="lookPic(item.url)">-->
-                <!--<img :src="require('./icon_screenshot.png')" style="width: 4.27vw;height: 4.27vw;margin-right: 1.077777vw">-->
-                <!--<p class="base-text-details-normal-black-666">预览</p>-->
-              <!--</div>-->
-              <!--<div class="base-horizontal-layout-center-item-center" -->
-                   <!--@click="openDoor(item.tempVisitorNumber,item.openStatus,item.triggeringTime)">-->
-                <!--<img :src="require('./icon_open-door.png')" style="width: 4.27vw;height: 4.27vw;margin-right: 1.077777vw">-->
-                <!--<p class="base-text-details-normal-black-666"-->
-                <!--&gt;{{item.openStatus===0?'开门':item.openStatus===1?'已开门':item.openStatus===2?'开门中':item.openStatus===3?'已过期':''}}</p>-->
-              <!--</div>-->
+
+          <div class="right" v-if="item.url">
+            <div class="avatar">
+              <img :src="getImageUrl(item.url)" />
+            </div>
+            <span style="margin-top: 2vw">点击预览</span>
+          </div>
+          <div class="middle">
+            <div class="time">{{item.datetime}}</div>
+            <div class="type">
+              {{item.typeDesc==='拜访'?'进入':item.typeDesc==='离开'?'离开':item.typeDesc}}
+            </div>
+            <!--<div class="type">-->
+              <!--{{(item.typeDesc==='拜访' && (item.openType===0 || item.openType===4))-->
+              <!--?'进入':(item.typeDesc==='离开' && (item.openType===0 || item.openType===4))?'离开':item.typeDesc}}-->
             <!--</div>-->
+          </div>
+          <!-- <div class="right" :style="item.openType===2 ? 'justify-content: space-between' : ''">
             <div class="base-vertical-layout-space-between-item-end" style="height: 13vw">
               <div class="base-horizontal-layout-space-between-item-center">
-                <div v-if="item.url" class="base-horizontal-layout-center-item-center" @click="lookPic(item.url)">
-                  <img :src="require('./icon_screenshot.png')" class="base-icon-normal-style">
+                <div
+                  v-if="item.url"
+                  class="base-horizontal-layout-center-item-center"
+                  @click="lookPic(item.url)"
+                >
+                  <img :src="require('./icon_screenshot.png')" class="base-icon-normal-style" />
                   <p class="right-right-p1" style="color: #3388EE;margin-right: 1vw;">预览图</p>
                 </div>
                 <p class="right-right-p1">{{item.datetime}}</p>
-                <!--<p class="right-right-p2"-->
-                <!--&gt;{{(item.typeDesc==='拜访' && (item.openType===0 || item.openType===4))-->
-                  <!--?'回家':(item.typeDesc==='离开' && (item.openType===0 || item.openType===4))?'离家':item.typeDesc}}</p>-->
               </div>
-              <p class="right-right-p2"
-              >{{(item.typeDesc==='拜访' && (item.openType===0 || item.openType===4))
-                ?'回家':(item.typeDesc==='离开' && (item.openType===0 || item.openType===4))?'离家':item.typeDesc}}</p>
+              <p class="right-right-p2">
+                {{(item.typeDesc==='拜访' && (item.openType===0 || item.openType===4))
+                ?'回家':(item.typeDesc==='离开' && (item.openType===0 || item.openType===4))?'离家':item.typeDesc}}
+              </p>
             </div>
-          </div>
+          </div>-->
         </div>
         <!--<p v-if="isNotLoading" class="base-text-title-normal-gray" style="margin-top: 4vw;text-align: center">—————我是有底线的—————</p>-->
       </div>
     </div>
     <div v-else class="no-data">
-      <div v-if="showTitle" class="base-vertical-layout-center-item-center" style="padding-top: 21.333333vw">
-        <img :src="require('@/assets/inAndOut/icon_record@2x.png')" style="width: 13.33vw;height:13.33vw">
+      <div
+        v-if="showTitle"
+        class="base-vertical-layout-center-item-center"
+        style="padding-top: 21.333333vw"
+      >
+        <img
+          :src="require('@/assets/inAndOut/icon_record@2x.png')"
+          style="width: 13.33vw;height:13.33vw"
+        />
         <p class="no-data-text">今天大家都没有出门呢~</p>
       </div>
       <div v-else class="base-vertical-layout-center-item-center" style="padding-top: 13.333333vw">
-        <img :src="require('@/assets/inAndOut/icon_record@2x.png')" style="width: 13.33vw;height:13.33vw">
+        <img
+          :src="require('@/assets/inAndOut/icon_record@2x.png')"
+          style="width: 13.33vw;height:13.33vw"
+        />
         <p class="no-data-text">暂无出入记录</p>
       </div>
     </div>
@@ -78,12 +106,12 @@
 </template>
 
 <script>
-  import utils from "_libs/utils";
-  import buttonBorder from '@/components/button/button-border';
+import utils from "_libs/utils";
+import buttonBorder from "@/components/button/button-border";
 
 export default {
   name: "dayRecord",
-  components: {buttonBorder},
+  components: { buttonBorder },
   props: {
     showTitle: {
       type: Boolean,
@@ -108,12 +136,12 @@ export default {
 
     buttonBorderStyle: {},
     buttonBorderBlueStyle: {
-      height: '6.67vw',
-      padding: '0 3vw',
-      boxSizing: 'border-box',
-      border: '1px solid #3388FF',
-      borderRadius: '5.07vw'
-    },
+      height: "6.67vw",
+      padding: "0 3vw",
+      boxSizing: "border-box",
+      border: "1px solid #3388FF",
+      borderRadius: "5.07vw"
+    }
   },
   data() {
     return {
@@ -129,9 +157,11 @@ export default {
     this.init();
     console.log(this.lastID);
   },
-  mounted() {
-  },
+  mounted() {},
   methods: {
+    getImageUrl(url){
+      return utils.getImageUrl(url[0],64,64);
+    },
     touchStart() {
       this.isTouch = true;
     },
@@ -147,7 +177,8 @@ export default {
     init() {
       //初始化星期显示（当天）
       this.weekDay = utils.toWeek(new Date().getTime());
-      this.selectDate = `${new Date().getMonth()+1}月${new Date().getDate()}号 ${this.weekDay}`;
+      this.selectDate = `${new Date().getMonth() +
+        1}月${new Date().getDate()}号 ${this.weekDay}`;
       // //当天日期 yymmdd=>时间戳
       // let startTime = `${utils.timetrans(
       //   new Date().getTime(),
@@ -160,15 +191,16 @@ export default {
 
     lookPic(imgs) {
       console.log(imgs);
-      this.$createImagePreview({
+      this.$createImagePreview(
+        {
           imgs: imgs,
           initialIndex: this.initialIndex,
           loop: false,
-          onChange: (i) => {
-            this.initialIndex = i
+          onChange: i => {
+            this.initialIndex = i;
           },
           onHide: () => {
-            console.log("$createImagePreview",'hide')
+            console.log("$createImagePreview", "hide");
           }
         }
         // , (h) => {
@@ -179,31 +211,33 @@ export default {
         //     slot: 'header'
         //   }, this.initialIndex + 1)
         // }
-      ).show()
+      ).show();
     },
     openDoor(tempVisitorNumber, openStatus, triggeringTime) {
       let self = this;
-      if (openStatus===0) {
-        self.$post("entry","/callOpenDoor",{
-          tempVisitorNumber: tempVisitorNumber,
-          triggeringTime: triggeringTime,
-          openStatus: 2,
-        }).then((res)=>{
-          console.log("开门",res);
-        });
-      } else if (openStatus===1){
+      if (openStatus === 0) {
+        self
+          .$post("entry", "/callOpenDoor", {
+            tempVisitorNumber: tempVisitorNumber,
+            triggeringTime: triggeringTime,
+            openStatus: 2
+          })
+          .then(res => {
+            console.log("开门", res);
+          });
+      } else if (openStatus === 1) {
         const toast = this.$createToast({
           type: "correct",
           txt: "已经开门了"
         });
         toast.show();
-      } else if (openStatus===2){
+      } else if (openStatus === 2) {
         const toast = this.$createToast({
           type: "correct",
           txt: "开门中，请稍后..."
         });
         toast.show();
-      } else if (openStatus===3){
+      } else if (openStatus === 3) {
         const toast = this.$createToast({
           type: "correct",
           txt: "已过期"
@@ -221,46 +255,45 @@ export default {
 };
 </script>
 
-
-<style lang="scss">
-$color: #fff;
+<style lang="stylus" scoped>
 .day-record-wrapper {
-  // border-bottom-width: 0.1rem;
-  // border-bottom-color: gray;
-  // border-bottom-type: solid;
-
   .title {
     padding: 3.33vw 5.33vw;
     display: flex;
     flex-direction: row;
     align-items: center;
     justify-content: space-between;
-    background: $color;
+    background: #fff;
+
     span {
       width: 33.33%;
     }
+
     span:first-child {
       text-align: left;
       font-size: 5.33vw;
       color: rgba(77, 77, 77, 1);
       font-weight: bold;
     }
+
     span:last-child {
       text-align: right;
-      color: #3388FF;
-      /*color: rgba(77, 77, 77, 1);*/
-      /*text-decoration: underline;*/
-      /*font-size: 3.73vw;*/
+      color: #3388ff;
+      /* color: rgba(77, 77, 77, 1); */
+      /* text-decoration: underline; */
+      /* font-size: 3.73vw; */
       font-size: 4.27vw;
     }
+
     span:nth-child(2) {
       text-align: center;
       color: rgba(77, 77, 77, 1);
+
       button {
         background: rgba(250, 250, 250, 1);
         color: rgba(77, 77, 77, 1);
         font-weight: 600;
-        /*outline: none;*/
+        /* outline: none; */
         font-size: 3.2vw;
         border: 1px solid rgba(204, 204, 204, 1);
         padding: 1.33vw 2.4vw;
@@ -269,110 +302,123 @@ $color: #fff;
       }
     }
   }
-  .list {
+
+  .dayRecord-item {
+    min-height: 20.667vw;
+    padding: 2.933vw 5.333vw 1.867vw 5.333vw;
+    background: #fff;
     display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
-    padding: 5.33vw 5.33vw;
-    border-bottom: 1px solid #f0f0f0;
-    margin-top: 1px;
-    background: $color;
+    box-sizing: border-box;
+
+    &::after {
+      border-color: #ddd;
+    }
 
     .left {
+      flex: 1;
       display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      width: 70%;
-      p:first-child {
+      flex-flow: column;
+      overflow hidden
+
+      .info-wrapper {
+        height: 5.867vw;
         display: flex;
-        flex-direction: row;
+        margin-bottom: 3.733vw;
         align-items: center;
+
+        img {
+          flex: 0 0 4.267vw;
+          height: 4.267vw;
+          width: 4.267vw;
+          margin-right: 2.667vw;
+        }
+
+        .name {
+          font-size: 4.267vw;
+          color: #666666;
+          font-weight: bold;
+        }
+
+        .limit {
+          margin-left: 1.067vw;
+          color: #999;
+          font-size: 3.2vw;
+        }
       }
-      p:last-child {
-        text-overflow: ellipsis;
+
+      .address {
+        height: 4.2666vw;
+        line-height: 4.2666vw;
+        font-size: 3.733vw;
+        color: #898989;
+        margin-left: 6.933vw;
         overflow: hidden;
-        white-space: nowrap;
-        max-width: 67%;
-        margin-top: 0.3rem;
-        padding: 0.1rem 0 0.05rem 0;
-        line-height: 0.3rem;
-        border-radius: 0.23rem;
-
-        /*span {*/
-          /*color: rgba(102, 102, 102, 1);*/
-          /*padding: 0.2rem 0.12rem;*/
-          /*font-size: 0.37rem;*/
-          /*background: rgba(237, 238, 240, 1);*/
-        /*}*/
-      }
-      .name {
-        color: rgba(0, 0, 0, 1);
-        font-size: 3.73vw;
-        font-weight: bold;
-      }
-      .limit {
-        border: 1px solid rgba(51, 136, 255, 1);
-        padding: 0.5vw 1.33vw;
-        border-radius: 2.13vw;
-        color: rgba(51, 136, 255, 1);
-        font-size: 2.67vw;
-        margin-left: 2.67vw;
+        text-overflow: ellipsis;
+        white-space nowrap
       }
     }
-    .right {
-      width: 33%;
+
+    .middle {
+      flex: 0 0 20vw;
       display: flex;
-      flex-direction: row;
+      flex-flow: column;
       justify-content: space-between;
+      text-align: right;
 
-      p:first-child {
-        color: rgba(102, 102, 102, 1);
-        font-size: 3.73vw;
-        font-weight: 300;
+      .time {
+        font-size: 3.2vw;
+        color: #666666;
+        margin-top: 0.267vw;
+        height: 5.867vw;
+        line-height: 5.867vw;
       }
-      p:last-child {
-        color: rgba(51, 136, 255, 1);
-        font-size: 3.73vw;
-        font-weight: 300;
+
+      .type {
+        font-size: 3.733vw;
+        color: #E6782B;
+        margin-top: 2.667vw;
+        height: 5.333vw;
+        line-height: 5.333vw;
       }
     }
-  }
-  .list:nth-child(n + 3) {
-    margin-top: 0;
-  }
 
-  .right-right {
-    width: 42%;
-    height: 15vw;
-    display: flex;
-    flex-direction: column;
-    /*justify-content: flex-end;*/
-    align-items: flex-end;
-  }
-  .right-right-b1{
-    height: 4.67vw;
-    padding: 1px 2vw;
-    box-sizing: border-box;
-    border: 1px solid #3388FF;
-    border-radius: 5.07vw;
-    color: #3388FF;
-  }
-  .right-right-p1 {
-    color: rgba(102, 102, 102, 1);
-    font-size: 3.7333vw;
-    font-weight: 300;
-  }
-  .right-right-p2 {
-    color: #E6782B;
-    font-size: 3.7333vw;
-    font-weight: 300;
+    .right {
+      flex: 0 0 14.667vw;
+      display: flex;
+      flex-flow: column;
+      justify-content: flex-end;
+      align-items: center;
+      margin-left: 1.333vw;
+
+      .avatar {
+        flex: 0 0 8.533vw;
+        height: 8.533vw;
+        width: 8.533vw;
+        background: #EEEEEE;
+        border-radius: 2px;
+        overflow: hidden;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+        img {
+          max-height: 100%;
+          max-width: 100%;
+        }
+      }
+
+      span {
+        font-size: 3.2vw;
+        color: #3388FF;
+      }
+    }
   }
 
   .no-data {
     display: flex;
     flex-direction: column;
     align-items: center;
+
     .no-data-text {
       color: rgba(161, 167, 179, 1);
       font-size: 3.2vw;

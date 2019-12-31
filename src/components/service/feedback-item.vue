@@ -1,5 +1,6 @@
 <template>
-  <div class="record-wrapper">
+  <div >
+    <!--class="record-wrapper"-->
     <div style="display: flex;justify-content: center">
       <div class="feedback-item">
         <div class="feedback-item-hand">
@@ -21,7 +22,7 @@
           </div>
         </div>
         <div class="intro">
-          <div class="text">{{feedback.content}}</div>
+          <div class="text">{{feedback.content | filterHTMLTag}}</div>
         </div>
         <div class="time">提交时间：{{feedback.date}}</div>
         <div class="div_min" @click="pathLinkPage"></div>
@@ -47,6 +48,19 @@
       return {};
     },
     created() {},
+    filters:{
+      filterHTMLTag: (msg)=> {
+        if(msg){
+          var msg = msg.replace(/<img[^>]*>/gi, '[图片]');
+          msg = msg.replace(/<\/?[^>]*>/g, ''); //去除HTML Tag
+          msg = msg.replace(/[|]*\n/, '') //去除行尾空格
+          msg = msg.replace(/&nbsp;/ig, ''); //去掉npsp
+        }else{
+          msg = '[图片]...'
+        }
+        return msg;
+      }
+    },
     methods: {
       deleteFeedback() {
         let self = this;

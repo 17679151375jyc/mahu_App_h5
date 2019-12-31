@@ -117,6 +117,7 @@
     },
     methods: {
       ...mapActions(['setIsShowMinePop','setUserID','setUserToken','setAreaTypesList']),
+
       closePoppup() {
         let self = this;
         self.isPopShow = false;
@@ -182,14 +183,11 @@
       },
 
       logOut() {
-        let self = this;
-        self.setAreaTypesList([]);
-        self.setIsShowMinePop(false);
-        const toast = self.$createToast({
+        window.localStorage.clear();
+        this.$createToast({
           type: 'correct',
           txt: "退出成功"
-        });
-        toast.show();
+        }).show();
         if(window.CYJ.userID()) {
           setTimeout(() => {
             utils.logout().then((e)=>{

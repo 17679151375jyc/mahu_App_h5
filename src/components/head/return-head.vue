@@ -4,13 +4,15 @@
     <div v-else class="return-head-btn" style="justify-content: flex-start" @click="goPathBack">
       <img :src="require('@/assets/icon/icon_back.png')" class="icon-style" >
     </div>
-    <div class="base-horizontal-layout-center-item-center" style="width: 60vw">
+    <div class="base-horizontal-layout-center-item-center" style="width: 52vw">
       <slot v-if="title === ''" name="title"></slot>
       <p v-else class="title-name">{{title}}</p>
     </div>
-    <div class="return-head-btn" @click="rightBtnOnClick">
+    <div class="return-head-btn right" @click="rightBtnOnClick">
       <slot v-if="rightText === ''"  name="menu"></slot>
-      <p v-else class="return-head-right-text" :style="rightTextStyle">{{rightText}}</p>
+      <div v-else class="return-head-right">
+        <p class="return-head-right-text" :style="rightTextStyle">{{rightText}}</p>
+      </div>
     </div>
   </div>
 </template>
@@ -44,16 +46,29 @@
     },
     methods: {
       goPathBack() {
-        let self = this;
+        console.log("click goPathBack："+window.history.length);
         if(localStorage.getItem("myWordInfoNum")) {
           localStorage.removeItem("myWordInfoNum");//清空消息number记录
         }
-        if (self.isEnableClickGoBack) {
-          self.isEnableClickGoBack = false;
-          setTimeout(() => {
-            self.$router.go(-1);
-            // self.$router.goBack();
-          }, 50);
+        if (this.isEnableClickGoBack) {
+          this.isEnableClickGoBack = false;
+
+        //  console.log(">>>>>>>>>>>>>>>>>>>>>>>",this.$router);
+       //   setTimeout(() => {
+            this.$router.go(-1);
+            let path = window.location.href;
+            setTimeout(()=>{
+              if(path==window.location.href){
+                console.log('===============================================')
+                this.$router.push('/ma-hu-index')
+              }
+              this.isEnableClickGoBack = true;
+
+            },100);
+
+
+            //this.$router.goBack();
+       //   }, 50);
         }
       },
       rightBtnOnClick() {
@@ -64,7 +79,7 @@
   };
 </script>
 
-<style scoped>
+<style lang="stylus" scoped>
   .return-head-box {
     width: 100vw;
     height: 11.7333vw;
@@ -82,19 +97,28 @@
   }
   .return-head-btn {
     width: 24vw;
-    height:11.7333vw;
+    height: 11.7333vw;
     display: flex;
     align-items: center;
+    &.right{
+      justify-content flex-end;
+    }
   }
   .icon-style {
     width: 11.7333vw;
     height: 11.7333vw;
   }
+  .return-head-right {
+    background: linear-gradient(133deg,rgba(48,201,255,1) 0%,rgba(51,136,255,1) 100%);
+    border-radius: 1vw;
+    margin-right: 3.3333vw;
+    padding: 2vw 2vw;
+  }
   .return-head-right-text {
-    font-size: 3.73vw;
+    font-size: 4vw;
     font-weight: bold;
-    color: #3388FF;
+    /*color: #3388FF;*/
+    color: white
     line-height: 4.27vw;
-    margin-right: 5.3333vw;
   }
 </style>

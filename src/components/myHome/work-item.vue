@@ -47,7 +47,7 @@
       </div>
       <div v-show="myWordInfo.status!=='误报' && myWordInfo.status!=='已忽略' && myWordInfo.status!=='评价完成'"
            class="base-horizontal-layout-center-item-center"
-           style="width: 45.34vw;height: 13.33vw;justify-content: flex-end;">
+           style="width: 48.34vw;height: 13.33vw;justify-content: flex-end;">
         <div v-if="beingMsgText===''" class="base-horizontal-layout-center-item-center">
           <button-border v-show="button1Text!==''"
                          :buttonBorderStyle="buttonBorderStyle"
@@ -113,7 +113,7 @@
           height: '6.67vw',
           padding: '0 3vw',
           boxSizing: 'border-box',
-          border: '0.27vw solid #24B3B3',
+          border: '0.27vw solid #3388FF',//#24B3B3
           borderRadius: '5.07vw'
         },
         buttonBorderBlueStyle: {
@@ -134,7 +134,7 @@
         },
         buttonBorderTextGreenStyle: {
           fontSize: '2.67vw',
-          color: '#24B3B3'
+          color: '#3388FF'//#3388FF
         },
         buttonBorderTextBlueStyle: {
           fontSize: '2.67vw',
@@ -201,7 +201,7 @@
         }
       },
       getMyWordItemInfo() {
-        this.msgNumStr = this.myWordInfo.messageCount > 99 ? "99+" : this.myWordInfo.messageCount;
+        this.msgNumStr = this.myWordInfo.messageCount ;
         if (this.myWordInfo.messageType === "报警") {
           this.messageTypeStrSome(require('@/assets/icon/icon_alert.png'));
           // this.alertMsgStyle = BaseRedBackgroundColor;
@@ -235,7 +235,7 @@
           }
         } else if (this.myWordInfo.messageType === "维保") {
           this.messageTypeStrSome(require('@/assets/icon/icon_fault.png'));
-          // this.alertMsgStyle = {backgroundColor: '#24B3B3'};
+          // this.alertMsgStyle = {backgroundColor: '#3388FF'};//#24B3B3
           // this.titleIcon = "static/assets/icon/icon_alarm-msg-fault.png";
           switch (this.myWordInfo.status) {
             case "未处理":

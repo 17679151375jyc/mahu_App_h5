@@ -181,18 +181,18 @@
            border-style: solid;border-width: 0 0 0.27vw 0;border-color: #E3E4E6">服务评分</p>
           <div style="padding: 3vw 5vw">
             <div class="base-horizontal-layout-general">
-              <p class="base-text-details-normal-black-light" style="line-height: 5vw;color: #808080">服务评分</p>
+              <p class="base-text-details-normal-black-light" style="width: 17vw;line-height: 5vw;color: #808080;">服务评分</p>
               <div class="base-vertical-layout-general" style="margin-left: 3.73vw">
                 <div class="base-horizontal-layout-general">
                   <cube-rate v-model="securityPersonnelScore" style="width: 27.75vw"></cube-rate>
-                  <p style="font-size: 2.67vw;color: #FF8080;line-height: 5vw;margin-left: 5.33vw">{{securityPersonnelScoreText}}</p>
+                  <p style="font-size: 2.67vw;color: #FF8080;line-height: 5vw;margin-left: 5.33vw;min-width:36vw">{{securityPersonnelScoreText}}</p>
                 </div>
                 <p class="base-text-details-small-gray-light" style="line-height: 8.88vw">您的评价会让服务做得更好</p>
               </div>
             </div>
             <div class="base-horizontal-layout-general">
-              <p class="base-text-details-normal-black-light" style="line-height: 5vw;color: #808080">其它意见</p>
-              <div class="base-vertical-layout-general" style="margin-left: 3.73vw">
+              <p class="base-text-details-normal-black-light" style="width: 17vw;line-height: 5vw;color: #808080">其它意见</p>
+              <div class="base-vertical-layout-general" style="margin-left: 2.6666vw">
                 <textarea style="width: 72vw;height: 24vw;background-color: #EDEEF0;
                                   box-sizing: border-box; padding: 0 2vw;
                                   border:none;resize:none;outline:none;
@@ -202,7 +202,7 @@
                           maxlength="90"
                           v-model="securityText"/>
                 <div class="base-horizontal-layout-space-between-item-center"
-                     style="width: 73vw;margin-top: 1.33vw;justify-content: flex-end">
+                     style="width: 70vw;margin-top: 1.33vw;justify-content: flex-end">
                   <button-background text="清空"
                                      :buttonBackgroundStyle="buttonBackgroundStyle"
                                      :buttonBackgroundTextStyle="buttonBackgroundTextStyle"
@@ -307,7 +307,8 @@
         let self = this;
         switch (self.securityPersonnelScore) {
           case 1:
-            self.securityPersonnelScoreText = "非常不满意，各方面都很差";
+            // self.securityPersonnelScoreText = "非常不满意，各方面都很差";
+            self.securityPersonnelScoreText = "非常不满意";
             return;
           case 2:
             self.securityPersonnelScoreText = "不满意，比较差";

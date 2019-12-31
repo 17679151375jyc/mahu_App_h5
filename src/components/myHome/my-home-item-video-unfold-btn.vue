@@ -10,7 +10,7 @@
        @touchstart="videoUnfoldTouch"
        @touchend="videoUnfoldTouchEnd">
     <img :src="require('@/assets/icon/icon-play.png')" class="base-icon-normal-style" style="margin-bottom: 1.0666vw">
-    <p class="base-text-details-large-white">实时监控</p>
+    <p class="base-text-details-large-white but_text_line_height">实时监控</p>
   </div>
 </template>
 
@@ -68,7 +68,7 @@
           //   this.$emit('videoUnfoldOnClick', {machineShow: false, isVideoShowStart: false, isVideoShow: true, index: this.index});
           // },300);
 
-          this.$emit('videoUnfoldOnClick', {isOpenCamera: true, sum: this.sum});
+          this.$emit('videoUnfoldOnClick', {isOpenCamera: true, sum: this.sum, index: this.index});
 
           setTimeout(()=>{
             this.videoUnfoldStyle = {width: "19.4666vw"};

@@ -6,8 +6,6 @@
   <div class="wrapper">
     <return-head title="社区管理" rightText="加入记录" @rightBtnOnClick="addPlotOnClick"></return-head>
 
-    <div></div>
-
     <div class="scroll-wrapper-addition-title">
       <cube-scroll
         ref="myPlotScroll"
@@ -44,7 +42,7 @@
                 @rightBtnPoppup="rightBtnPoppup">
       <!--没有回车的纯文字-->
       <div v-if="popType === 'plainText'" class="base-vertical-layout-center-item-center">
-        <p class="popup-text" style="width: 53.33vw">{{popPlainText}}</p>
+        <p class="popup-text" style="width: 56.33vw">{{popPlainText}}</p>
       </div>
     </base-popup>
 
@@ -93,6 +91,7 @@
         },
 
         myPlotList: [],
+        isChangeRoute: '',
 
         // 弹窗属性
         isPopShow: false,
@@ -119,10 +118,27 @@
       //监听路由变化
       $route(to, from) {//todo 再做一点判断
         let self = this;
-        if(localStorage.getItem("plotInvitePeople") === "add") {
+        if(to.path=='/mine/myPlot'){
           self.getPersonalMessage();
-        } else if (localStorage.getItem("plotRenewPay") === "success") {
-          self.getPersonalMessage();
+        }
+        /* if(localStorage.getItem("plotInvitePeople") === "add") {
+           self.getPersonalMessage();
+         } else if (localStorage.getItem("plotRenewPay") === "success") {
+           self.getPersonalMessage();
+         }
+         else if (localStorage.getItem("communityChange") === "add") {
+           self.isChangeRoute = "community-add-manage";
+           localStorage.removeItem("communityChange");
+         }*/
+      },
+
+      isChangeRoute() {
+        let self = this;
+        if(self.isChangeRoute === "community-add-manage") {
+          setTimeout(() => {
+            self.isChangeRoute = "";
+            self.addPlotOnClick();
+          }, 200);
         }
       }
     },
@@ -209,15 +225,20 @@
       },
 
       addPlotOnClick() {//加入记录
-        this.$router.push({path: "/mine/myPlot/community-add-manage"});
+        let self = this;
+        self.$router.push({path: "/mine/myPlot/community-add-manage"});
       },
 
       invitePeople(e) {//邀请家人
-        this.$router.push({path: "/mine/myPlot/my-plot-invite-people",query: {domicileNumber: e.domicileNumber}});
+        let self = this;
+        self.$router.push({path: "/mine/myPlot/my-plot-invite-people",query: {domicileNumber: e.domicileNumber}});
       },
 
       addApplyCommunity() {//加入社区
-        this.$router.push({path: "/mine/myPlot/community-add"});
+        let self = this;
+        self.$router.push({path: "/mine/myPlot/community-add",
+          query: {chooseCityPath: '/mine/myPlot/community-add/choose-city',
+            choosePlotPath: '/mine/myPlot/community-add/choose-plot'}});
       },
     }
   }

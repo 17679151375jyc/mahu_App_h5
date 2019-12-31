@@ -180,12 +180,12 @@
         let self = this;
         if (this.$route.path === "/inAndOut") {
           // utils.showTab();
-          if(localStorage.getItem("inAndOutChange")) {
+          // if(localStorage.getItem("inAndOutChange")) {
             self.$post("entry","/vistor",{}).then((res)=>{
               self.visitorList = [...res.data.list];
             });
-            localStorage.removeItem("inAndOutChange");
-          }
+            // localStorage.removeItem("inAndOutChange");
+          // }
         }
       },
 

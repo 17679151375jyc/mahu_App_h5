@@ -100,16 +100,15 @@
 <style lang="stylus" scoped>
 .info {
   width: 100%;
-  height: 25.6vw;
   background: #fff;
   display: flex;
   flex-direction: column;
   margin-top: 2.6667vw;
   text-align: center;
-
+  padding-bottom: 3.7333vw
   .main {
-    font-size: 4.2667vw;
-    color: #666;
+    font-size: 4.8vw;
+    color: #555;
     font-weight: bold;
     padding: 3.7333vw 0;
 
@@ -120,10 +119,10 @@
 
   .intro {
     width: 75.7333vw;
-    color: #ccc;
-    font-size: 3.4667vw;
+    color: #666;
+    font-size:4vw
     margin: 0 auto;
-    line-height: 4.2667vw;
+    line-height:5.333vw;
   }
 }
 
@@ -137,7 +136,7 @@
     padding-right: 5.3333vw;
     justify-content: space-between;
     align-items: center;
-    height: 13.3333vw;
+    height: 14.667vw;
 
     span {
       color: #666;
@@ -177,7 +176,8 @@
 
     >>>.cube-input {
       flex: 1;
-      font-size: 3.4667vw;
+      font-size: 4.267vw;
+      height: 14.667vw;
 
       &:after {
         content: none;
@@ -185,6 +185,9 @@
 
       input {
         padding: 2.66667vw 0;
+        &::placeholder {
+          color: #aaa;
+        }
       }
     }
   }

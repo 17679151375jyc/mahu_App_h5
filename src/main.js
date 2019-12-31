@@ -1,3 +1,11 @@
+/*
+ * @Descripttion: 
+ * @version: 
+ * @Author: Vencent Lum
+ * @Date: 2019-12-13 15:05:40
+ * @LastEditors: Vencent Lum
+ * @LastEditTime: 2019-12-16 16:26:50
+ */
 // import 'amfe-flexible'
 import Vue from 'vue';
 import Cube from 'cube-ui'
@@ -12,7 +20,7 @@ import VueQuillEditor from 'vue-quill-editor'
 import 'quill/dist/quill.core.css'
 import 'quill/dist/quill.snow.css'
 import 'quill/dist/quill.bubble.css'
-Vue.use(Cube)
+Vue.use(Cube);
 Vue.use(VueQuillEditor, {
     placeholder: '请简要描述您提交的内容，我们将尽快跟进处理。（请控制在600字以内）',
     modules: {
@@ -41,6 +49,7 @@ const vConsole = process.env.NODE_ENV === 'production' ? null : new VConsole();
 //注册全局事件
 window.eventBus = new Vue();
 window.CYJ = window.CYJ || {};
+
 // window.update = (res)=>{
 //   eventBus.$emit('pushUpdate',res)
 // }
@@ -80,7 +89,7 @@ import VueTouch from 'vue-touch'
 Vue.use(VueTouch, {
     name: 'v-touch'
 });
-
+Vue.prototype.safetyInvoke = utils.safetyInvoke;
 // 将window的方法直接加在vue的原型链上
 Vue['prototype']['unescape'] = (str) => { //这个是将utf8转成utf16
     return window.unescape(str.replace(/\\u/g, "%u"));

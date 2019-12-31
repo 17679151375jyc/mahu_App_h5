@@ -95,7 +95,7 @@
                   WITHINNUMBER: local.WITHINNUMBER, //给定的范围，单位m
                 }
               } else {
-                location.reload();
+                // location.reload();
                 return;
               }
             })()
@@ -106,7 +106,7 @@
 
             //状态栏信息
             let headStatus = function (text) {
-              if (text) {
+              if (text &&  document.getElementById('headStatus')) {
                 document.getElementById('headStatus').innerHTML = text;
                 document.getElementsByClassName('header')[0].style.background = 'rgba(37, 38, 45, 0.7)'
               }
@@ -370,7 +370,7 @@
                       map.add(marker);
                       map.setFitView();//自适应显示多个点标记
 
-                      this.isShowHeader = false;
+                      self.isShowHeader = false;
                     }
 
                     // new SimpleMarker({

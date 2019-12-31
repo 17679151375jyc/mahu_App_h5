@@ -4,148 +4,208 @@
     <return-head :title="topTitle"></return-head>
 
     <div class="form-wrapper">
-      <div class="input-item border-bottom-1px">
-        <div class="label-wrapper">
-          <i v-if="!isEditVisitor">*</i>
-          <span>访客姓名</span>
-        </div>
-        <div class="input-wrapper">
-          <span v-if="isEditVisitor" class="text">{{visitorInfo.vistorName}}</span>
-          <cube-input v-else v-model="name" placeholder="请填写访客真实姓名" :maxlength="6"></cube-input>
-        </div>
-
-        <!-- <p>
-          <i v-if="!isEditVisitor">*</i>访客姓名
-        </p>
-        <p v-if="isEditVisitor" class="pp">{{visitorInfo.vistorName}}</p>
-        <input
-          v-else
-          type="text"
-          :autofocus="false"
-          placeholder="请输入访客客人真实姓名"
-          maxlength="6"
-          v-model="name"
-        />-->
-      </div>
-      <div
-        v-if="comnunitiesObj.isIdentity>0 || visitorInfo.identityCard"
-        class="input-item border-bottom-1px"
+      <cube-form
+        :model="addVisitorDataModel"
+        :options="options"
+        @validate="validateHandler"
+        @submit="submitHandler"
       >
-        <div class="label-wrapper">
-          <i v-if="!isEditVisitor">*</i>
-          <span>身份证号</span>
-        </div>
-        <div class="input-wrapper">
-          <span v-if="isEditVisitor" class="text">{{visitorInfo.identityCard}}</span>
-          <cube-input v-else v-model="data.objprop.identityCard" placeholder="请填写访客身份证"></cube-input>
-        </div>
-        <!-- <p>
-          <i v-if="!isEditVisitor">*</i>身份证号
-        </p>-->
+        <!--<cube-form-item :field="addVisitorFields[0]"></cube-form-item>-->
+        <div class="form-wrapper">
+          <cube-form-group>
+            <cube-form-item v-if="isEditVisitor">
+              <div class="input-item">
+                <div class="label-wrapper">
+                  <span>访客姓名</span>
+                </div>
+                <div class="input-wrapper">
+                  <span v-if="isEditVisitor" class="text">{{
+                    addVisitorDataModel.vistorName || "匿名"
+                  }}</span>
+                </div>
+              </div>
+            </cube-form-item>
+            <cube-form-item
+              v-else
+              :field="addVisitorFields[0]"
+              :class="[{ 'cube-form-label-noxingxing': !isVistorNameIn }]"
+            >
+            <div class="right-side">
+              <cube-input v-model="addVisitorDataModel.vistorName"
+                          placeholder="填写来客姓名"
+                          :maxlength="8"
+                          class="name-input"></cube-input>
+              <div
+                class="base-text-title-normal-blue note-book-btn"
+                @click="readContactss"
+              >
+               | 通讯录
+              </div>
+              </div>
+            </cube-form-item>
 
-        <!-- <p v-if="isEditVisitor" class="pp">{{visitorInfo.identityCard}}</p>
-        <input
-          v-else
-          type="text"
-          :autofocus="false"
-          placeholder="请输入来访客人身份证"
-          :style="focusInput"
-          v-model="data.objprop.identityCard"
-          style="height: 13.3333vw;border:none;resize:none;outline:none"
-        />-->
-      </div>
-      <div class="input-item border-bottom-1px">
-        <div class="label-wrapper">
-          <i v-if="!isEditVisitor">*</i>
-          <span>访客性别</span>
+            <cube-form-item v-if="isEditVisitor">
+              <div class="input-item">
+                <div class="label-wrapper">
+                  <span>访客手机</span>
+                </div>
+                <div class="input-wrapper">
+                  <span class="text">{{
+                    addVisitorDataModel.vistorPhone
+                  }}</span>
+                </div>
+              </div>
+            </cube-form-item>
+            <cube-form-item
+              v-else
+              :field="addVisitorFields[3]"
+              :class="[{ 'cube-form-label-noxingxing': !isVistorPhoneIn }]"
+            ></cube-form-item>
+
+            <div style="height: 2.6666vw;background-color: #F5F5F5"></div>
+
+            <cube-form-item
+              v-if="comnunitiesObj && comnunitiesObj.idcardStatus === 1"
+              :field="addVisitorFields[1]"
+            ></cube-form-item>
+            <cube-form-item
+              v-if="isEditVisitor && addVisitorDataModel.identityCard"
+            >
+              <div class="input-item">
+                <div class="label-wrapper">
+                  <span>身份证号</span>
+                </div>
+                <div class="input-wrapper">
+                  <span class="text">{{
+                    addVisitorDataModel.identityCard
+                  }}</span>
+                </div>
+              </div>
+            </cube-form-item>
+
+            <cube-form-item>
+              <div class="input-item" style="padding: 0 0 0 3.5vw">
+                <div class="label-wrapper">
+                  <span>访客性别</span>
+                </div>
+                <div class="input-wrapper">
+                  <span v-if="isEditVisitor" class="text">{{
+                    addVisitorDataModel.vistorSex
+                  }}</span>
+                  <div v-else class="gender-wrapper">
+                    <div
+                      :class="[
+                        'gender-item',
+                        addVisitorDataModel.vistorSex === 1 ? 'active' : ''
+                      ]"
+                      @click="addVisitorDataModel.vistorSex = 1"
+                    >
+                      男
+                    </div>
+                    <div
+                      :class="[
+                        'gender-item',
+                        addVisitorDataModel.vistorSex === 0 ? 'active' : ''
+                      ]"
+                      @click="addVisitorDataModel.vistorSex = 0"
+                    >
+                      女
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </cube-form-item>
+          </cube-form-group>
+
+          <cube-form-group class="addVisitorInfo-context">
+            <div
+              class="input-item"
+              style="padding: 0 0 0 7.5vw;border-bottom: 1px solid #ebebeb90"
+            >
+              <div class="label-wrapper">
+                <span>来访小区</span>
+              </div>
+              <div class="input-wrapper">
+                <!--<div v-if="isEditVisitor" class="text-box" style="width: 70vw">-->
+                <!--<span class="text"-->
+                <!--&gt;{{`${visitorInfo.plotName} ${visitorInfo.buildingName} ${visitorInfo.doorName}`}}</span>-->
+                <!--</div>-->
+
+                <div class="text-box" style="width: 62vw">
+                  <span v-if="isEditVisitor" class="text">{{
+                    `${safetyInvoke(
+                      visitorInfo,
+                      "plotName",
+                      "string"
+                    )} ${safetyInvoke(
+                      visitorInfo,
+                      "buildingName",
+                      "string"
+                    )} ${safetyInvoke(visitorInfo, "doorName", "string")}`
+                  }}</span>
+                  <span v-else class="text">{{
+                    `${safetyInvoke(
+                      comnunitiesObj,
+                      "plotName",
+                      "string"
+                    )} ${safetyInvoke(
+                      comnunitiesObj,
+                      "buildingName",
+                      "string"
+                    )} ${safetyInvoke(comnunitiesObj, "doorName", "string")}`
+                  }}</span>
+                </div>
+              </div>
+            </div>
+            <div
+              class="input-item visitor-time"
+              style="padding: 0 0 0 7.5vw;border-bottom: 1px solid #ebebeb90;"
+            >
+              <div class="label-wrapper">
+                <span>来访时长</span>
+              </div>
+              <div class="input-wrapper lager">
+                <span class="text">
+                  默认1天
+                  <br />过期可在访客管理重新激活
+                </span>
+              </div>
+            </div>
+          </cube-form-group>
+
+          <cube-form-group
+            v-if="
+              (comnunitiesObj.parkId && comnunitiesObj.temporaryCount > 0) ||
+                (visitorInfo.parkId && visitorInfo.temporaryCount > 0)
+            "
+          >
+            <cube-form-item :field="addVisitorFields[4]" class="car-number-box">
+              <!--<div class="input-item border-bottom-1px">-->
+              <!--<div class="label-wrapper">-->
+              <!--<span>车牌号码</span>-->
+              <!--</div>-->
+              <div class="input-item">
+                <div class="input-wrapper">
+                  <car-number
+                    class="car-number-container"
+                    style="height: 40px"
+                    v-model="addVisitorDataModel.carNumber"
+                  ></car-number>
+                </div>
+              </div>
+              <!--</div>-->
+            </cube-form-item>
+          </cube-form-group>
         </div>
-        <div class="input-wrapper">
-          <span v-if="isEditVisitor" class="text">{{visitorInfo.vistorSex}}</span>
-          <div v-else class="gender-wrapper">
-            <div
-              :class="['gender-item', data.objprop.sex===1 ? 'active': '']"
-              @click="data.objprop.sex=1"
-            >男</div>
-            <div
-              :class="['gender-item', data.objprop.sex===0 ? 'active': '']"
-              @click="data.objprop.sex=0"
-            >女</div>
+
+        <cube-form-group class="footer-btn">
+          <div>
+            <cube-button type="submit" class="sub-btn" @click="submit">{{
+              isEditVisitor ? "激活" : "保存"
+            }}</cube-button>
           </div>
-        </div>
-      </div>
-      <div class="input-item border-bottom-1px">
-        <div class="label-wrapper">
-          <i v-if="!isEditVisitor">*</i>
-          <span>访客手机</span>
-        </div>
-        <!-- <p>
-          <i v-if="!isEditVisitor">*</i>访客手机
-        </p>-->
-        <!--<p>访客手机</p>-->
-        <div class="input-wrapper">
-          <span v-if="isEditVisitor" class="text">{{visitorInfo.vistorPhone}}</span>
-          <cube-input v-else v-model="data.objprop.phoneNumber" placeholder="请填写访客手机号"></cube-input>
-        </div>
-        <!-- <p v-if="isEditVisitor" class="pp">{{visitorInfo.vistorPhone}}</p>
-        <input
-          v-else
-          type="text"
-          :autofocus="false"
-          placeholder="请输入手机号码"
-          v-model="data.objprop.phoneNumber"
-        />-->
-      </div>
-      <div class="input-item border-bottom-1px">
-        <div class="label-wrapper">
-          <span>来访小区</span>
-        </div>
-        <div class="input-wrapper">
-          <span
-            v-if="isEditVisitor"
-            class="text"
-          >{{`${visitorInfo.plotName} ${visitorInfo.buildingName} ${visitorInfo.doorName}`}}</span>
-          <span
-            v-else
-            class="text"
-          >{{`${comnunitiesObj.plotName} ${comnunitiesObj.buildingName} ${comnunitiesObj.doorName}`}}</span>
-        </div>
-        <!-- <p
-          v-if="isEditVisitor"
-          class="pp"
-        >{{visitorInfo.plotName}} {{visitorInfo.buildingName}} {{visitorInfo.doorName}}</p>-->
-        <!-- <p
-          v-else
-          class="pp"
-        >{{comnunitiesObj.plotName}} {{comnunitiesObj.buildingName}} {{comnunitiesObj.doorName}}</p>-->
-      </div>
-      <div class="input-item visitor-time border-bottom-1px">
-        <div class="label-wrapper">
-          <span>来访时长</span>
-        </div>
-        <div class="input-wrapper">
-          <span class="text">默认1天，过期可在访客管理重新激活</span>
-        </div>
-        <!-- <div class="base-text-details-normal-gray-ccc"></div> -->
-      </div>
-      <div
-        v-if="(comnunitiesObj.parkId && comnunitiesObj.temporaryCount>0) ||
-                 (visitorInfo.parkId && visitorInfo.temporaryCount>0)"
-        class="input-item border-bottom-1px"
-      >
-        <div class="label-wrapper">
-          <span>车牌号码</span>
-        </div>
-        <!-- <p>车牌号码</p> -->
-        <div class="input-wrapper">
-          <car-number class="car-number-container" style="height: 40px;" v-model="data.objprop.carNumber"></car-number>
-        </div>
-      </div>
-      
-    </div>
-
-    <div class="footer-btn">
-        <div class="sub-btn"  @click="summit">{{isEditVisitor ? '激活' : '保存'}}</div>
-        <!-- <cube-button :inline="true" class="sub-btn" @click="summit">{{isEditVisitor ? '激活' : '保存'}}</cube-button> -->
+        </cube-form-group>
+      </cube-form>
     </div>
   </div>
 </template>
@@ -153,600 +213,585 @@
 <script>
 import utils from "_libs/utils";
 import returnHead from "_c/head/return-head";
-import CarNumber from "_c/carNumber/carNumber";
+import carNumber from "_c/carNumber/carNumber";
+import DayRecord from "./dayRecord";
+
+var isBack = false;
+
 export default {
   name: "addVisitorInfo",
   components: {
-    CarNumber,
+    DayRecord,
+    carNumber,
     returnHead
   },
   data() {
     return {
-      cNumber: null,
-      hideValue: true,
       topTitle: "添加访客",
-      name: "",
-      uploadFile: "",
-      identityNumber: "",
-      // personNumber: 0,
-      mFile: "",
-      leaveOrCome: true,
-      comeDate: "",
-      leaveDate: "",
-      comeTimestamp: "",
-      leaveTimestamp: "",
-      sexMen: ["sex_btn_none", "sex_btn_active"],
-      sexWomen: ["sex_btn_none"],
-      whichSex: "",
-      focusInput: {},
-      selectArea: 2,
-      placeholder: 0,
-      placeholderDate: 0,
-      dateNumber: 0,
-      optionsArea: [],
-      comnunities: [],
-      comnunitiesObj: {},
-      value: "",
-      options: {
-        observeDOM: true,
-        click: true,
-        probeType: 1,
-        scrollbar: false
+
+      isVistorNameIn: false,
+      isVistorPhoneIn: false,
+      addVisitorDataModel: {
+        vistorName: "",
+        vistorSex: 1,
+        vistorPhone: "",
+        identityCard: "",
+        carNumber: ""
       },
-      data: {
-        objname: "333",
-        objparent: "000",
-        imgurl: "",
-        objprop: {
-          phoneNumber: "",
-          carNumber: "",
-          identityCard: "",
-          sex: "女",
-          同行人数: "",
-          comeDate: 0,
-          leaveDate: 0,
-          业主id: "000",
-          小区id: "000",
-          楼座id: "000",
-          住宅id: "000"
-        }
+      validity: "",
+      valid: "",
+      addVisitorFields: [],
+      options: {
+        scrollToInvalidField: true
       },
 
+      comnunitiesObj: {},
       isEditVisitor: false,
       visitorInfo: {},
-      phoneNumber: "",
-      identityCard: "",
-      isSummit: false,
-
-      cos: null // cos上传对象
+      isSummit: false
+      //  isBack: false
+      // cos: null // cos上传对象
     };
-  },
-  methods: {
-    // changeNumber(e) {
-    //   if (e < 0 && this.personNumber === 0) {
-    //     return;
-    //   } else if (e > 0 && this.personNumber === 99) {
-    //     return;
-    //   } else {
-    //     this.personNumber += e;
-    //     this.data.objprop.同行人数 = this.personNumber;
-    //   }
-    // },
-    // inval(number) {
-    //   number = Number.parseInt(number);
-    //   number = Math.abs(number);
-    //   Number.isNaN(number) ? this.placeholder = 0 : this.personNumber = number;
-    // },
-    /**
-     * 显示前缀picker
-     */
-    areaShow() {
-      utils.hideTab();
-    },
-    areaHide() {
-      setTimeout(() => {
-        // utils.showTab()
-      }, 300);
-    },
-    // selectSex(sex) {
-    //   this.whichSex = sex;
-    //   if (sex == "男") {
-    //     if (this.sexMen.length > 1) {
-    //       return;
-    //     } else {
-    //       this.sexMen.push("sex_btn_active");
-    //       this.data.objprop.sex = 1;
-    //       this.sexWomen.pop();
-    //     }
-    //   } else {
-    //     if (this.sexWomen.length > 1) {
-    //       return;
-    //     } else {
-    //       this.sexWomen.push("sex_btn_active");
-    //       this.data.objprop.sex = 0;
-    //       this.sexMen.pop();
-    //     }
-    //   }
-    // },
-
-    idCardOnChange() {
-      if (this.data && this.data.objprop) {
-        this.data.objprop.identityCard = this.data.objprop.identityCard.replace(
-          /[ ]/g,
-          ""
-        );
-        if (
-          this.data.objprop.identityCard &&
-          this.data.objprop.identityCard.length > 18
-        ) {
-          this.data.objprop.identityCard = this.data.objprop.identityCard.substring(
-            0,
-            18
-          );
-        }
-      }
-    },
-
-    selectDate(event, ...args) {
-      //console.log(args)
-      let title = "",
-        now = new Date(),
-        minDate = new Date(),
-        show = new Date();
-
-      if (event === "comeDate") {
-        this.leaveOrCome = true;
-        title = "选择来访时间";
-        this.leaveDate = "";
-        /**
-         * comeDate不为空
-         * 比较comeDate和现在时间的大小，
-         * 小于现在时间的话，最小时间为now，显示时间为now
-         * 大于现在时间的话，最小时间为now，显示时间为comeDate
-         */
-        minDate = now;
-        if (this.comeDate !== "") {
-          let comeDateGetTime = new Date(this.comeDate).getTime();
-          show =
-            comeDateGetTime > now.getTime() ? new Date(this.comeDate) : now;
-        } else {
-          show = now;
-        }
-
-        // 显示日期控件
-        this.dateTimePicker = this.$createDatePicker({
-          title: title,
-          min: minDate,
-          max: new Date(
-            now.getFullYear() + 1,
-            now.getMonth(),
-            now.getDate(),
-            now.getHours(),
-            now.getMinutes()
-          ),
-          value: show,
-          format: {
-            year: "YYYY",
-            month: "MM",
-            day: "DD"
-          },
-          columnCount: 5,
-          onSelect: this.selectHandle,
-          onCancel: this.cancelHandle
-        });
-        this.dateTimePicker.show();
-      } else {
-        let leaveDate = new Date(this.comeDate);
-        if (this.comeDate === "") {
-          const toast = this.$createToast({
-            type: "warn",
-            txt: "请先选择来访时间"
-          });
-          toast.show();
-          return;
-        } else {
-          this.leaveOrCome = false;
-          title = "选择离开时间";
-          /**
-           * leaveDate不为空
-           * 比较leaveDate和现在时间的大小，
-           * 小于现在时间的话，最小时间为comeDate+6小时，显示时间为comeDate+3小时
-           * 大于现在时间的话，最小时间为comeDate+6小时，显示时间为leaveDate
-           */
-          minDate = new Date(
-            now.getFullYear(),
-            now.getMonth(),
-            now.getDate(),
-            now.getHours() + 6,
-            now.getMinutes()
-          );
-          let leaveDateGetTime = new Date(this.leaveDate).getTime();
-          if (
-            this.leaveDate !== "" &&
-            leaveDateGetTime > now.getTime() + 6 * 60 * 60 * 1000
-          ) {
-            show = new Date(this.leaveDate);
-          } else {
-            show = new Date(
-              leaveDate.getFullYear(),
-              leaveDate.getMonth(),
-              leaveDate.getDate(),
-              leaveDate.getHours() + 3,
-              leaveDate.getMinutes()
-            );
-          }
-
-          // 显示日期控件
-          this.dateTimePicker = null;
-          this.dateTimePicker = this.$createDatePicker({
-            title: title,
-            min: minDate,
-            max: new Date(
-              now.getFullYear() + 1,
-              now.getMonth(),
-              now.getDate(),
-              now.getHours(),
-              now.getMinutes()
-            ),
-            value: show,
-            format: {
-              year: "YYYY",
-              month: "MM",
-              day: "DD"
-            },
-            columnCount: 5,
-            onSelect: this.selectHandle,
-            onCancel: this.cancelHandle
-          });
-          this.dateTimePicker.show();
-        }
-      }
-
-      // // 显示日期控件
-      // if (!this.dateTimePicker || this.dateTimePicker === null) {
-      //   this.dateTimePicker = this.$createDatePicker({
-      //     title: title,
-      //     min: minDate,
-      //     max: new Date(now.getFullYear()+1, now.getMonth(), now.getDate(), now.getHours(), now.getMinutes()),
-      //     value: show,
-      //     format: {
-      //       year: 'YYYY',
-      //       month: 'MM',
-      //       day: 'DD'
-      //     },
-      //     columnCount: 5,
-      //     onSelect: this.selectHandle,
-      //     onCancel: this.cancelHandle
-      //   });
-      //   this.dateTimePicker.show();
-      // }
-    },
-    selectHandle(selectedTime, selectedVal, formatedTime) {
-      //todo 日期输入的规范性
-      // console.log(selectedVal)
-      //    console.log(new Date(`${selectedVal[0]}/${selectedVal[1]}/${selectedVal[2]} ${selectedVal[3]}:${selectedVal[4]}`))
-      selectedVal[1] =
-        selectedVal[1] > 9 ? selectedVal[1] : `0${selectedVal[1]}`;
-      selectedVal[2] =
-        selectedVal[2] > 9 ? selectedVal[2] : `0${selectedVal[2]}`;
-      selectedVal[3] =
-        selectedVal[3] > 9 ? selectedVal[3] : `0${selectedVal[3]}`;
-      selectedVal[4] =
-        selectedVal[4] > 9 ? selectedVal[4] : `0${selectedVal[4]}`;
-      // console.log(selectedVal)
-      this.leaveOrCome
-        ? (this.comeDate = `${selectedVal
-            .slice(0, -2)
-            .join("-")} ${selectedVal.slice(3, 5).join(":")}`)
-        : (this.leaveDate = `${selectedVal
-            .slice(0, -2)
-            .join("-")} ${selectedVal.slice(3, 5).join(":")}`);
-      this.leaveOrCome
-        ? (this.comeTimestamp = selectedTime)
-        : (this.leaveTimestamp = selectedTime);
-
-      if (utils.isEmptyAddStrAddObj(this.comeTimestamp)) {
-        this.data.objprop.leaveDate = this.leaveTimestamp.getTime();
-      } else {
-        this.data.objprop.comeDate = this.comeTimestamp.getTime();
-        this.data.objprop.leaveDate = this.leaveTimestamp.getTime();
-      }
-      this.dateTimePicker = null;
-
-      // console.log("selectHandle111", this.comeTimestamp.getTime());
-      // console.log("selectHandle222", this.leaveTimestamp.getTime());
-      // console.log("selectHandle", new Date(this.comeDate).getTime());
-      // console.log("selectHandle2", new Date(this.leaveDate).getTime());
-    },
-    cancelHandle(e) {
-      this.dateTimePicker = null;
-    },
-
-    fileChange(e) {
-      let self = this;
-      let file = document.getElementsByName("file")[0].files[0];
-      // let mFile = e.target.files[0];
-      // let mFileArray = [];
-      utils.toFileBase64(file).then(base64 => {
-        self.uploadFile = base64;
-        self.mFile = e.target.files;
-      });
-    },
-
-    summit() {
-      if (this.isSummit) {
-        //todo return?
-      } else {
-        if (this.isEditVisitor) {
-          this.editVisitorSumit();
-        } else {
-          if (this.name === "") {
-            const toast = this.$createToast({
-              type: "warn",
-              txt: "带*为必填项"
-            });
-            toast.show();
-          } else {
-            if (
-              this.data.objprop.phoneNumber &&
-              utils.numberVerification(
-                "telephone",
-                this.data.objprop.phoneNumber
-              )
-            ) {
-              console.log(this.data.objprop.identityCard);
-              console.log(this.comnunitiesObj.isIdentity);
-              if (
-                this.comnunitiesObj.isIdentity <= 0 ||
-                (this.data.objprop.identityCard &&
-                  utils.numberVerification(
-                    "identityCard",
-                    this.data.objprop.identityCard
-                  ))
-              ) {
-                this.addVisitorSumit("");
-              } else {
-                const toast = this.$createToast({
-                  type: "warn",
-                  txt: "请填写正确的身份证"
-                });
-                toast.show();
-              }
-            } else {
-              const toast = this.$createToast({
-                type: "warn",
-                txt: "请填写正确的手机号"
-              });
-              toast.show();
-            }
-          }
-        }
-      }
-    },
-    addVisitorSumit(vistorPicture) {
-      let nowDate = new Date();
-      let self = this;
-      if (
-        utils.numberVerification("carNumber", self.data.objprop.carNumber) ||
-        !self.data.objprop.carNumber
-      ) {
-        self
-          .$post("entry", "/add", {
-            vistorName: self.name,
-            identityCard: self.data.objprop.identityCard,
-            vistorSex: self.data.objprop.sex,
-            vistorPhone: self.data.objprop.phoneNumber,
-            carNumber: self.data.objprop.carNumber,
-            // vistorPicture: vistorPicture,
-            domicileID: self.comnunitiesObj.domicileID,
-            // vistorNumbers: self.personNumber,
-            // startTime: self.data.objprop.comeDate,
-            // endTime: self.data.objprop.leaveDate,
-            startTime: nowDate.getTime(),
-            endTime: nowDate.getTime() + 24 * 60 * 60 * 1000
-          })
-          .then(res => {
-            localStorage.setItem("inAndOutChange", "add");
-            const toast = self.$createToast({
-              type: "correct",
-              txt: "添加成功！"
-            });
-            toast.show();
-            self.isSummit = true;
-            setTimeout(() => {
-              self.$router.goBack();
-            }, 1000);
-          });
-      } else {
-        const toast = self.$createToast({
-          type: "warn",
-          txt: "请填写正确的车牌号码"
-        });
-        toast.show();
-      }
-    },
-    editVisitorSumit() {
-      let nowDate = new Date();
-      let self = this;
-      console.log(self.data.objprop.comeDate);
-      console.log(self.data.objprop.leaveDate);
-      if (
-        utils.numberVerification("carNumber", self.data.objprop.carNumber) ||
-        !self.data.objprop.carNumber
-      ) {
-        self
-          .$post("entry", "/modify", {
-            visitorID: self.visitorInfo.vistorID,
-            carNumber: self.data.objprop.carNumber,
-            // visitorQuantity: self.personNumber,
-            // startTime: self.data.objprop.comeDate,
-            // endTime: self.data.objprop.leaveDate,
-            startTime: nowDate.getTime(),
-            endTime: nowDate.getTime() + 6 * 60 * 60 * 1000
-          })
-          .then(res => {
-            localStorage.setItem("inAndOutChange", "edit");
-            const toast = self.$createToast({
-              type: "correct",
-              txt: "激活成功！"
-            });
-            toast.show();
-            self.isSummit = true;
-            setTimeout(() => {
-              self.$router.goBack();
-            }, 1000);
-          });
-      } else {
-        const toast = self.$createToast({
-          type: "warn",
-          txt: "请填写正确的车牌号码"
-        });
-        toast.show();
-      }
-    },
-
-    getID() {
-      utils.getUserId().then(result => {
-        this.data.objparent = this.result;
-        this.data.objprop.业主id = this.result;
-      });
-      utils.comnunities().then(res => {
-        if (res) {
-          res.forEach((item, index, arr) => {
-            if (item.statusInt === 1) {
-              this.optionsArea.push(item.nameDesc);
-            }
-          });
-          this.comnunities = [...res];
-        }
-      });
-    },
-
-    getSelectComnunitiesId() {
-      this.comnunities.map((item, index) => {
-        if (item.nameDesc == this.value) {
-          this.data.objprop.小区id = item.cellID;
-          this.data.objprop.楼座id = item.floorID;
-          this.data.objprop.住宅id = item.addressID;
-        }
-      });
-    },
-    checkLocalStorage() {
-      let arg = JSON.parse(localStorage.getItem("comnunuties"));
-      console.log("StorageComnunuties", arg);
-      this.comnunitiesObj = arg ? arg : {};
-      localStorage.removeItem("comnunuties");
-      if (
-        localStorage.getItem("visitorInfo") &&
-        localStorage.getItem("hideValue")
-      ) {
-        this.hideValue = false;
-        this.isEditVisitor = true;
-        this.topTitle = "编辑访客资料";
-        console.log(localStorage.getItem("hideValue"));
-        localStorage.removeItem("hideValue");
-        this.visitorInfo = JSON.parse(localStorage.getItem("visitorInfo"));
-        this.phoneNumber = utils.hiddenPhoneNum(this.visitorInfo.vistorPhone);
-        this.data.objprop.carNumber = this.visitorInfo.carNumber;
-        // let identityCardLen = this.visitorInfo.identityCard.length;
-        // let identityCardStar = "";
-        // for (let count = 0; count < this.visitorInfo.identityCard.length-2; count++) {
-        //   identityCardStar = identityCardStar + "*"
-        // }
-        // this.identityCard = this.visitorInfo.identityCard.substring(0, 1) + identityCardStar +
-        //   this.visitorInfo.identityCard.substring(identityCardLen-1, identityCardLen);
-        // this.personNumber = Number.parseInt(this.visitorInfo.vistorNumbers);
-        this.comeDate = utils.timetrans(
-          Number.parseInt(this.visitorInfo.startTimestamp),
-          "yymmddhhmm"
-        );
-        console.log("comeDate", this.comeDate);
-        this.leaveDate = utils.timetrans(
-          Number.parseInt(this.visitorInfo.endTimestamp),
-          "yymmddhhmm"
-        );
-
-        let comeDateDateTime = new Date(this.comeDate);
-        let leaveDateDateTime = new Date(this.comeDate);
-        this.data.objprop.comeDate = this.visitorInfo.startTimestamp;
-        console.log("objpropComeDate1", comeDateDateTime);
-        console.log("objpropComeDate2", comeDateDateTime.getTime());
-        console.log("objpropComeDate3", this.data.objprop.comeDate);
-        this.data.objprop.leaveDate = this.visitorInfo.endTimestamp;
-        localStorage.removeItem("visitorInfo");
-        localStorage.removeItem("hideValue");
-      } else if (this.$route.params.hideValue) {
-        this.hideValue = false;
-      }
-    },
-    checkIos() {
-      if (!utils.isIos()) {
-        //如果不是ios则需要加一个capture的属性 //todo
-        // document.getElementsByName('file')[0].setAttribute('capture', 'camera');
-      }
-    }
   },
 
   created() {
-    this.data.objprop.sex = 1;
-    utils.hideTab().then(e => {
-      this.checkLocalStorage();
-      this.getID();
-      // this.checkIos();//todo 拍照暂时没有用
+    this.checkLocalStorage();
+
+    this.addVisitorFields.push({
+      type: "input",
+      modelKey: "vistorName",
+      label: "访客姓名",
+      props: {
+        placeholder: "请填写访客姓名"
+      },
+      rules: {
+        required: this.isVistorNameIn,
+        custom: val => {
+          if (val) {
+            if (this.isVistorNameIn) {
+              return val.length <= 6;
+            } else {
+              return val.length <= 6 || !val;
+            }
+          }
+        }
+      },
+      trigger: "change"
+    });
+    this.addVisitorFields.push({
+      type: "input",
+      modelKey: "identityCard",
+      label: "身份证号",
+      props: {
+        placeholder: "请填写访客身份证"
+      },
+      rules: {
+        required: true,
+        custom: val => {
+          if (val) {
+            val = val.replace(/[ ]/g, "");
+            return utils.numberVerification("identityCard", val);
+          }
+        }
+      },
+      messages: {
+        custom: "请填写正确的身份证号码"
+      },
+      trigger: "change"
+    });
+    this.addVisitorFields.push({
+      type: "radio-group",
+      label: "访客性别",
+      modelKey: "vistorSex",
+      props: {
+        options: ["男", "女"],
+        action: "男"
+      },
+      rules: {
+        required: false,
+        custom: val => {
+          return true;
+        }
+      }
+    });
+    this.addVisitorFields.push({
+      type: "input",
+      modelKey: "vistorPhone",
+      label: "访客手机",
+      props: {
+        placeholder: "请填写访客手机号"
+      },
+      rules: {
+        required: this.isVistorPhoneIn,
+        custom: val => {
+          if (val) {
+            val = val.replace(/[ ]|[-]/g, "").slice(0,12);
+            if (this.isVistorPhoneIn) {
+              return utils.numberVerification("telephone", val);
+            } else {
+              return utils.numberVerification("telephone", val) || !val;
+            }
+          }
+        }
+      },
+      messages: {
+        custom: "请填写正确的手机号"
+      },
+      trigger: "change"
+    });
+    this.addVisitorFields.push({
+      type: "radio-group",
+      label: "车牌号码",
+      modelKey: "carNumber",
+      props: {
+        options: ["男", "女"],
+        action: "男"
+      },
+      rules: {
+        required: false,
+        custom: val => {
+          return (
+            utils.numberVerification(
+              "carNumber",
+              this.addVisitorDataModel.carNumber
+            ) || !this.addVisitorDataModel.carNumber
+          );
+        }
+      }
     });
   },
-  destroyed() {
-    if (window.localStorage && localStorage.getItem("hideValue")) {
-      localStorage.removeItem("hideValue");
-    }
+  mounted() {
+    /** 加载通讯录 **/
+    setTimeout(() => {
+      window.readContacts = this.readContactsCallback; //调用原生通讯录回调
+    }, 700);
   },
-  mounted() {},
   computed: {},
   watch: {
-    value(newData, old) {
-      this.getSelectComnunitiesId();
-    },
-
-    "data.objprop.phoneNumber": {
+    "addVisitorDataModel.identityCard": {
       handler(newValue, oldValue) {
-        console.log("触发watch");
         if (newValue) {
-          this.data.objprop.phoneNumber = newValue.replace(/[ ]|[-]/g, "");
           if (
-            this.data.objprop.phoneNumber &&
-            this.data.objprop.phoneNumber.length > 11
+            this.addVisitorDataModel.identityCard &&
+            this.addVisitorDataModel.identityCard.length > 18
           ) {
-            this.data.objprop.phoneNumber = this.data.objprop.phoneNumber.substring(
-              0,
-              11
-            );
+            this.$nextTick(() => {
+              this.addVisitorDataModel.identityCard = newValue.replace(
+                /[ ]/g,
+                ""
+              );
+              this.addVisitorDataModel.identityCard = this.addVisitorDataModel.identityCard.substring(
+                0,
+                18
+              );
+            });
           }
         }
       }
     },
-
-    "data.objprop.identityCard": {
+    "addVisitorDataModel.vistorPhone": {
       handler(newValue, oldValue) {
         if (newValue) {
-          this.data.objprop.identityCard = newValue.replace(/[ ]/g, "");
           if (
-            this.data.objprop.identityCard &&
-            this.data.objprop.identityCard.length > 18
+            this.addVisitorDataModel.vistorPhone &&
+            this.addVisitorDataModel.vistorPhone.length > 11
           ) {
-            this.data.objprop.identityCard = this.data.objprop.identityCard.substring(
-              0,
-              18
-            );
+            this.$nextTick(() => {
+              this.addVisitorDataModel.vistorPhone = newValue.replace(
+                /[ ]|[-]/g,
+                ""
+              );
+              this.addVisitorDataModel.vistorPhone = this.addVisitorDataModel.vistorPhone.substring(
+                0,
+                11
+              );
+            });
           }
         }
       }
     }
-  }
+  },
+  beforeRouteEnter(to, from, next) {
+    // 在渲染该组件的对应路由被 confirm 前调用
+    // 不！能！获取组件实例 `this`
+    // 因为当守卫执行前，组件实例还没被创建
+    if (from.path == "/ma-hu-index/visitor-index") {
+      isBack = true;
+    } else {
+      isBack = false;
+    }
+    next();
+  },
+  methods: {
+    validName() {},
+    checkLocalStorage() {
+      let arg = JSON.parse(localStorage.getItem("comnunuties"));
+      this.comnunitiesObj = arg ? arg : {};
+      this.isVistorNameIn = this.comnunitiesObj.realNameStatus
+        ? this.comnunitiesObj.realNameStatus
+        : false;
+      this.isVistorPhoneIn = this.comnunitiesObj.phoneStatus
+        ? this.comnunitiesObj.phoneStatus
+        : false;
+      localStorage.removeItem("comnunuties");
+      if (localStorage.getItem("visitorInfo")) {
+        this.isEditVisitor = true;
+        this.topTitle = "编辑访客资料";
+
+        this.visitorInfo = JSON.parse(localStorage.getItem("visitorInfo"));
+        this.addVisitorDataModel = this.visitorInfo ? this.visitorInfo : {};
+
+        // this.comeDate = utils.timetrans(
+        //   Number.parseInt(this.visitorInfo.startTimestamp),
+        //   "yymmddhhmm"
+        // );
+        // this.leaveDate = utils.timetrans(
+        //   Number.parseInt(this.visitorInfo.endTimestamp),
+        //   "yymmddhhmm"
+        // );
+        // let comeDateDateTime = new Date(this.comeDate);
+        // let leaveDateDateTime = new Date(this.comeDate);
+        // this.data.objprop.comeDate = this.visitorInfo.startTimestamp;
+        // this.data.objprop.leaveDate = this.visitorInfo.endTimestamp;
+        localStorage.removeItem("visitorInfo");
+      }
+    },
+
+    // selectDate(event, ...args) {
+    //   //console.log(args)
+    //   let title = "",
+    //     now = new Date(),
+    //     minDate = new Date(),
+    //     show = new Date();
+    //
+    //   if (event === "comeDate") {
+    //     this.leaveOrCome = true;
+    //     title = "选择来访时间";
+    //     this.leaveDate = "";
+    //     /**
+    //      * comeDate不为空
+    //      * 比较comeDate和现在时间的大小，
+    //      * 小于现在时间的话，最小时间为now，显示时间为now
+    //      * 大于现在时间的话，最小时间为now，显示时间为comeDate
+    //      */
+    //     minDate = now;
+    //     if (this.comeDate !== "") {
+    //       let comeDateGetTime = new Date(this.comeDate).getTime();
+    //       show =
+    //         comeDateGetTime > now.getTime() ? new Date(this.comeDate) : now;
+    //     } else {
+    //       show = now;
+    //     }
+    //
+    //     // 显示日期控件
+    //     this.dateTimePicker = this.$createDatePicker({
+    //       title: title,
+    //       min: minDate,
+    //       max: new Date(
+    //         now.getFullYear() + 1,
+    //         now.getMonth(),
+    //         now.getDate(),
+    //         now.getHours(),
+    //         now.getMinutes()
+    //       ),
+    //       value: show,
+    //       format: {
+    //         year: "YYYY",
+    //         month: "MM",
+    //         day: "DD"
+    //       },
+    //       columnCount: 5,
+    //       onSelect: this.selectHandle,
+    //       onCancel: this.cancelHandle
+    //     });
+    //     this.dateTimePicker.show();
+    //   } else {
+    //     let leaveDate = new Date(this.comeDate);
+    //     if (this.comeDate === "") {
+    //       const toast = this.$createToast({
+    //         type: "warn",
+    //         txt: "请先选择来访时间"
+    //       });
+    //       toast.show();
+    //       return;
+    //     } else {
+    //       this.leaveOrCome = false;
+    //       title = "选择离开时间";
+    //       /**
+    //        * leaveDate不为空
+    //        * 比较leaveDate和现在时间的大小，
+    //        * 小于现在时间的话，最小时间为comeDate+6小时，显示时间为comeDate+3小时
+    //        * 大于现在时间的话，最小时间为comeDate+6小时，显示时间为leaveDate
+    //        */
+    //       minDate = new Date(
+    //         now.getFullYear(),
+    //         now.getMonth(),
+    //         now.getDate(),
+    //         now.getHours() + 6,
+    //         now.getMinutes()
+    //       );
+    //       let leaveDateGetTime = new Date(this.leaveDate).getTime();
+    //       if (
+    //         this.leaveDate !== "" &&
+    //         leaveDateGetTime > now.getTime() + 6 * 60 * 60 * 1000
+    //       ) {
+    //         show = new Date(this.leaveDate);
+    //       } else {
+    //         show = new Date(
+    //           leaveDate.getFullYear(),
+    //           leaveDate.getMonth(),
+    //           leaveDate.getDate(),
+    //           leaveDate.getHours() + 3,
+    //           leaveDate.getMinutes()
+    //         );
+    //       }
+    //
+    //       // 显示日期控件
+    //       this.dateTimePicker = null;
+    //       this.dateTimePicker = this.$createDatePicker({
+    //         title: title,
+    //         min: minDate,
+    //         max: new Date(
+    //           now.getFullYear() + 1,
+    //           now.getMonth(),
+    //           now.getDate(),
+    //           now.getHours(),
+    //           now.getMinutes()
+    //         ),
+    //         value: show,
+    //         format: {
+    //           year: "YYYY",
+    //           month: "MM",
+    //           day: "DD"
+    //         },
+    //         columnCount: 5,
+    //         onSelect: this.selectHandle,
+    //         onCancel: this.cancelHandle
+    //       });
+    //       this.dateTimePicker.show();
+    //     }
+    //   }
+
+    // // 显示日期控件
+    // if (!this.dateTimePicker || this.dateTimePicker === null) {
+    //   this.dateTimePicker = this.$createDatePicker({
+    //     title: title,
+    //     min: minDate,
+    //     max: new Date(now.getFullYear()+1, now.getMonth(), now.getDate(), now.getHours(), now.getMinutes()),
+    //     value: show,
+    //     format: {
+    //       year: 'YYYY',
+    //       month: 'MM',
+    //       day: 'DD'
+    //     },
+    //     columnCount: 5,
+    //     onSelect: this.selectHandle,
+    //     onCancel: this.cancelHandle
+    //   });
+    //   this.dateTimePicker.show();
+    // }
+    // },
+    // selectHandle(selectedTime, selectedVal, formatedTime) {
+    //   //todo 日期输入的规范性
+    //   // console.log(selectedVal)
+    //   //    console.log(new Date(`${selectedVal[0]}/${selectedVal[1]}/${selectedVal[2]} ${selectedVal[3]}:${selectedVal[4]}`))
+    //   selectedVal[1] =
+    //     selectedVal[1] > 9 ? selectedVal[1] : `0${selectedVal[1]}`;
+    //   selectedVal[2] =
+    //     selectedVal[2] > 9 ? selectedVal[2] : `0${selectedVal[2]}`;
+    //   selectedVal[3] =
+    //     selectedVal[3] > 9 ? selectedVal[3] : `0${selectedVal[3]}`;
+    //   selectedVal[4] =
+    //     selectedVal[4] > 9 ? selectedVal[4] : `0${selectedVal[4]}`;
+    //   // console.log(selectedVal)
+    //   this.leaveOrCome
+    //     ? (this.comeDate = `${selectedVal
+    //         .slice(0, -2)
+    //         .join("-")} ${selectedVal.slice(3, 5).join(":")}`)
+    //     : (this.leaveDate = `${selectedVal
+    //         .slice(0, -2)
+    //         .join("-")} ${selectedVal.slice(3, 5).join(":")}`);
+    //   this.leaveOrCome
+    //     ? (this.comeTimestamp = selectedTime)
+    //     : (this.leaveTimestamp = selectedTime);
+    //
+    //   if (utils.isEmptyAddStrAddObj(this.comeTimestamp)) {
+    //     this.data.objprop.leaveDate = this.leaveTimestamp.getTime();
+    //   } else {
+    //     this.data.objprop.comeDate = this.comeTimestamp.getTime();
+    //     this.data.objprop.leaveDate = this.leaveTimestamp.getTime();
+    //   }
+    //   this.dateTimePicker = null;
+    // },
+    // cancelHandle(e) {
+    //   this.dateTimePicker = null;
+    // },
+
+    // fileChange(e) {
+    //   let self = this;
+    //   let file = document.getElementsByName("file")[0].files[0];
+    //   // let mFile = e.target.files[0];
+    //   // let mFileArray = [];
+    //   utils.toFileBase64(file).then(base64 => {
+    //     self.uploadFile = base64;
+    //     self.mFile = e.target.files;
+    //   });
+    // },
+
+    /** 联系人 **/
+    readContactss() {
+      utils.openContacts();
+    },
+    readContactsCallback(res) {
+      if (utils.isIos()) {
+        let JSONDataJson = JSON.parse(res);
+        this.addVisitorDataModel.vistorName = JSONDataJson.userName;
+        this.addVisitorDataModel.vistorPhone = JSONDataJson.userPhone;
+      } else {
+        this.addVisitorDataModel.vistorName = res.userName;
+        this.addVisitorDataModel.vistorPhone = res.userPhone;
+      }
+    },
+
+    validateHandler(result) {
+      this.validity = result.validity;
+      this.valid = result.valid;
+    },
+    submitHandler(e) {
+      e.preventDefault();
+      this.isSummit = true;
+    },
+
+    goToVisitorIndex() {
+      if (isBack) {
+        this.$router.back();
+      } else {
+        this.$router.replace({ path: "/ma-hu-index/visitor-index" });
+      }
+    },
+    submit() {
+      let self = this,
+        nowDate = new Date();
+      setTimeout(() => {
+        if (this.isSummit) {
+          let visitorData = {},
+            url = "",
+            message = "";
+
+          if (this.isEditVisitor) {
+            visitorData = {
+              visitorID: self.addVisitorDataModel.vistorID,
+              carNumber: self.addVisitorDataModel.carNumber
+            };
+            url = "/modify";
+            message = "激活";
+          } else {
+            visitorData = {
+              vistorName: self.addVisitorDataModel.vistorName,
+              identityCard: self.addVisitorDataModel.identityCard,
+              vistorSex: self.addVisitorDataModel.vistorSex,
+              vistorPhone: self.addVisitorDataModel.vistorPhone,
+              carNumber: self.addVisitorDataModel.carNumber,
+              domicileID: self.comnunitiesObj.domicileID
+            };
+            url = "/add";
+            message = "增加";
+          }
+          visitorData.startTime = nowDate.getTime();
+          visitorData.endTime = nowDate.getTime() + 24 * 60 * 60 * 1000;
+
+          self.$post("entry", url, visitorData).then(res => {
+            self.isSummit = false;
+            //   localStorage.setItem("inAndOutChange", "add");
+            self.$createDialog(
+                {
+                  type: "confirm",
+                  title: message + "访客成功！",
+                  confirmBtn: {
+                    text: "分享到微信"
+                  },
+                  cancelBtn: {
+                    text: "取消"
+                  },
+                  onConfirm: () => {
+                    self.useVInfoShare(visitorData.visitorID?visitorData.visitorID:res.data, message + "成功！");
+                  },
+                  onCancel: () => {
+                    self.goToVisitorIndex();
+                  }
+                },
+                h => {
+                  return [
+                    h(
+                      "div",
+                      {
+                        class: {
+                          "pwd-content": true
+                        },
+                        slot: "content"
+                      },
+                      [
+
+                        h(
+                          "div",
+                          {
+                            class: {
+                              "in-and-out-index-details": true
+                            }
+                          },
+                          [h("span", "您要马上分享二维码给微信来访客人吗？")]
+                        )
+                      ]
+                    )
+                  ];
+                }
+              )
+              .show();
+          });
+        } else {
+          self
+            .$createToast({
+              type: "warn",
+              txt: "请正确填写必填项"
+            })
+            .show();
+        }
+      }, 300);
+    },
+
+    // 分享二维码
+    useVInfoShare(vistorID, toastStr) {
+      let self = this;
+      self.$post("entry", "/sharedlink", { visitorID: vistorID }).then(res => {
+        utils
+          .shareUrl(
+            res.data.link,
+            "来访二维码",
+            "使用你的来访二维码进行来访确认"
+          )
+          .then(res => {
+            // self.$createToast({
+            //   type: "correct",
+            //   txt: toastStr
+            // }).show();
+            setTimeout(() => {
+              self.goToVisitorIndex();
+            }, 250);
+          });
+        //   .catch(err => {
+        //   this.$createToast({
+        //     type: "warn",
+        //     txt: err
+        //   }).show();
+        // });
+      });
+    }
+  },
 };
 </script>
 
+<style lang="stylus" scoped>
 
-<style lang="stylus">
 .addVisitorInfo-wrapper {
   top: 0;
   left: 0;
@@ -761,29 +806,51 @@ export default {
   .form-wrapper {
     flex: 1;
     overflow: auto;
-  }
-  .footer-btn{
-      flex: 0 0 22.4vw;
-      height:22.4vw;
-      display:flex;
-      justify-content center;
-      align-items:center;
-      .sub-btn{
-          width:84vw;
-          height:11.733vw;
-          background:linear-gradient(270deg,rgba(48,202,255,1) 0%,rgba(51,136,255,1) 100%);
-          border-radius:1.067vw;
-          display:flex;
-          justify-content: center;
-          align-items:center;
-          font-size:4.267vw;
-          color:#fff;
-          font-weight: bold;
-          &:active{
-              background:linear-gradient(270deg,darken(rgba(48,202,255,1), 20%) 0%,darken(rgba(51,136,255,1), 20%) 100%);
-          }
+
+    >>>.cube-form-item_invalid {
+      input {
+        padding-right: 1.333vw !important;
       }
+
+      .cube-validator-msg {
+        flex: 0 0 6.667vw;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 13.333vw;
+
+        &::before {
+          padding-left: 0;
+        }
+      }
+    }
   }
+
+  .footer-btn {
+    flex: 0 0 22.4vw;
+    height: 22.4vw;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    .sub-btn {
+      width: 84vw;
+      height: 11.733vw;
+      background: linear-gradient(135deg, rgba(48, 202, 255, 1) 0%, rgba(51, 136, 255, 1) 100%);
+      border-radius: 1.067vw;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 4.267vw;
+      color: #fff;
+      padding: 0;
+
+      &:active {
+        background: linear-gradient(135deg, darken(rgba(48, 202, 255, 1), 20%) 0%, darken(rgba(51, 136, 255, 1), 20%) 100%);
+      }
+    }
+  }
+
   .tips {
     margin: 0 5.33vw;
     padding: 2vw 0;
@@ -799,17 +866,18 @@ export default {
     flex-direction: row;
     align-items: center;
     justify-content: space-between;
-    padding: 0 0 0 8vw;
-    height: 13.333vw;
+    padding: 0 0 0 4vw;
+    height: 14.667vw;
     background: #fff;
-    &:after{
-        border-color:#eee;
 
+    &:after {
+      border-color: #eee;
     }
 
     &.visitor-time {
       .label-wrapper {
         flex: 0 0 21.333vw;
+        font-size: 4.6666vw;
       }
 
       .input-wrapper {
@@ -817,18 +885,26 @@ export default {
           font-size: 3.467vw;
         }
       }
+
+      .lager {
+        .text {
+          font-size: 4.533vw;
+          text-align: right;
+          line-height: 5.333vw;
+        }
+      }
     }
 
-    .label-wrapper{
-      height: 13.333vw;
+    .label-wrapper {
+      height: 14.667vw;
       display: flex;
       align-items: center;
       flex: 0 0 26.667vw;
-      font-size: 4.267vw;
+      font-size: 4.6666vw;
       color: #333;
 
       i {
-        flex: 0 0 4vw;
+        flex: 0 0 3.5vw;
         margin-left: -4vw;
         color: #FF0000;
         font-style: normal;
@@ -836,31 +912,45 @@ export default {
     }
 
     .input-wrapper {
-      height: 13.333vw;
+      height: 14.667vw;
       display: flex;
       flex: 1;
       align-items: center;
       justify-content: flex-end;
-      .car-number-container{
-          margin-right:8vw;
-          margin-left: 8vw;
-          .cube-input{
-              &::after{
-                  display:block;
-              }
-              input{
-                  padding: 0 2.667vw;
-              }
+      font-size: 4.6666vw;
+
+      .car-number-container {
+        margin-right: 8vw;
+        margin-left: 2vw;
+
+        .cube-input {
+          &::after {
+            display: block;
           }
+
+          input {
+            padding: 0 2.667vw;
+          }
+        }
+      }
+
+      .text-box {
+        display: flex;
+        align-items: flex-end;
+        justify-content: flex-end;
+        width: 62vw;
       }
 
       .text {
         flex: 1;
-        font-size: 4.267vw;
-        display: flex;
-        align-items: center;
-        justify-content: flex-end;
+        font-size: 4.533vw;
         padding-right: 8vw;
+        text-align: end;
+        overflow: hidden;
+        /* 文本不会换行 */
+        white-space: nowrap;
+        /* 当文本溢出包含元素时，以省略号表示超出的文本 */
+        text-overflow: ellipsis;
       }
 
       .cube-input {
@@ -878,7 +968,6 @@ export default {
           &::placeholder {
             color: #aaa;
             font-size: 4.267vw;
-    
           }
         }
       }
@@ -892,7 +981,7 @@ export default {
           height: 10.667vw;
           width: 16vw;
           display: flex;
-          border-radius: 1.6vw;
+          border-radius: 1vw;
           background: #ddd;
           margin-right: 1.6vw;
           justify-content: center;
@@ -901,7 +990,7 @@ export default {
           font-size: 4.267vw;
 
           &.active {
-            background: linear-gradient(360deg, rgba(72, 204, 253, 1) 0%, rgba(51, 136, 255, 1) 100%);
+            background: linear-gradient(135deg, rgba(72, 204, 253, 1) 0%, rgba(51, 136, 255, 1) 100%);
             color: #fff;
           }
         }
@@ -947,19 +1036,18 @@ export default {
     }
 
     // input {
-    //   width: 50%;
-    //   border: none;
-    //   text-align: right;
-    //   font-size: 3.47vw;
-    //   color: #4D4D4D;
+    // width: 50%;
+    // border: none;
+    // text-align: right;
+    // font-size: 3.47vw;
+    // color: #4D4D4D;
 
-    //   &::placeholder {
-    //     font-weight: normal;
-    //     text-align: right;
-    //     font-size: 3.47vw;
-    //   }
+    // &::placeholder {
+    // font-weight: normal;
+    // text-align: right;
+    // font-size: 3.47vw;
     // }
-
+    // }
     .sex-line {
       width: calc(16vw + 16vw + 2.67vw);
       display: flex;
@@ -1039,58 +1127,23 @@ export default {
       }
     }
 
-    .come-date {
-      width: 41.333333vw;
-      padding: 1.333333vw;
-      box-sizing: border-box;
-      background: rgba(237, 238, 240, 1);
-      border-radius: 1.33vw;
-      display: flex;
-      flex-direction: row;
-      font-weight: 500;
-      align-items: center;
-      justify-content: space-between;
-      text-align: left;
+    /* .upload-file {
+              background: url('../../assets/inAndOut/add.png') no-repeat;
+              width: 13.33vw;
+              height: 13.33vw;
+              background-position: center;
+              border: 1px solid #f0f0f0;
+              overflow: hidden;
+              background-color: rgba(237, 238, 240, 1);
+              border-radius: 1.33vw;
+            }
 
-      &::after {
-        content: '';
-        background: url('../../assets/inAndOut/carlendar.png') no-repeat;
-        display: inline-block;
-        background-position: center;
-        width: 3.73vw;
-        height: 3.73vw;
-        background-size: cover;
-      }
-
-      &::placeholder {
-        text-align: left;
-      }
-    }
-
-    .comeDate-img {
-      width: 4.73vw;
-      height: 4.73vw;
-      position: absolute;
-      right: 6.6vw;
-    }
-
-    .upload-file {
-      background: url('../../assets/inAndOut/add.png') no-repeat;
-      width: 13.33vw;
-      height: 13.33vw;
-      background-position: center;
-      border: 1px solid #f0f0f0;
-      overflow: hidden;
-      background-color: rgba(237, 238, 240, 1);
-      border-radius: 1.33vw;
-    }
-
-    .hasUploadFile {
-      display: flex;
-      flex-direction: row;
-      justify-content: space-around;
-      align-items: flex-start;
-    }
+            .hasUploadFile {
+              display: flex;
+              flex-direction: row;
+              justify-content: space-around;
+              align-items: flex-start;
+            } */
   }
 
   .summit-btn {
@@ -1106,5 +1159,150 @@ export default {
     margin: 5.33vw 0;
     font-size: 3.73vw;
   }
+
+  >>>.cube-form-label {
+    font-size: 4.6666vw;
+  }
+
+  >>>.cube-form_standard {
+    position: absolute;
+    top: 11.6666vw;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    flex-flow: column;
+    display: flex;
+    flex: 1;
+  }
+
+  >>>.cube-form_standard .cube-form-item {
+    min-height: 14.6666vw;
+    padding: 0 0 0 4vw;
+
+    .input-wrapper {
+      height: 14.667vw;
+      display: flex;
+      flex: 1;
+      align-items: center;
+      justify-content: flex-end;
+      font-size: 4.6666vw;
+
+      .car-number-container {
+        margin-right: 8vw;
+        margin-left: 2vw;
+
+        .cube-input {
+          &::after {
+            display: block;
+          }
+
+          input {
+            padding: 0 2.667vw;
+          }
+        }
+      }
+    }
+  }
+
+  .car-number-box {
+    border-bottom: 1px solid #ebebeb90;
+  }
+
+  .car-number-box >>>.cube-form-label {
+    padding: 0 0 0 3.4vw;
+  }
+
+  .addVisitorInfo-context >>>.cube-form-group-content {
+    border-top: 1px solid #ebebeb90;
+  }
+
+  >>>.cube-form_standard .cube-input input {
+    font-size: 4.533vw;
+    padding: 4vw 8vw 4vw 0;
+    text-align: right !important;
+
+    &::before {
+    }
+
+    &::after {
+    }
+
+    &::placeholder {
+    }
+  }
+
+  >>>.cube-form-group .cube-form-group-content {
+    .footer-btn {
+      flex: 0 0 22.4vw;
+      height: 22.4vw;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+
+      .sub-btn {
+        width: 84vw;
+        height: 11.733vw;
+        background: linear-gradient(135deg, rgba(48, 202, 255, 1) 0%, rgba(51, 136, 255, 1) 100%);
+        border-radius: 1.067vw;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-size: 4.267vw;
+        color: #fff;
+        font-weight: bold;
+
+        &:active {
+          background: linear-gradient(135deg, darken(rgba(48, 202, 255, 1), 20%) 0%, darken(rgba(51, 136, 255, 1), 20%) 100%);
+        }
+      }
+    }
+  }
+
+  >>>.cube-form-label {
+    span {
+      color: #333;
+    }
+  }
+
+  .cube-form-label-noxingxing >>>.cube-form-label {
+    padding: 3.5vw;
+  }
+
+  /* todo 还未用到 */
+  .unRequired .cube-form-label:before {
+    content: '*';
+    display: block;
+    margin-top: 1px;
+    margin-right: 0.3em;
+    color: #fff;
+  }
 }
+</style>
+
+<style>
+  .in-and-out-index-details {
+    margin: 2vw 14.6666vw 0 15.6666vw;
+    font-size: 4.3333vw;
+    width: 53.33vw;
+    text-align: center;
+  }
+</style>
+
+
+<style lang="stylus" scoped>
+
+.note-book-btn
+ width 30vw
+ text-align right
+ padding-right 8vw
+
+.right-side
+ display flex
+ flex-flow row nowrap
+ justify-content space-between
+ align-items center
+.name-input
+ font-size smaller
+ padding-top .5vw
+ text-align center
 </style>

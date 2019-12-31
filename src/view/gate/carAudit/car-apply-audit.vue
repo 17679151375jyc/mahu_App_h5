@@ -19,19 +19,19 @@
         <p>{{item.title}}</p>
         <div v-if="item.title==='车辆车牌'"
              class="base-horizontal-layout-center-item-center">
-          <p class="form-item-placeholder-text">{{ formList.carNumber }}</p>
+          <p class="form-item-placeholder-text fonColor">{{ formList.carNumber }}</p>
         </div>
         <div v-else-if="item.title==='社区名称'"
              class="base-horizontal-layout-center-item-center">
-          <p class="form-item-placeholder-text">{{ formList.plotName }}</p>
+          <p class="form-item-placeholder-text fonColor">{{ formList.plotName }}</p>
         </div>
         <div v-else-if="item.title==='真实姓名'"
              class="base-horizontal-layout-center-item-center">
-          <p class="form-item-placeholder-text">{{ formList.carownName?formList.carownName:'(用户未填写)' }}</p>
+          <p class="form-item-placeholder-text fonColor">{{ formList.carownName?formList.carownName:'(用户未填写)' }}</p>
         </div>
         <div v-else-if="item.title==='联系电话'"
              class="base-horizontal-layout-center-item-center">
-          <p class="form-item-placeholder-text">{{ formList.carownPhone}}</p>
+          <p class="form-item-placeholder-text fonColor">{{ formList.carownPhone}}</p>
         </div>
       </div>
     </div>
@@ -191,7 +191,8 @@
         } else {
           this.dialog = this.$createDialog({
             type: 'confirm',
-            title: '是否通过该申请',
+            title: '提示',
+            content: '是否通过该申请',
             confirmBtn: {
               text: '确定',
               active: true,
@@ -221,13 +222,14 @@
           status: val
         }).then(({data, errorCode})=>{
           if(errorCode === 0){
-            const toast = this.$createToast({
+            self.$createToast({
               type: 'txt',
               txt: "审核成功"
-            });
-            toast.show();
-            self.$router.goBack(-1);
-            self.$emit('Refresh');
+            }).show();
+            setTimeout(()=>{
+              this.$router.goBack(-1);
+              self.$emit('Refresh');
+            }, 700)
           }
         })
       }
@@ -236,9 +238,6 @@
 </script>
 
 <style lang="stylus" scoped>
-  *{
-    font-family: '微软';
-  }
   .title {
     display: flex;
     justify-content: space-between;
@@ -332,5 +331,9 @@
   input:-ms-input-placeholder, textarea:-ms-input-placeholder {
     color: #B3B3B3;
     font-size: 3.2vw;
+  }
+  .fonColor{
+    color #666;
+    font-size 100%;
   }
 </style>

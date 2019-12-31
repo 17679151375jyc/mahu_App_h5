@@ -5,14 +5,17 @@
     <cube-scroll class="scroll-list-wrap">
       <div style="background-color: #fff;padding-bottom: 3.47vw;">
         <div>
-          <div class="title_top">
-            <div @click="plotClick">
-              {{ formTitle.noticeTitle }}
+          <div class="base-horizontal-layout-space-between-item-center title_top">
+            <div @click="plotClick" class="base-horizontal-layout-end-item-center huodong">
+              <div class="plot_css">{{ formTitle.noticeTitle }}</div>
               <img :src="require('@/assets/notification/icon_bottom.png')" />
             </div>
-            <div>{{ formTitle.addressName }}</div>
+            <div class="plotName_css">
+              <div class="plot_css">{{ formTitle.addressName }}</div>
+            </div>
           </div>
         </div>
+        
         <div class="div_p">
           <textarea
             class="div_p_divP"
@@ -20,14 +23,24 @@
             placeholder="请简要描述您提交的内容，我们将尽快跟进处理。（请控制在600字以内）"
             ref="textRef"
           ></textarea>
-          <div class="div_Img">
-            <div v-for="(item, index) in filePath" :key="index">
-              <span @click="delImg(index)">X</span>
-              <img @click="bigImg(index)" style='z-index: 1000' :src="item" />
+        </div>
+        <div class="div_Img">
+          <div class="box_div_css" v-for="(item, index) in filePath" :key="index">
+            <div class="div_click" @click="delImg(index)">
+              <img :src="require('@/assets/notification/cha.png')" class="img_css"/>
+            </div>
+            <div class="img_one_css" @click.stop="bigImg(index)">
+              <img  class="img_css_1" :src="item" />
             </div>
           </div>
-        </div>
+            <!-- <div v-for="(item, index) in filePath" :key="index" class="box_div_css">
+              <span @click="delImg(index)">X</span>
+              <div @click="bigImg(index)">
+                <img  style='z-index: 1000' :src="item" />
+              </div>
 
+            </div> -->
+        </div>
         <div class="botttom_but">
           <div class="but_one">
             <input
@@ -39,7 +52,7 @@
             <img :src="require('@/assets/notification/icon_updata.png')" />
             插入图片&nbsp;
             <span>{{ filePath.length }}</span>
-            <span>&nbsp;/&nbsp;3</span>
+            <span>/9</span>
           </div>
           <div class="but_two" @click="subit">提交</div>
         </div>
@@ -59,13 +72,9 @@ export default {
   components: { returnHead },
   data() {
     return {
+      butShow: true,
       filePath: [],
       classList: [], //通知分类
-      addreList: [
-        { text: "测试4", value: 4 },
-        { text: "测试5", value: 5 },
-        { text: "测试6", value: 6 }
-      ],
       formTitle: {
         addressName: null,
         plotId: null, //小区ID
@@ -93,23 +102,7 @@ export default {
       default: ""
     }
   },
-  computed: {},
-  watch: {
-    "formTitle.noticeContent": function(val, oldVal) {
-      let valLength = val.replace(/[\u0391-\uFFE5]/g, "val").length;
-      let oldValLength = oldVal
-        ? oldVal.replace(/[\u0391-\uFFE5]/g, "oldVal").length
-        : -1;
-      if (val) {
-        this.$refs.textRef.scrollTop = 0;
-        // this.$refs.textRef.style.height = `${this.$refs.textRef.scrollHeight-4}px`;
-        this.$refs.textRef.style.height = "50vw";
-        if (valLength < oldValLength) {
-        }
-      } else {
-        this.$refs.textRef.style.height = "auto";
-      }
-    }
+  computed: {
   },
   methods: {
     //查看图片
@@ -125,27 +118,42 @@ export default {
     },
     //提交
     subit() {
-      this.formTitle.pictureLink = null;
-      let text = this.filePath.join(",");
-      this.formTitle.pictureLink = text;
-      if (this.formTitle.noticeContent) {
-        this.$post(
-          "base",
-          "/FamilyJava/server/community/notice/post",
-          this.formTitle
-        ).then(res => {
-          const toast = this.$createToast({
-            type: "txt",
-            txt: "发布成功"
+      if(this.butShow){
+        this.butShow = false
+        this.formTitle.pictureLink = null;
+        let text = this.filePath.join(",");
+        this.formTitle.pictureLink = text;
+        if (this.formTitle.noticeContent) {
+          setTimeout(() => {
+            this.butShow = true
+          }, 2000);
+          this.$post(
+            "base",
+            "/FamilyJava/server/community/notice/post",
+            this.formTitle
+          ).then(res => {
+            const toast = this.$createToast({
+              type: "txt",
+              txt: "发布成功"
+            });
+            toast.show();
+            this.$router.goBack(-1);
+            this.$emit("Refresh");
           });
-          toast.show();
-          this.$router.goBack(-1);
-          this.$emit("Refresh");
-        });
-      } else {
+          setTimeout(()=>{            
+            this.butShow = true
+          }, 2000)
+        } else {
+          this.$createToast({
+            type: "txt",
+            txt: "请输入消息内容"
+          }).show();
+          self.isSummit = true;
+        }
+      }else{
         this.$createToast({
-          type: "txt",
-          txt: "请输入消息内容"
+          type: 'warn',
+          txt: "请勿重复点击"
         }).show();
       }
     },
@@ -218,7 +226,7 @@ export default {
     },
     //图片压缩
     fileChange(e) {
-      if (this.filePath.length < 3) {
+      if (this.filePath.length < 9) {
         let file = e.target.files[0];        
         if (file.type.split("/")[0] !== "image") {
           this.$createToast({
@@ -231,11 +239,15 @@ export default {
           console.log("开始上传");
           let compressFile = results.file
           this.updataFile({file, compressFile})
-        }).catch(err=> {
+        }).catch( (err)=> {
           this.updataFile({file, file})
-        }).always(()=> {
-          // 不管是成功失败，都会执行         
-        });              
+        })            
+      } else {
+        this.$createToast({
+          time: 1500,
+          type: "txt",
+          txt: "最多上传9张图片"
+        }).show();
       }
     }
   },
@@ -267,41 +279,36 @@ export default {
 };
 </script>
 <style scoped>
-* {
-  font-family: "微软";
-}
 .title_top {
-  height: 7.47vw;
-  margin: 0 5.53vw;
-  padding: 2.93vw 0;
-  width: calc(100% - 11.06vw);
+  height: 13.07vw;
+  line-height: 13.07vw;
+  width: 89.37vw;
+  background-color: #fff;
+  padding: 0 5.33vw;
 }
-.title_top div {
+.huodong{
   height: 7.47vw;
-  line-height: 7.47vw;
-  color: #666;
-  font-size: 3.73vw;
-  background-color: #f4f4f4;
+  background-color: #f5f5f5;
+  border-radius: 1.07vw;
+  padding: 0 1.07vw
+}
+.plotName_css{
+  height: 7.47vw;
   border-radius: 1.07vw;
   padding: 0 1.07vw;
 }
+.plot_css{
+  height: 5.33vw;
+  line-height: 5.33vw;
+  margin-top: 1.07vw;
+  color: #666;
+  font-weight: bold;
+  font-size: 3.73vw ;
+}
 .title_top div img {
-  float: right;
   width: 1.6vw;
   height: 1.07vw;
-  margin: 3.2vw 0;
-}
-.title_top div:nth-child(1) {
-  float: left;
-  width: 26.93vw;
-}
-.title_top div:nth-child(2) {
-  float: right;
-  width: 35.73vw;
-  background-color: #fff;
-  font-weight: bold;
-  font-size: 4vw;
-  text-align: right;
+  margin-left: 2.67vw
 }
 .div_p {
   width: 95%;
@@ -309,13 +316,11 @@ export default {
   background-color: #f4f4f4;
   margin: 0 auto;
   border-radius: 1.6vw;
-  overflow: hidden;
   margin-top: 2.67vw;
-  min-height: 90.33vw;
 }
 .div_p .div_p_divP {
   display: block;
-  height: auto;
+  height: 45.87vw;
   line-height: 5.33vw;
   width: 90%;
   margin: 0 auto;
@@ -323,45 +328,58 @@ export default {
   resize: none;
   text-align: left;
   font-size: 3.73vw;
-  line-height: 5.33vw;
-  color: #999;
+  color: #000;
   border: 0;
   background-color: transparent;
 }
-.div_p .div_Img {
-  width: 92%;
+textarea::-webkit-input-placeholder {
+   color: #ccc;
+   font-size: 3.73vw;
+  line-height: 5.33vw;
+}
+.div_Img {
+  width: 95%;
   margin: 0 auto;
   overflow: hidden;
   margin-top: 2.5vw;
 }
-.div_p div:empty:before {
-  content: attr(placeholder);
+.img_one_css{
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: 1px solid #eee;
+  box-sizing: border-box;
 }
-.div_p div:focus:before {
-  content: none;
+.img_css_1{
+  max-width: 100%;
+  max-height: 100%;
 }
-.div_p .div_Img img {
-  width: 85.87vw;
-  height: 48.27vw;
-}
-.div_p .div_Img div {
+.box_div_css{
+  width: 30vw;
+  height: 30vw;
   position: relative;
+  float: left;
+  margin-right: 1.5vw;
+  position: relative;
+  margin-top: 1vw;
 }
-.div_p .div_Img div span {
+.box_div_css .div_click{
   position: absolute;
-  background-color: rgba(0, 0, 0, 0.3);
-  color: #fff;
-  width: 20px;
-  height: 20px;
-  z-index: 1000;
+  width: 5vw;
+  height: 5vw;
+  top: -1vw;
+  right: -1vw;
   border-radius: 50%;
-  right: 5px;
-  top: 0;
-  line-height: 20px;
-  text-align: center;
+  background-color: #ccc;
 }
-.div_p div img:nth-last-child() {
-  margin-bottom: 2.67vw;
+.img_css{
+  width: 100%;
+  height: 100%;
+}
+.box_div_css:last-child{
+  margin-right: 0;
 }
 .botttom_but {
   height: 12.8vw;
@@ -371,7 +389,7 @@ export default {
   margin-bottom: 15vw;
 }
 .but_one {
-  width: 30vw;
+  width: 50vw;
   float: left;
   height: 12.8vw;
   line-height: 12.8vw;

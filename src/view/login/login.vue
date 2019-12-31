@@ -21,7 +21,7 @@
         placeholder="，密码"
         v-model="password">
       </input>
-      
+
       <div style="width: 100%;height: 12.277777vw;background-color: #3388FF" @click="login">登录</div>
     </div>-->
   </div>
@@ -52,7 +52,7 @@ export default {
           loginInfo = res.data.loginInfo;
           self.$store.dispatch("setUserID", loginInfo.userid);
           self.$store.dispatch("setUserToken", loginInfo.token);
-          // self.$router.push('/ma-hu-index');
+           self.$router.replace('/ma-hu-index');
           // window.location.href = window.location.origin+window.location.pathname+"#/ma-hu-index";
           window.location.reload();
         });

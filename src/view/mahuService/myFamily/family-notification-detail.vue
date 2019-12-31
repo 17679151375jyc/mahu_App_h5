@@ -9,13 +9,19 @@
         <h2 style='font-size: 4.8vw;font-weight: bold;'>{{ list.title }}</h2>
     </div> -->
     
-    <cube-scroll class="cube-scroll-wrapper">
+      <div class="box_css">
         <div v-html='info.noticeContent' class='cont_css' ref='cont_css'></div> 
-        <div class="divImg_css">
-          <img  @click="bigImg(index)" v-if='item' class="img_css" :src="item" v-for="(item, index) in info.pictureLink" :key='index' > 
+        <!-- <div class="divImg_css"> -->
+         <!-- <img  @click="bigImg(index)" v-if='item' class="img_css" :src="item" v-for="(item, index) in info.pictureLink" :key='index' >-->
+         <div v-if="info.pictureLink[0]" class="box_css_div">
+          <div @click="bigImg(index)" class="box_img_css" v-for="(item, index) in info.pictureLink" :key='index'>
+            <img class="img_css" :src="item" >
+          </div>
+         </div>
+          <div ref='date' class='dates'>{{ info.postDate }}</div>
+
+        <!-- </div> -->
         </div>
-        <div ref='date' class='dates'>{{ info.postDate }}</div>
-    </cube-scroll>
   </div>
 </template>
 
@@ -100,34 +106,46 @@
 </script>
 
 <style lang="stylus" scoped>
+.wrapper-white{
+  display: flex;
+  flex-flow: column;
+}
+.box_css{
+  width: 100%;
+  overflow-y: auto;
+  flex: 1;
+}
 .cont_css{
   width: 85.87vw;
   margin: 0 auto;
   line-height: 6vw;
   font-size: 3.73vw;
 }
-.cube-scroll-wrapper{
-  max-height: 88.5%;
-}
-.cont_css <<< p{
-  color: red;
-  background-color: yellow;
-}
 .divImg_css{
   width: 90%;
   margin: 0 auto;
 }
+.box_css_div{
+  width: 93%;
+  margin: 2vw auto;
+  overflow hidden
+}
+.box_img_css{
+  width: 30vw;
+  height: 30vw;
+  float left
+  border: 0.27vw solid #fff;
+}
 .img_css{
-  width: 100%;
-  height: 48.27vw;
-  margin:1.07vw auto;
+  width 100%;
+  height 100%
 }
 .dates{
-  width: 92.87vw;
+  width: 96vw;
   margin: 0 auto;
   text-align: right;
   font-size:3.73vw;
   color: #999;
-  margin: 5vw 0 3vw 0;
+  margin: 3vw 0;
 }
 </style>

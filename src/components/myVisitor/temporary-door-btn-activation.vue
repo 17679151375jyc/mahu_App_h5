@@ -3,51 +3,62 @@
 <!--@File  : temporary-door-btn-activation.vue-->
 
 <template>
-  <div class="temporary-door-btn-activation"
-       :class="['base-horizontal-layout-center-item-center']"
-       :style="activation"
-       @click="activationOnClick"
-       @touchstart="activationOnClickTouch"
-       @touchend="activationOnClickTouchEnd">
-    <p class="base-text-details-normal-white">激活密码</p>
+  <div
+    class="temporary-door-btn-activation"
+    :class="['base-horizontal-layout-center-item-center']"
+    :style="activation"
+    @click="activationOnClick"
+    @touchstart="addActiveCls"
+    @touchend="removeActiveCls"
+  >
+    <span>激活密码</span>
   </div>
 </template>
 
 <script>
-  export default {
-    name: "temporary-door-btn-activation",
-    props: {
-      domicileNumber: {
-        type: String,
-        default: ""
-      }
+import { addClass, removeClass } from "_libs/dom";
+export default {
+  name: "temporary-door-btn-activation",
+  props: {
+    domicileNumber: {
+      type: String,
+      default: ""
+    }
+  },
+  data() {
+    return {
+      activation: {}
+    };
+  },
+  created() {},
+  methods: {
+    activationOnClick() {
+      this.$emit("activationOnClick", { domicileNumber: this.domicileNumber });
     },
-    data() {
-      return {
-        activation: {}
-      }
+    addActiveCls(e) {
+      addClass(e.currentTarget, "active");
     },
-    created() {
-    },
-    methods: {
-      activationOnClick() {
-        this.$emit('activationOnClick', {domicileNumber: this.domicileNumber});
-      },
-      activationOnClickTouch() {
-        this.activation = {background: "linear-gradient(to bottom, #3388FF, #30C9FF)"};
-      },
-      activationOnClickTouchEnd() {
-        this.activation = {background: "linear-gradient(to bottom, #30C9FF, #3388FF)"};
-      },
+    removeActiveCls(e) {
+      removeClass(e.currentTarget, "active");
     }
   }
+};
 </script>
 
-<style scoped>
-  .temporary-door-btn-activation{
-    width: 16vw;
-    height: 8.5333vw;
-    background: linear-gradient(to bottom, #30C9FF, #3388FF);
-    border-radius: 1.0666vw;
+<style lang="stylus" scoped>
+.temporary-door-btn-activation {
+  width: 22vw;
+  height: 9.333vw;
+  border-radius: 0.533vw;
+  background: linear-gradient(135deg, rgba(72, 204, 253, 1) 0%, rgba(51, 136, 255, 1) 100%);
+
+  &.active {
+    background: linear-gradient(135deg, darken(rgba(72, 204, 253, 1), 20%) 0%, darken(rgba(51, 136, 255, 1), 20%) 100%);
   }
+
+  span {
+    color: #fff;
+    font-size: 4vw
+  }
+}
 </style>

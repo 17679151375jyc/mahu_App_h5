@@ -1,19 +1,14 @@
 <template>
   <div class="car-number">
-    <div class="label" @click="visible=true">
+    <div class="label" @click="showProvinceList">
       <span>{{province == 'other' ? '其它' : province}}</span>
       <i class="cubeic-pulldown"></i>
     </div>
     <cube-input class="input" v-model.trim="inputCarNumber" placeholder="车牌号码"></cube-input>
 
-    <div :class="['car-number-popup', visible ? 'cube-popup_mask' : '']" v-show="visible">
+    <!-- <div :class="['car-number-popup', visible ? 'cube-popup_mask' : '']" v-show="visible">
       <div class="cube-popup-mask" @click="visible=false"></div>
       <div class="car-number-content" v-show="visible">
-        <!-- <div class="handler border-bottom-1px">
-          <div class="left">取消</div>
-          <div class="title">请选择车牌前缀</div>
-          <div class="right" @click="visible=false">确定</div>
-        </div>-->
         <div class="items">
           <div
             :class="['item', item == province ? 'active' : '', ]"
@@ -23,11 +18,16 @@
           >{{item == 'other' ? "其它" : item}}</div>
         </div>
       </div>
-    </div>
+    </div>-->
   </div>
 </template>
 <script>
+import Vue from "vue";
+import Province from "./province.vue";
+import { Style, createAPI } from "cube-ui";
+createAPI(Vue, Province, ["click"], true);
 export default {
+  name: "CarNumber",
   props: {
     value: {
       type: String,
@@ -78,7 +78,8 @@ export default {
         "宁",
         "新",
         "other"
-      ]
+      ],
+      provincePopup: null
     };
   },
   watch: {
@@ -91,23 +92,25 @@ export default {
     },
     inputCarNumber(val) {
       console.log("inputCarNumber改变", val);
+      let res = '';
       if (this.province == "other") {
         let valArr = val.split("");
         if (this.provinceList.includes(valArr[0])) {
           this.province = valArr[0];
           this.inputCarNumber = val.toUpperCase();
         }
-        this.$emit("input", val.toUpperCase());
+        res = val.toUpperCase();
       } else {
         let valArr = val.split("");
         if (this.provinceList.includes(valArr[0])) {
           this.province = valArr[0];
           this.inputCarNumber = val.toUpperCase();
-          this.$emit("input", val.toUpperCase());
+          res = (valArr.length > 1) ? val.toUpperCase() : '';
         } else {
-          this.$emit("input", this.province + "" + val.toUpperCase());
+          res =  val ? (this.province + "" + val.toUpperCase()) : '';
         }
       }
+      this.$emit("input", res);
     },
     carNumber: {
       handler: function(val) {
@@ -117,13 +120,52 @@ export default {
         if (this.provinceList.includes(valArr[0])) {
           valArr.splice(0, 1);
         }
-        newVal = valArr.join("").toUpperCase();
-        this.inputCarNumber = newVal;
+        newVal = valArr
+          .join("")
+          .toUpperCase()
+          .replace(/[ ]|[-]/g,"");
+        let code = String.fromCharCode(8198)
+        newVal= newVal.replace(code,"");
+        // this.inputCarNumber = newVal.substr(0, 8);
+        this.$nextTick(() => {
+          this.inputCarNumber =
+            newVal.length > 8 ? newVal.substring(0, 8) : newVal;
+
+          //   if (this.province == "other") {
+          //     this.model.carNumber = this.inputCarNumber;
+          //   } else {
+          //     this.model.carNumber = this.inputCarNumber
+          //       ? this.province + this.inputCarNumber
+          //       : null;
+          //   }
+        });
       },
       immediate: true
     }
   },
+  mounted() {
+    //   this.provincePopup.$on('chooseProvince', (e) => {
+    //       this.chooseProvince(e)
+    //   })
+  },
   methods: {
+    /**
+     * 显示省选择列表
+     */
+    showProvinceList() {
+      // console.log(this.$createProvince())
+      this.$createProvince({
+        $props: {
+          province: this.province
+        },
+        $events: {
+          chooseProvince: e => {
+            this.chooseProvince(e);
+          }
+        }
+      }).show();
+      //   this.visible = true;
+    },
     /**
      * 选择省
      */
@@ -132,34 +174,37 @@ export default {
       if (this.province == "other") {
         this.$emit("input", this.inputCarNumber);
       } else {
-        this.$emit("input", this.province + this.inputCarNumber);
+        this.$emit("input", this.inputCarNumber ? (this.province + this.inputCarNumber) : '');
       }
-
-      this.visible = false;
+      //   this.visible = false;
     }
   }
 };
 </script>
 <style lang="stylus" scoped>
+@import '~@/stylus/mixin'
 .car-number {
   display: flex;
   height: 13.333vw;
   justify-content: flex-end;
 
   .label {
-    flex: 0 0 13.333vw;
+    flex: 0 0 16vw;
     display: flex;
     justify-content: center;
     align-items: center;
     font-size: 3.733vw;
+    border-radius: 0.267vw;
+    color: #333;
+    position: relative;
+    box-sizing: border-box;
+    border-1px(#bababa)
 
     span {
       font-weight: bold;
+      font-size:4.267vw;
     }
 
-    position: relative;
-    border: 1px solid #ddd;
-    box-sizing: border-box;
 
     &.active {
       background: #f4f4f4;
@@ -173,6 +218,11 @@ export default {
 
   >>>.cube-input {
     padding: 0 4vw;
+    input{
+        font-size:5.067vw;
+        padding: 0;
+        text-align: center;
+    }
   }
 
   >>>.cube-input::after {

@@ -17,7 +17,7 @@
       </div>
     </div>
 
-    <div style="margin-bottom: 3vw">
+    <div class="base-button-fixed-bottom">
       <button-main text="退出登录" @btnOnclick="logOut"></button-main>
     </div>
 
@@ -113,7 +113,7 @@
       });
     },
     methods: {
-      ...mapActions(['setIsShowMinePop','setUserID','setUserToken','setAreaTypesList','setIndexPageTabIndex']),
+      ...mapActions(['setIsShowMinePop','setUserID','setUserToken','setAreaTypesList','setIndexPageTabIndex', 'setAreaTypesList']),
       clickItem(item) {
         let self = this;
         switch (item.label) {
@@ -155,20 +155,35 @@
       },
 
       logOut() {
-        let self = this;
-        self.setAreaTypesList([]);
-        // self.setIsShowMinePop(false);
-        self.setIndexPageTabIndex(0);
-        setTimeout(() => {
-          const toast = self.$createToast({
-            type: 'correct',
-            txt: "退出成功"
-          });
-          setTimeout(() => {
-            utils.logout().then((e)=>{
-            })
-          },100)
-        },50)
+        this.$createDialog({
+          type: "confirm",
+          icon: "",
+          title: "退出",
+          content: "您确定要退出该账户吗？",
+          confirmBtn: {
+            text: "退出"
+          },
+          onConfirm: () => {
+            this.$createToast({
+              type: 'correct',
+              txt: "退出成功",
+              time: 1000,
+              onTimeout: () => {
+                // utils.logout().then((e)=>{
+                // })
+                utils.logout();
+              }
+            }).show();
+          }
+        }).show();
+
+
+      /*  this.setAreaTypesList([]);
+        setTimeout(()=>{
+          utils.logout().then((e)=>{
+          })
+        },1000)*/
+
 
 
         /*
@@ -224,5 +239,11 @@
     border-radius: 7.7333vw;
     color: #fff;
     font-size: 3.7333vw;
+  }
+</style>
+
+<style lang="stylus">
+  .cube-dialog-content-def P{
+    font-size: 4.2666vw;
   }
 </style>

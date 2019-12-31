@@ -24,7 +24,10 @@
             <p v-if="cityStr===''" style="font-size: 3.73vw;color: #45484D;margin-left: 2.67vw">请选择城区</p>
             <p v-else style="font-size: 3.73vw;color: #8A8F99;margin-left: 2.67vw">{{cityStr}}</p>
           </div>
-          <img :src="require('@/assets/icon/icon_more.png')" style="width: 5.33vw;height: 5.33vw" @click="chooseAddress">
+          <div @click="chooseAddress">
+            <img :src="require('@/assets/icon/icon_more.png')" style="width: 5.33vw;height: 5.33vw" >
+          </div>
+
         </div>
         <div style="padding: 0 8vw;margin-top: 4vw">
           <input class="address-management-change-input" v-model="address" placeholder=" 请填写详细地址"/>

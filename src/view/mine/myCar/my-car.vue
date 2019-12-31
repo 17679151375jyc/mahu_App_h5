@@ -38,8 +38,8 @@
           >
             <div class="info">
               <div class="status" v-if="listItem.status===1 || listItem.status===0">
-                  <img v-if="listItem.status===0" :src="require('./checking-icon.png')">
-                  <img v-if="listItem.status===1" :src="require('./pass-icon.png')">
+                <img v-if="listItem.status===0" :src="require('./checking-icon.png')" />
+                <img v-if="listItem.status===1" :src="require('./pass-icon.png')" />
               </div>
               <div class="icon">
                 <img :src="require('./plot-icon.png')" />
@@ -47,7 +47,7 @@
               <div class="name">{{listItem.plotName}}</div>
               <div class="handler">
                 <!-- <span class="pass" v-if="listItem.status===1">通过审核</span>
-                <span class="checking" v-if="listItem.status===0">未审核</span> -->
+                <span class="checking" v-if="listItem.status===0">未审核</span>-->
                 <div
                   class="resubmit"
                   v-if="listItem.status===2"
@@ -64,8 +64,6 @@
         </div>
       </div>
     </div>
-
-    
   </div>
 </template>
 
@@ -75,14 +73,13 @@ import returnHead from "_c/head/return-head";
 import buttonAddQuick from "_c/button/button-add-quick";
 import basePopup from "_c/popup/base-popup";
 import { mapState } from "vuex";
-
+import CarNumber from "_c/carNumber/carNumber";
 export default {
   name: "my-car",
-  components: { returnHead, buttonAddQuick, basePopup },
+  components: { CarNumber, returnHead, buttonAddQuick, basePopup },
   data() {
     return {
       carList: [],
-
       plotOptions: [],
       choosePlotName: "",
       choosePlotId: "",
@@ -105,13 +102,14 @@ export default {
   },
   computed: {
     ...mapState({
-      mFamilyPlotList: state => state.plot.familyPlotList
+      'mFamilyPlotList': state => state.plot.familyPlotList
     }),
     changeCarName: {
       get: function() {
         return this.carNumber;
       },
       set: function(val) {
+        console.log("set ChangeCarName");
         if (val) {
           this.carNumber = val.toUpperCase();
         }
@@ -119,7 +117,12 @@ export default {
     }
   },
   created() {
-    this.plotOptions = this.mFamilyPlotList;
+    this.mFamilyPlotList.forEach((item)=> {
+      console.log(item);
+      if(item.parkId) {
+        this.plotOptions.push(item)
+      }
+    });
     this.choosePlotName = this.plotOptions[0].text;
     this.choosePlotId = this.plotOptions[0].plotId;
   },
@@ -135,6 +138,7 @@ export default {
     },
 
     addCar(carName = "") {
+      this.carNumber = carName;
       console.log("点击了触发添加车辆");
       this.addCarDialog = this.$createDialog(
         {
@@ -164,8 +168,7 @@ export default {
         },
         h => {
           let cubeSelect = null;
-          if (this.plotOptions.length > 1) {
-            cubeSelect = h("cube-select", {
+          cubeSelect = h("cube-select", {
               class: {
                 "car-number-plot": true
               },
@@ -174,7 +177,6 @@ export default {
                 placeholder: "请选择社区",
                 options: this.plotOptions,
                 value: this.choosePlotId,
-                "v-if": this.plotOptions.length > 0
               },
               on: {
                 change: value => {
@@ -182,7 +184,6 @@ export default {
                 }
               }
             });
-          }
           return [
             h(
               "div",
@@ -196,21 +197,35 @@ export default {
               },
               [
                 cubeSelect,
-                h("cube-input", {
+                h(CarNumber, {
                   class: {
-                    "car-number-input": true
+                    "add-car-number": true
                   },
                   props: {
-                    placeholder: "请输入完整车辆号码",
                     value: this.changeCarName
                   },
                   on: {
                     input: $event => {
-                      console.log($event);
                       this.changeCarName = $event;
                     }
                   }
                 })
+                // h("cube-input", {
+                //   class: {
+                //     "car-number-input": true
+                //   },
+                //   props: {
+                //     placeholder: "请输入完整车辆号码",
+                //     value: this.changeCarName
+                //   },
+                //   on: {
+                //     input: $event => {
+                //       console.log($event);
+                //       this.changeCarName = $event;
+                //     }
+                //   }
+                // }
+                // )
               ]
             )
           ];
@@ -364,11 +379,11 @@ input:-ms-input-placeholder, textarea:-ms-input-placeholder {
 
     .handler {
       color: #3388FF;
-      font-size: 3.733vw;
+      font-size: 4.267vw;
       display: flex;
 
       span {
-        height: 8vw;
+        height: 13.333vw;
         padding: 0 2.667vw;
         display: flex;
         align-items: center;
@@ -400,18 +415,21 @@ input:-ms-input-placeholder, textarea:-ms-input-placeholder {
         position: relative;
         width: 100%;
         height: 13.333vw;
-        padding-top:  2.667vw;
+        padding-top: 2.667vw;
         display: flex;
         align-items: center;
-        .status{
-            position: absolute;
-            top: 0;
-            right: -10.133vw;
-            img{
-                display: block;
-                width: 12vw;
-            }
+
+        .status {
+          position: absolute;
+          top: 0;
+          right: -10.133vw;
+
+          img {
+            display: block;
+            width: 12vw;
+          }
         }
+
         .icon {
           flex: 0 0 5.333vw;
           margin-right: 2.133vw;
@@ -427,7 +445,7 @@ input:-ms-input-placeholder, textarea:-ms-input-placeholder {
           white-space: nowrap;
           flex: 1;
           color: #666;
-          font-size: 3.733vw;
+          font-size: 4.267vw;
         }
 
         .handler {
@@ -490,13 +508,13 @@ input:-ms-input-placeholder, textarea:-ms-input-placeholder {
         .c-title {
           flex: 0 0 18.667vw;
           color: #999999;
-          font-size:3.733vw;
+          font-size: 3.733vw;
         }
 
         .remark {
           flex: 1;
           color: #D72A25;
-          font-size:3.467vw;
+          font-size: 3.467vw;
           line-height: 4.267vw;
         }
       }
@@ -529,12 +547,44 @@ input:-ms-input-placeholder, textarea:-ms-input-placeholder {
   width: 72vw;
   border-radius: 0;
 
+  .cube-select-text {
+    font-size: 5.067vw;
+    color: #333;
+  }
+
   >>>.cube-select-placeholder {
     color: #999;
   }
 
   >>>&:after {
     display: none;
+  }
+}
+
+.add-car-number {
+  margin-top: 2.667vw;
+  width: 72vw;
+  height: 12.8vw !important;
+
+  .label {
+    background: #f8f8f8;
+  }
+
+  .input {
+    flex: 1 !important;
+    background: #f8f8f8;
+
+    input {
+      &::placeholder {
+        color: #999;
+      }
+    }
+  }
+
+  .car-number-content {
+    width: 100vw;
+    left: -8vw !important;
+    bottom: -57vw !important;
   }
 }
 </style>

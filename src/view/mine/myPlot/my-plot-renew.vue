@@ -18,14 +18,18 @@
         </div>
 
         <div style="padding: 0 8vw;background-color: white">
-          <div class="base-horizontal-layout-space-between-item-center plot-renew-details-item">
-            <p class="base-text-details-large-black-666">服务时长</p>
+          <div class="base-horizontal-layout-space-between-item-center plot-renew-details-item" @click="choosePackagesPayPicker">
+            <p class="base-text-details-large-black-666">服务套餐</p>
             <div class="base-horizontal-layout-space-between-item-center"
-                 style="width:21.3333vw;height: 6.9333vw;padding:0 2.0666vw;background-color: #EDEEF0;border-radius: 1.3333vw"
-                 @click="choosePackagesPayPicker">
-              <p class="base-text-details-large-gray">{{packagesTimeStr}}</p>
+                 style="width:28.3333vw;height: 10.9333vw;padding:0 2.0666vw;background-color: #EDEEF0;border-radius: 1.3333vw">
+              <p class="base-text-details-large-gray plot-renew-details-item-text">{{packagesName}}</p>
               <img :src="require('@/assets/notification/icon_bottom.png')">
             </div>
+          </div>
+
+          <div class="base-horizontal-layout-space-between-item-center plot-renew-details-item" @click="choosePackagesPayPicker">
+            <p class="base-text-details-large-black-666">服务时长</p>
+            <p class="base-text-details-large-gray plot-renew-details-item-text"><span style="color: #3388FF;font-weight: bold">{{packagesMonth}}</span>个月</p>
           </div>
 
           <div class="base-horizontal-layout-space-between-item-center plot-renew-details-item" style="margin-top: 2.4vw">
@@ -82,6 +86,8 @@
 
         packagesTimeList: [],
         packagesTimeStr: '',
+        packagesName: '',
+        packagesMonth: 0,
         choosePackagesTime: 0,
         applyPackagePrice: 0,
         sumPrice: 0,
@@ -98,12 +104,14 @@
       self.$post("plotPackage", "/getList", {
       }).then((res) => {
         let plotPackageList = [...res.data];
-        self.sumPrice = plotPackageList[0].price.toFixed(2);
+        self.sumPrice = plotPackageList[0].discount ? plotPackageList[0].discount.toFixed(2) : plotPackageList[0].price.toFixed(2);
         plotPackageList.forEach((item)=>{
           item.text = item.name.replace("套餐","");
           item.value = item.name.replace("套餐","");
         });
         self.packagesTimeStr = plotPackageList[0].value;
+        self.packagesName = plotPackageList[0].name;
+        self.packagesMonth = plotPackageList[0].month;
         self.packagesTimeList = plotPackageList;
       });
     },
@@ -122,6 +130,8 @@
       },
       packagesPaySelectHandle(selectedVal, selectedIndex, selectedText) {
         this.packagesTimeStr = this.packagesTimeList[selectedIndex].value;
+        this.packagesName = this.packagesTimeList[selectedIndex].name;
+        this.packagesMonth = this.packagesTimeList[selectedIndex].month;
         this.choosePackagesTime = selectedIndex;
         this.applyPackagePrice =
           this.packagesTimeList[selectedIndex].discount ?
@@ -199,7 +209,8 @@
       },
 
       onWxPay(res) {
-        if (res) {
+        console.log("onWxPay121212",res);
+        if (res || res==0) {
           console.log("onWxPay",res);
           this.isPaySuccess = (res=="0" ? true : false);
           if(res=="-2") {
@@ -274,5 +285,14 @@
   .plot-renew-details-item {
     border-top: 1px solid #eeeeee;
     padding: 4vw 0;
+  }
+  .plot-renew-details-item-text {
+    height: 5vw;
+    line-height: 5vw;
+    overflow: hidden;
+    /* 文本不会换行 */
+    white-space: nowrap;
+    /* 当文本溢出包含元素时，以省略号表示超出的文本 */
+    text-overflow: ellipsis;
   }
 </style>

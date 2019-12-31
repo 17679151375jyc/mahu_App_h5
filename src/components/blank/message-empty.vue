@@ -7,7 +7,7 @@
        :class="['base-horizontal-layout-center-item-center']"
        style="margin: 4vw">
     <p class="base-text-details-large-white"
-       style="width: 44.8vw;white-space:normal;text-align: center;line-height: 5vw">暂无消息</p>
+       style="width: 44.8vw;white-space:normal;text-align: center;line-height: 5vw;font-size:4.8vw;">暂无消息</p>
   </div>
 </template>
 

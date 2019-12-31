@@ -7,10 +7,10 @@
        :class="{'base-vertical-layout-center-item-center':true,'base-background-img-green':true}"
        :style="buttonAddStyle"
        @click="btnOnClick">
-    <p class="base-text-details-large-white">{{text}}</p>
+    <p class="base-text-details-large-white but_text_line_height">{{text}}</p>
     <img v-if="iconType==='visitor'" :src="require('./icon-add-visitor.png')" class="base-icon-large-style" style="margin-top: 4vw">
     <img v-else-if="iconType==='car'" :src="require('./icon-add-car.png')" class="base-icon-large-style" style="margin-top: 4vw">
-    <p class="base-text-details-normal-white" style="margin-top: 1.0666vw">快速添加</p>
+    <p class="base-text-details-normal-white but_text_line_height" style="margin-top: 1.0666vw">快速添加</p>
   </div>
 </template>
 

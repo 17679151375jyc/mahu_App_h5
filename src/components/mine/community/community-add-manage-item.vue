@@ -6,7 +6,7 @@
   <div>
     <div class="community-add-manage-item-box"
          :class="{'base-horizontal-layout-space-between':true,
-         'community-add-manage-item-box-blue':applyCommunityInfo.status===0,
+         'community-add-manage-item-box-blue':(applyCommunityInfo.status===0||applyCommunityInfo.status===1),
          'community-add-manage-item-box-red':applyCommunityInfo.status===2,
          'community-add-manage-item-box-gray':applyCommunityInfo.status===3}"
          @click="applyCommunityOnClick">
@@ -18,14 +18,15 @@
               class="base-text-details-large-white" style="margin-left: 1.0666vw">{{applyCommunityInfo.phone}}</span></p>
           </div>
         </div>
-        <div class="base-vertical-layout-general" style="margin: 5.3333vw 0 0 11.2vw">
-          <p class="base-text-details-large-white">{{getApplyPlotName(applyCommunityInfo.plotName)}}</p>
-          <p class="base-text-details-large-white" style="margin-top: 2vw">{{getApplyTime(applyCommunityInfo.applyTime)}}</p>
-          <p class="base-text-details-large-white" style="margin-top: 2vw">{{getServerUserName(applyCommunityInfo.serverUserName)}}</p>
+        <div class="base-vertical-layout-general" style="margin: 4.3333vw 0 0 8.2vw;width: 60vw">
+          <p class="base-text-details-large-white base-text-overflow" style="line-height: 4.3vw"
+          >{{getApplyPlotName(applyCommunityInfo.plotName+applyCommunityInfo.buildingName+applyCommunityInfo.doorName)}}</p>
+          <p class="base-text-details-large-white" style="margin-top: 2vw;line-height: 4.3vw;height: 4.3vw">{{getApplyTime(applyCommunityInfo.applyTime)}}</p>
+          <p class="base-text-details-large-white but_text_line_height" style="margin-top: 2vw">{{getServerUserName(applyCommunityInfo.serverUserName)}}</p>
         </div>
       </div>
       <div class="base-vertical-layout-space-between-item-end" style="margin-right: 4.5333vw">
-        <p class="base-text-details-large-white" style="margin-top: 2.9333vw">{{getApplyStatus(applyCommunityInfo.status)}}</p>
+        <p class="base-text-details-large-white" style="margin-top: 2.9333vw;line-height: 4.3vw;height: 4.3vw">{{getApplyStatus(applyCommunityInfo.status)}}</p>
         <!--<div :class="{'base-vertical-layout-center-item-center':applyCommunityInfo.status===0,-->
              <!--'base-vertical-layout-space-between-item-center':applyCommunityInfo.status===2}"-->
              <!--style="height: 18.6666vw;margin-bottom: 2.4vw">-->
@@ -71,7 +72,7 @@
         return "申请社区："+name;
       },
       getApplyTime(time) {
-        return "申请时间："+utils.timetrans(time, 'yymmdd');
+        return "申请时间："+utils.timetrans(time, 'yymmddhhmmss');
       },
       getServerUserName(name) {
         return name ? ("审核人："+name) : "";
@@ -81,6 +82,9 @@
         switch (status) {
           case 0:
             str = "未审核";
+            break;
+          case 1:
+            str = "已审核";
             break;
           case 2:
             str = "不通过";

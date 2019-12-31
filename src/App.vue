@@ -1,6 +1,6 @@
 <template>
   <div>
-
+    
     <div  id="app">
       <!--<transition :name="aheadBack">-->
         <router-view></router-view>
@@ -11,11 +11,18 @@
           <div v-for="(item,index) in tabBarImgArr" :key="index" class="tab-item" @click="switchTo(item.toPath)">
             <img :src="item.toPath === $route.path ? item.selected : item.normal" :alt="item.value">
             <span :class="{on: item.toPath === $route.path}">{{item.value}}</span>
+            <div v-if="item.key==='service' &&
+            mIsUntreated &&
+            (mIsUntreated.gatePlotApplyIsUntreated || mIsUntreated.gateCarApplyIsUntreated || mIsUntreated.gateFeedbackIsUntreated ||
+            mIsUntreated.notificationIsUntreated)"
+                 style="position: relative;bottom: 12vw;left: 2vw;width: 0;height: 0">
+              <div style="width: 10px;height: 10px;border-radius: 6px;background-color: red"></div>
+            </div>
           </div>
         </div>
-        <div v-if="mIsShowOtherPop" style="position: fixed;bottom: 0;left: 0;z-index: 12">
-          <div style="width: 100vw;height: 14.933vw;background-color: rgba(37, 38, 45, 0.4)"></div>
-        </div>
+        <!--<div v-if="mIsShowOtherPop" style="position: fixed;bottom: 0;left: 0;z-index: 12">-->
+          <!--<div style="width: 100vw;height: 14.933vw;background-color: rgba(37, 38, 45, 0.4)"></div>-->
+        <!--</div>-->
       </div>
     </div>
 
@@ -31,7 +38,7 @@
                 @closePoppup="closePoppup">
       <!--没有回车的纯文字-->
       <div v-if="popType === 'callSecure'" class="base-vertical-layout-center-item-center">
-        <p class="popup-text" style="width: 53.33vw">{{popPlainText}}</p>
+        <p class="popup-text" style="width: 53.33vw">{{popPlainText }}</p>
       </div>
       <!--故障警报弹窗-->
       <div v-if="popType==='alarmProcessingExigency' || popType==='alarmProcessing'" class="base-vertical-layout-center-item-center">
@@ -39,6 +46,22 @@
         <div class="popup-text" style="width: 53.33vw">
           <p>{{popPlainText}}</p>
           <p>{{popPlainText2}}</p>
+        </div>
+      </div>
+      <!--访客通知-->
+      <div v-if="popType === 'visitor'" class="base-vertical-layout-center-item-center">
+        <div class="popup-text" style="font-size: 4.8vw;width: 53.33vw" v-html="popPlainText"></div>
+        <!--<p class="popup-text" style="font-size: 4.8vw;width: 53.33vw">{{popPlainText}}</p>-->
+        <div  @click="lookPic(visitorSrc)">
+          <img v-if="visitorSrc" :src="visitorSrc" style="width: 74.6666vw;height: 53.3333vw;margin-top: 4.5333vw">
+        </div>
+
+      </div>
+      <!--微信访客通知-->
+      <div v-if="popType === 'wxVisitor'" class="base-vertical-layout-center-item-center">
+        <div>
+          <p class="popup-text" style="font-size: 4.2666vw">微信访客 <span style="color: #3388FF">{{popPlainText1}}</span> 申请来访</p>
+          <p class="popup-text" style="margin-top: 2.4vw;font-size: 4.2666vw">{{popPlainText2}}</p>
         </div>
       </div>
     </base-popup>
@@ -87,9 +110,17 @@
         closeIconStyle: {},
         // 弹窗参数
         popPlainText: '',
+        popPlainText1: '',
         popPlainText2: '',
         newAlertNumber: '',
         areaNumber: '',
+        visitorSrc: '',//访客通知图片
+        visitorSrcList: '',//访客通知数组
+        tempVisitorNumber: '',//访客通知。。。
+        triggeringTime: '',//访客通知。。。
+        openStatus: '',//访客通知。。。
+        wxVisitorListInfo: {},//微信访客
+        wxVisitorNumber: '',//微信访客Number
 
         tabBarImgArr:[ //图片切换
           // {
@@ -105,6 +136,7 @@
             selected: require('@/assets/tab/icon_home_color.png')
           },
           {
+            key: 'service',
             value: '服务',
             toPath: '/service-index',
             normal: require('@/assets/tab/icon_service_gray.png'),
@@ -136,7 +168,6 @@
     },
     created() {
       let self = this;
-
       /*** 清除标签 ***/
       self.setIsShowOtherPop(false);
       self.setIsShowMinePop(false);
@@ -169,7 +200,7 @@
       console.log("screenWidth",window.screen.width);
       console.log("screenHeight",window.screen.height);
       // document.documentElement.clientHeight,//默认屏幕高度
-      console.log("App");
+      // console.log("App");
 
       // window.eventBus.$on('registerOnBackPressCallback',function(){
       //   console.log("111");}
@@ -186,66 +217,58 @@
 
         'mUserNickName': state => state.user.userNickName,
 
-        'mIsShowDoorListGatePop': state => state.layout.isShowDoorListGatePop
+        'mIsShowDoorListGatePop': state => state.layout.isShowDoorListGatePop,
+        'mShowVisitorPopList': state => state.layout.showVisitorPopList,
+
+        'mIsPlotBlankDomicile': state => state.plot.isPlotBlankDomicile,
+
+        'mIsUntreated': state => state.layout.isUntreated,
+        'mIndexPageTabKey': state => state.layout.indexPageTabKey,
+
+        'mAreaTypesList': state => state.user.areaTypesList,
+        'mUserPlotList': state => state.user.userPlotList,
       })
     },
     watch: {
-      //监听路由变化
+      //监听路由变化,
       $route(to, from) {
+        if(to.path==='/login'){
+          //这个只是钩子，阻止不了后续动作
+          return;
+        }
         this.setAppPath(to.path);
-        if (to.path==="/my-home" || to.path==="/inAndOut" || to.path==="/service" || to.path==="/mine" ||
-          to.path==="/ma-hu-index" || to.path==="/service-index") {
-          console.log("to.path",to.path)
+        // if (to.path==="/my-home" || to.path==="/inAndOut" || to.path==="/service" || to.path==="/mine" ||
+        //   to.path==="/ma-hu-index" || to.path==="/service-index") {
+        //   console.log("to.path",to.path)
+        if (to.path==="/mine" || to.path==="/ma-hu-index" || to.path==="/service-index") {
+          console.log("to.path",to.path);
           this.isIndexPage = true;
+          this.getVisitorIndexList();
         } else {
           this.isIndexPage = false;
         }
+        // if(to.path==="/ma-hu-index") {
+        //   this.getCommonInfos();//todo 分开为点击和第一次加载
+        // }
         console.log("App.Vue",this.mAppPath);
       },
 
-      mUserInfo() {
+      /** 检查全部未读未处理 **/
+      mIndexPageTabKey() {
         let self = this;
-        if(self.mUserInfo===null || self.mUserInfo===undefined)
-        {
-          const toast = this.$createToast({
-            type: 'warn',
-            txt: "初始化 没有userInfo"
-          });
-          toast.show();
-        } else {
-          if(self.mUserInfo.infos===null || self.mUserInfo.infos===undefined)
-          {
-            const toast = this.$createToast({
-              type: 'warn',
-              txt: "初始化 没有userInfo.infos"
-            });
-            toast.show();
-          } else {
-            utils.localStorage('userInfo', self.mUserInfo).then((r) => {
-              console.log("userInfo获取成功",r);
-
-            });
-          }
-        }
-        // self.$router.push('/my-home');//跳到主页
+        self.checkIsUntreated();
       }
-
-    //   $route(to, from) {
-    //     utils.registerOnBackPressCallback(function () {
-    //       setTimeout(() => {
-    //         self.$router.go(-1);
-    //       }, 50);
-    //     })
-    //   }
     },
     mounted() {
       let self = this;
       self.getCommonInfos();
+      // self.getVisitorIndexList(2);
+      // self.getVisitorIndexList(1);
     },
-
     methods: {
       ...mapActions(
-        ['setUserInfo',//用户所有信息
+        [
+          'setUserInfo',//用户所有信息
           'setUserID', 'setUserToken',//用户ID、用户token
           'setUserNickName', 'setUserRealName', 'setUserHeadPortrait', 'setUserPhone', 'setUserIdCard',//用户基础信息
           'setUserHasProprietor', 'setUserPlotList',//是否加入社区、社区列表
@@ -257,6 +280,9 @@
           'setMyHomeWork',//设置跳转到work页面的哪个tab
           'setPropertyManagePlotNumber','setPropertyManagePlotName',//备城门社区信息
           'setIsShowDoorListGatePop',//备城门门口机
+          'setShowVisitorPopList',//访客弹窗记录
+          'setIsPlotBlankDomicile',//有社区无住宅，情况如下：社区过期
+          'setIsUntreated',//app所有未处理消息红点提示
         ]
       ),
 
@@ -264,10 +290,11 @@
         this.$router.push(url);
       },
       toGoBack() {
+        console.log("click toGoBack："+window.history.length);
         let self = this;
         if(this.isIndexPage) {
           this.calculateDoubleClick++;
-          console.log(this.calculateDoubleClick);
+
           if(this.calculateDoubleClick===2) {
             utils.finishTop();
           } else {
@@ -276,9 +303,13 @@
               txt: "再按一次返回桌面"
             });
             toast.show();
+            setTimeout(()=>{
+              this.calculateDoubleClick = 0;
+            },3000)
           }
         } else {
           this.$router.goBack();
+
         }
       },
 
@@ -286,7 +317,7 @@
       getCommonInfos() {
         let self = this;
 
-        if (!utils.isIos) {
+        if (utils.isIos()) {
           // 注销ios推送
           self.$post("iosViop","",{
           }).then((res)=>{
@@ -296,22 +327,23 @@
         if(window.CYJ.token) {
           self.setUserToken(CYJ.token());
           // self.setUserSign(CYJ.userSign(mDate));
-          self.$router.push('/ma-hu-index');//跳到主页
-        }else {
-          if(!self.$store.state || !self.$store.state.user || !self.$store.state.user.userToken){
+        } else {
+          if(!self.$store.state || !self.$store.state.user || !self.$store.state.user.userToken) {
             self.myRouter('login');
-          }else{
-            self.$router.push('/ma-hu-index');//跳到主页
+            return;
+          } else {
+            if(this.$route.path==='/'){
+              //self.$router.replace('/ma-hu-index');//跳到主页
+            }
           }
         }
 
         self.$post("common","/infos", {
         }).then((res)=> {
-          let plotIDList = [];
+          let plotIDList = [], plotIDListStr = "";
           res.data.plots.forEach((item,index,arr) => {
             plotIDList.push(item.plotID);
             if(res.data.plots.length === index+1) {
-              let plotIDListStr = "";
               if(plotIDList.length>0) {
                 plotIDList.forEach((item,index) => {
                   if (index===0) {
@@ -321,19 +353,18 @@
                   }
                   if(plotIDList.length === index+1) {
                     plotIDListStr = plotIDListStr + "," + res.data.infos.pushPropertyManagePlot;
-                    console.log(plotIDListStr);
-                    utils.setPushAlias(res.data.infos.userPhone, plotIDListStr);//注册推送
+                    // utils.setPushAlias(res.data.infos.userPhone, plotIDListStr);//注册推送
                   }
                 });
               } else {
                 if(res.data.infos.pushPropertyManagePlot) {
-                  utils.setPushAlias(res.data.infos.userPhone, res.data.infos.pushPropertyManagePlot);//注册推送
-                } else {
-                  utils.setPushAlias(res.data.infos.userPhone, "");//注册推送
+                  plotIDListStr = res.data.infos.pushPropertyManagePlot;
+                  // utils.setPushAlias(res.data.infos.userPhone, plotIDListStr);//注册推送
                 }
               }
             }
           });
+          utils.setPushAlias(res.data.infos.userPhone, plotIDListStr);//注册推送
 
           self.setUserInfo(res.data);
           self.setUserNickName(res.data.infos.nickName);
@@ -343,74 +374,179 @@
           self.setUserIdCard(res.data.infos.idcard);
           // self.setUserHasProprietor(false);
           self.setUserHasProprietor(res.data.infos.hasProprietor);
-          let plots = [...res.data.plots];
-          self.setUserPlotList(plots);
-          let familyPlotList = [];
-          for (let count = 0; count < plots.length; count++) {
-            familyPlotList.push({
-              value: plots[count].plotID,text: plots[count].plotName,plotId: plots[count].plotID
-            })
-          }
-          self.setFamilyPlotList(familyPlotList);
-          let areaTypes = [];
-          res.data.infos.areaTypes.forEach((item)=>{
-            if(item === 0) {
-              areaTypes.push(0);
+          res.data.plots.forEach((item)=>{
+            let domicileList = [], domicileIndex = 0;
+            if(item.domicile) {
+              item.domicile.forEach((domicileItem,index,arr)=>{
+                domicileIndex = index;
+                if(domicileItem.effectiveStatus === 0) {
+                  domicileList.push(domicileItem);
+                }
+              });
             }
-            else if(item === 1){
-              areaTypes.push(1);
+            if(item.domicile.length === domicileIndex+1) {
+              item.domicile = [...domicileList];
             }
           });
-          if(res.data.infos.propertyManage===1) {
-            areaTypes.push(2);
+          let plots = [...res.data.plots];
+          self.setUserPlotList([...plots]);
+          self.setIsPlotBlankDomicile(true);
+          if(plots.length===1) {
+            if(!plots[0].domicile || (plots[0].domicile instanceof Array && plots[0].domicile.length===0)) {
+              self.setIsPlotBlankDomicile(false);
+            }
           }
-          self.setAreaTypesList(areaTypes);
+
+          let familyPlotList = [];
+          for(let count = 0; count < plots.length; count++) {
+            familyPlotList.push({
+              value: plots[count].plotID,
+              text: plots[count].plotName,
+              plotId: plots[count].plotID,
+              parkId: plots[count].parkId,
+              temporaryCount: plots[count].temporaryCount
+            })
+          }
+          self.setFamilyPlotList([...familyPlotList]);
+
+          let isAreaTypes = false;
+          let areaTypes = [],areaTypesIndex = 0;
+          res.data.infos.areaTypes.forEach((item,index)=>{
+            if(item === 0) {
+              areaTypes.push(0);
+            } else if(item === 1){
+              areaTypes.push(1);
+            }
+            areaTypesIndex = index;
+          });
+          if(!res.data.infos.areaTypes) {
+            if(res.data.infos.propertyManage &&res.data.infos.propertyManage===1) {
+              areaTypes.push(2);
+              isAreaTypes = true;
+            } else {
+              isAreaTypes = true;
+            }
+          } else {
+            if(res.data.infos.areaTypes &&
+              (res.data.infos.areaTypes.length === 0 || ((areaTypesIndex+1) === res.data.infos.areaTypes.length))) {
+              if(res.data.infos.propertyManage && res.data.infos.propertyManage===1) {
+                areaTypes.push(2);
+                isAreaTypes = true;
+              } else {
+                isAreaTypes = true;
+              }
+            }
+          }
 
           self.setPropertyManagePlotNumber(res.data.infos.propertyManagePlotNumber);
           self.setPropertyManagePlotName(res.data.infos.propertyManagePlotName);
 
-          utils.localStorage('userInfo', res.data).then((r) => {
-            // console.log("userInfo获取成功",r);
-            //
-            // self.$router.push('/my-home');//跳到主页
-          });
+          self.setAreaTypesList([...areaTypes]);
+          if(isAreaTypes) {
+            // self.setAreaTypesList([...areaTypes]);
+            utils.localStorage('userInfo', res.data).then((r) => {
+              // setTimeout(()=>{
+              if(self.$route.path!='/ma-hu-index'){
+                self.$router.push('/ma-hu-index');
+              }
+               //跳到主页 todo 千万不要动这行代码
+              // },2500)
+            });
+          }
 
-          // if(utils.isIos()) {
-          //   setTimeout(() => {
-          //     if(self.mUserInfo===null || self.mUserInfo===undefined)
-          //     {
-          //       const toast = this.$createToast({
-          //         type: 'warn',
-          //         txt: "初始化 没有userInfo"
-          //       });
-          //       toast.show();
-          //     } else {
-          //       if(self.mUserInfo.infos===null || self.mUserInfo.infos===undefined)
-          //       {
-          //         const toast = this.$createToast({
-          //           type: 'warn',
-          //           txt: "初始化 没有userInfo.infos"
-          //         });
-          //         toast.show();
-          //       } else {
-          //         utils.localStorage('userInfo', res.data).then((r) => {
-          //           console.log("userInfo获取成功",r);
-          //           self.$router.push('/my-home');//跳到主页
-          //         });
-          //       }
-          //     }
-          //   }, 300);
-          // } else {
-          //
-          // }
+          // self.$router.push('/ma-hu-index');//跳到主页 todo 千万不要动这行代码
+
+          /** 检查全部未读未处理 **/
+          self.checkIsUntreated();
+        });
+      },
+
+      /** 检查全部未读未处理 **/
+      checkIsUntreated() {
+        let self = this;
+        self.clearGateIsUntreated();
+        if(self.mIndexPageTabKey==="Family") {
+          self.getNoticeIsUntreated();
+        } else if(self.mIndexPageTabKey==="Gate") {
+          self.getGateIsUntreated();
+        }
+      },
+      clearGateIsUntreated() {
+        let self = this;
+        self.setIsUntreated({key: "gatePlotApplyIsUntreated", value: false});
+        self.setIsUntreated({key: "gateCarApplyIsUntreated", value: false});
+        self.setIsUntreated({key: "gateFeedbackIsUntreated", value: false});
+        self.setIsUntreated({key: "feedbackIsUntreated", value: false});
+        self.setIsUntreated({key: "notificationIsUntreated", value: false});
+      },
+      getGateIsUntreated() {
+        let self = this;
+        self.getGatePlotApplyIsUntreated();
+        self.getGateCarApplyIsUntreated();
+        self.getGateFeedbackIsUntreated();
+      },
+      getNoticeIsUntreated() {//todo
+        let self = this;
+        // self.$post("community", "/notice/getNotice", {
+        //   plotId: self.mUserPlotList[0].plotID,
+        //   nowTime: 0
+        // }).then(res => {
+        //   for(let item of res.data.list) {
+        //     item.isUnRead = true;//todo
+        //     self.setIsUntreated({key: "notificationIsUntreated", value: true});
+        //     break;
+        //   }
+        // });
+      },
+      getGatePlotApplyIsUntreated() {//检查社区审核未处理
+        let self = this;
+        let valList = "0,3".split(",");
+        self.$post("base", "/FamilyJava/client/community/allapply", {
+          plotId: self.mUserInfo.infos.propertyManagePlotNumber,
+          statusList: valList,
+          page: 1,
+          pageSize: 1
+        }).then((res) => {
+          if(res.data.list && res.data.list.length>0) {
+            self.setIsUntreated({key: "gatePlotApplyIsUntreated", value: true});
+          }
+        });
+      },
+      getGateCarApplyIsUntreated() {//检查车辆审核未处理
+        let self = this;
+        self.$post("base", "/family/server/userCar/getPageInfo", {
+          plotNumber: self.mUserInfo.infos.propertyManagePlotNumber,
+          statusList: "0".split(",")
+        }).then((res) => {
+          if(res.data.list && res.data.list.length>0) {
+            self.setIsUntreated({key: "gateCarApplyIsUntreated", value: true});
+          }
+        });
+      },
+      getGateFeedbackIsUntreated() {//检查用户反馈未处理 TODO 加查询条件
+        let self = this;
+        self.$post("gateCommunity", "/feedback/list", {
+          plotId: self.mUserInfo.infos.propertyManagePlotNumber,
+          page: 1,
+          pageSize: 1000
+        }).then(res => {
+          if(res.data.list && res.data.list.length>0) {
+            for(let item of res.data.list) {
+              if(item.auditStatus) {
+                self.setIsUntreated({key: "gateFeedbackIsUntreated", value: true});
+                break;
+              }
+            }
+          }
         });
       },
 
       getPush(res) {//接收推送消息
         console.log(res);
-        console.log(Object.prototype.toString.call(res));
+      //  console.log(Object.prototype.toString.call(res));
         let self = this;
         let mPushRes = Object.prototype.toString.call(res) === '[Object Object]' ? res : JSON.parse(res);
+        mPushRes.time = new Date().getTime();
         let subject = mPushRes.PUSH_SUBJECT;
         switch (subject) {
           case "POLICY_MESSAGE":
@@ -440,22 +576,51 @@
             break;
           case "VISITOR_MESSAGE":
             console.log("PUSH_SUBJECT","访客消息");
-            self.setPushInfo("访客消息： "+new Date());
-            if(mPushRes.notify && (mPushRes.notify==="开门通知" || mPushRes.notify==="访客出入记录")) {
-              const toast = self.$createToast({
-                type: "correct",
-                txt: mPushRes.message
-              });
-              toast.show();
-            }
+            setTimeout(()=>{
+              self.setPushInfo("访客消息： "+new Date());
+              if(mPushRes.notify && (mPushRes.notify==="开门通知" || mPushRes.notify==="访客出入记录" || mPushRes.notify==="wxCharVisitor")) {
+                console.log("1111111111>>>>>>>>>","PUSH_SUBJECT访客消息");
+                if(mPushRes.notify==="开门通知") {
+                  console.log("1111111111>>>>>>>>>","PUSH_SUBJECT开门通知");
+                  self.getVisitorIndexList();
+                } else if (mPushRes.notify==="wxCharVisitor") {
+                  console.log("1111111111>>>>>>>>>","PUSH_SUBJECT访客出入记录");
+                  self.getVisitorIndexList();
+                }
+                // self.$createToast({
+                //   type: "correct",
+                //   txt: mPushRes.message
+                // }).show();
+              }
+            },500)
+
             break;
           case "FEEDBACK_MESSAGE":
             console.log("PUSH_SUBJECT","用户反馈消息");
-            self.setPushInfo("用户反馈消息： "+new Date());
+            if(this.mAppPath==="/service-index/feedback") {
+              self.setPushInfo("用户反馈消息： "+ new Date());
+            } else {
+              utils.localStorage('plotId', mPushRes.mPushPlotId);
+              self.$router.push({ path: "/service-index/feedback"});
+            }
             break;
           case "FEEDBACK_MESSAGE_SERVICE":
             console.log("PUSH_SUBJECT","物管反馈消息");
-            self.setPushInfo("物管反馈消息： "+new Date());
+            if(this.mAppPath==="/service-index/feedback-apply-list") {
+              self.setPushInfo("物管反馈消息： "+ new Date());
+            } else {
+              utils.localStorage('plotId', mPushRes.mPushPlotId);
+              self.$router.push({ path: "/service-index/feedback-apply-list"});
+            }
+            break;
+          case "JOIN_COMMUNITY_SERVICE":
+            console.log("PUSH_SUBJECT","物管接收加入社区");
+            if(this.mAppPath==="/service-index/community-apply-list") {
+              self.setPushInfo("物管接收加入社区： "+ new Date());
+            } else {
+              // utils.localStorage('plotId', mPushRes.mPushPlotId);
+              self.$router.push({ path: "/service-index/community-apply-list"});
+            }
             break;
           case "JOIN_COMMUNITY":
             console.log("PUSH_SUBJECT","加入社区");
@@ -469,7 +634,7 @@
             break;
           case "CALL_OPEN_DOOR_SERVER":
             console.log("PUSH_SUBJECT","备城门开门");
-            self.setPushInfo("备城门开门： "+new Date());
+            self.setPushInfo(mPushRes);
             if(mPushRes.message) {
               const toast = self.$createToast({
                 type: "correct",
@@ -477,6 +642,14 @@
               });
               toast.show();
             }
+            break;
+          case "COUPON_GET_MESSAGE":
+            console.log("PUSH_SUBJECT","收到优惠券消息");
+            self.setPushInfo("收到优惠券消息： "+new Date());
+            break;
+          case "COUPON_USE_MESSAGE":
+            console.log("PUSH_SUBJECT","优惠券使用消息");
+            self.setPushInfo("优惠券使用消息： "+new Date());
             break;
           default:
             break;
@@ -551,11 +724,26 @@
             break;
           case "VISITOR_MESSAGE":
             console.log("PUSH_SUBJECT","访客消息");
-            if(this.mAppPath==="/ma-hu-index") {
-              self.setPushInfo("访客消息： "+ new Date());
-            } else {
-              utils.changePage("ma-hu-index");
-            }
+            setTimeout(()=>{
+              if(this.mAppPath==="/ma-hu-index") {
+                self.setPushInfo("访客消息： "+ new Date());
+              } else {
+                utils.changePage("ma-hu-index");
+              }
+              if(mPushRes.notify && (mPushRes.notify==="开门通知" || mPushRes.notify==="访客出入记录" || mPushRes.notify==="wxCharVisitor")) {
+                console.log("1111111111>>>>>>>>>","PUSH_SUBJECT访客消息");
+                if(mPushRes.notify==="开门通知") {
+                  console.log("1111111111>>>>>>>>>","PUSH_SUBJECT开门通知");
+                  // self.getVisitorIndexList(1);
+                  self.getVisitorIndexList();
+                } else if (mPushRes.notify==="wxCharVisitor") {
+                  console.log("1111111111>>>>>>>>>","PUSH_SUBJECT访客出入记录");
+                  // self.getVisitorIndexList(2);
+                  self.getVisitorIndexList();
+                }
+              }
+            },500);
+
             break;
           case "FEEDBACK_MESSAGE":
             console.log("PUSH_SUBJECT","用户反馈消息");
@@ -575,12 +763,22 @@
               self.$router.push({ path: "/service-index/feedback-apply-list"});
             }
             break;
+          case "JOIN_COMMUNITY_SERVICE":
+            console.log("PUSH_SUBJECT","物管接收加入社区");
+            if(this.mAppPath==="/service-index/community-apply-list") {
+              self.setPushInfo("物管接收加入社区： "+ new Date());
+            } else {
+              // utils.localStorage('plotId', mPushRes.mPushPlotId);
+              self.$router.push({ path: "/service-index/community-apply-list"});
+            }
+            break;
           case "JOIN_COMMUNITY":
             console.log("PUSH_SUBJECT","加入社区");
             if(this.mAppPath==="/mine/community-add-manage") {
               self.setPushInfo("加入社区： "+ new Date());
             } else {
-              self.$router.push({ path: "/mine/community-add-manage"});
+              self.$router.push({ path: "/mine/myPlot/community-add-manage"});
+              //self.$router.push({ path: "/mine/community-add-manage"});
             }
             break;
           case "DOMICILE_MESSAGE":
@@ -589,12 +787,401 @@
           case "CALL_OPEN_DOOR_SERVER":
             console.log("PUSH_SUBJECT","备城门开门");
             break;
+          case "COUPON_GET_MESSAGE":
+            console.log("PUSH_SUBJECT","收到优惠券消息");
+            self.$router.push({ path: "/mine/card-bag"});
+            break;
+          case "COUPON_USE_MESSAGE":
+            console.log("PUSH_SUBJECT","优惠券使用消息");
+            break;
           default:
             break;
         }
       },
 
-      switchTo(path){
+      /** 获取首页出入请求 **/
+      getVisitorIndexList() {
+        let self = this, isCreateDialog = false;
+        let isAdd = true, mIndex = -1;
+        self.$post("record", "/getMyVistorRecord", {}).then(res => {
+          if(res.data instanceof Array && res.data.length > 0) {
+            let visitorIndexListInfo = res.data[0];
+            if(self.mShowVisitorPopList instanceof Array && self.mShowVisitorPopList.length>0) {
+              self.mShowVisitorPopList.forEach((item,index)=>{
+                mIndex = index;
+                if(item === visitorIndexListInfo.tempVisitorNumber) {
+                  isAdd = false;
+                }
+              });
+            }
+            if((mIndex+1 === self.mShowVisitorPopList.length) && isAdd) {
+              isCreateDialog = true;
+              this.$createDialog(
+                {
+                  type: "confirm",
+                  title: "访客通知",
+                  showClose: true,
+                  confirmBtn: {
+                    text: visitorIndexListInfo.openStatus===0?'开门':
+                      visitorIndexListInfo.openStatus===1?'已开门':
+                        visitorIndexListInfo.openStatus===2?'开门中':'',
+                    active: true,
+                    disabled: false,
+                    href: 'javascript:;'
+                  },
+                  cancelBtn: {
+                    text: '忽略',
+                    active: false,
+                    disabled: false,
+                    href: 'javascript:;'
+                  },
+                  onConfirm: () => {
+                    this.openDoorPop(visitorIndexListInfo.openStatus, visitorIndexListInfo.tempVisitorNumber, visitorIndexListInfo.triggeringTime);
+                    isCreateDialog = false;//坑你多余
+                  },
+                  onCancel: () => {
+                    this.mOpenDoorPop(3, visitorIndexListInfo.tempVisitorNumber, visitorIndexListInfo.triggeringTime);
+                    isCreateDialog = false;//坑你多余
+                  }
+                },
+                h => {
+                  let imgSrc = "", visitorSrcList;
+                  if (visitorIndexListInfo.urlList) {
+                    imgSrc = visitorIndexListInfo.urlList.length>0 ? visitorIndexListInfo.urlList[0] : "";
+                    visitorSrcList = visitorIndexListInfo.urlList ? [...visitorIndexListInfo.urlList] : [];
+                  }
+                  return [
+                    h(
+                      "div",
+                      {
+                        class: {
+                          "pwd-content": true
+                        },
+                        slot: "content"
+                      },
+                      [
+                        h(
+                          "div",
+                          {
+                            class: {
+                              "in-and-out-index-title": true
+                            }
+                          },
+                          visitorIndexListInfo.plotName
+                          + visitorIndexListInfo.buildingName
+                          + (visitorIndexListInfo.doorName ? visitorIndexListInfo.doorName : "")
+                        ),
+                        h(
+                          "div",
+                          {
+                            on: {
+                              click: $event => {
+                                self.lookPic(visitorSrcList);
+                              }
+                            }
+                          },
+                          [
+                            h(
+                              "img",
+                              {
+                                class: {
+                                  "in-and-out-index-pop-img": true
+                                },
+                                style: {
+                                  display: imgSrc ? "block" : "none",
+
+                                },
+
+                                attrs: {
+                                  src: imgSrc
+                                },
+
+                              },
+                            )
+                          ]
+
+                        )
+
+                      ]
+                    )
+                  ];
+                }
+              ).show();
+              if(self.mShowVisitorPopList instanceof Array) {
+                self.setShowVisitorPopList(visitorIndexListInfo.tempVisitorNumber);
+              }
+            }
+          }
+          // 微信访客
+          if(!isCreateDialog) {
+            self.$post("entry", "/wxVisitor", {}).then(wxRes => {
+              if(wxRes.data instanceof Array && wxRes.data.length > 0) {
+                isAdd = true; mIndex = -1;
+                let wxVisitorListInfo = wxRes.data[0];
+                if(self.mShowVisitorPopList instanceof Array && self.mShowVisitorPopList.length>0) {
+                  self.mShowVisitorPopList.forEach((item,index)=>{
+                    mIndex = index;
+                    if(item === wxVisitorListInfo.visitorNumber) {
+                      isAdd = false;
+                    }
+                  });
+                }
+                if((mIndex+1 === self.mShowVisitorPopList.length) && isAdd) {
+                  isCreateDialog = true;
+                  this.$createDialog(
+                    {
+                      type: "confirm",
+                      title: "访客通知",
+                      showClose: true,
+                      confirmBtn: {
+                        text: '同意',
+                        active: true,
+                        disabled: false,
+                        href: 'javascript:;'
+                      },
+                      cancelBtn: {
+                        text: '拒绝',
+                        active: false,
+                        disabled: false,
+                        href: 'javascript:;'
+                      },
+                      onConfirm: () => {
+                        this.weCharVisitor(wxVisitorListInfo.visitorNumber, 1);
+                        isCreateDialog = false;//坑你多余
+                      },
+                      onCancel: () => {
+                        this.weCharVisitor(wxVisitorListInfo.visitorNumber, 2);
+                        isCreateDialog = false;//坑你多余
+                      }
+                    },
+                    h => {
+                      return [
+                        h(
+                          "div",
+                          {
+                            class: {
+                              "pwd-content": true
+                            },
+                            slot: "content"
+                          },
+                          [
+                            h(
+                              "div",
+                              {
+                                class: {
+                                  "in-and-out-index-title": true
+                                },
+                              },
+                              [
+                                h(
+                                  "span",
+                                  '微信访客 ',
+                                ),
+                                h(
+                                  "span",
+                                  {
+                                    style: {
+                                      color: '#3388FF'
+                                    },
+
+                                  },
+                                  wxVisitorListInfo.visitorName ? wxVisitorListInfo.visitorName : '匿名'
+                                ),
+                                h(
+                                  "span",
+                                  ' 申请来访',
+                                ),
+                              ]
+                            ),
+                            h(
+                              "div",
+                              {
+                                class: {
+                                  "in-and-out-index-title": true
+                                }
+                              },
+                              wxVisitorListInfo.plotName + wxVisitorListInfo.buildingName + (wxVisitorListInfo.doorName ? wxVisitorListInfo.doorName : "")
+                            )
+                          ]
+                        )
+                      ];
+                    }
+                  ).show();
+                  if(self.mShowVisitorPopList instanceof Array) {
+                    self.setShowVisitorPopList(wxVisitorListInfo.visitorNumber);
+                  }
+                }
+              }
+            });
+          }
+        });
+      },
+      // 开门按钮
+      openDoorPop(openStatus, tempVisitorNumber, triggeringTime) {
+        if (openStatus === 0) {
+          this.mOpenDoorPop(2, tempVisitorNumber, triggeringTime)
+        } else if (openStatus === 1) {
+          this.$createToast({
+            type: "correct",
+            txt: "已经开门了"
+          }).show();
+          this.isPopShow = false;
+        } else if (openStatus === 2) {
+          this.$createToast({
+            type: "correct",
+            txt: "开门中，请稍后..."
+          }).show();
+          this.isPopShow = false;
+        } else {
+          this.$createToast({
+            type: "correct",
+            txt: "状态出错，请刷新"
+          }).show();
+          this.isPopShow = false;
+        }
+      },
+      mOpenDoorPop(openStatus, tempVisitorNumber, triggeringTime) {//访客开门
+        let self = this;
+        self.$post("entry","/callOpenDoor",{
+          tempVisitorNumber: tempVisitorNumber,
+          triggeringTime: triggeringTime,
+          openStatus: openStatus,
+        }).then((res)=>{
+          console.log(self.openStatus+"门",res);
+          // self.setIsShowOtherPop(false);
+          // self.isPopShow = false;
+          self.setPushInfo("访客消息： "+new Date().getTime());//做一个假推送
+        });
+      },
+      lookPic(imgs) {
+        this.$createImagePreview({
+            imgs: imgs,
+            initialIndex: this.initialIndex,
+            loop: false,
+            onChange: (i) => {
+              this.initialIndex = i
+            },
+            onHide: () => {
+              console.log("$createImagePreview",'hide')
+            }
+          }
+          // , (h) => {
+          //   return h('div', {
+          //     class: {
+          //       'image-preview-custom-header': true
+          //     },
+          //     slot: 'header'
+          //   }, this.initialIndex + 1)
+          // }
+        ).show()
+      },
+      weCharVisitor(wxVisitorNumber,status) {//微信访客
+        let self = this;
+        self.$post("entry","/agree",{
+          visitorID: wxVisitorNumber,
+          status: status
+        }).then((res)=>{
+          self.setIsShowOtherPop(false);
+          self.isPopShow = false;
+          this.$createToast({
+            type: "correct",
+            txt: status===1 ? "已同意" : status===2 ? "已拒绝" : ""
+            // txt: res.errorCode+":"+e.index+":"+e.vistorID+"已同意"
+          }).show();
+          self.setPushInfo("访客消息： "+new Date());//做一个假推送
+        });
+      },
+
+
+
+
+
+      // 访客推送弹窗
+      // getVisitorIndexList(type) {
+        // let self = this;
+        // let isAdd = true, mIndex = -1;
+        // if(type===1) {
+        //   self.$post("record", "/getMyVistorRecord", {}).then(res => {
+        //     if(res.data.length>0) {
+        //       let visitorIndexListInfo = res.data[0];
+        //       console.log("<><><><><><><><><><><><><><>",visitorIndexListInfo)
+        //       if(self.mShowVisitorPopList instanceof Array && self.mShowVisitorPopList.length>0) {
+        //         self.mShowVisitorPopList.forEach((item,index)=>{
+        //           mIndex = index;
+        //           if(item === visitorIndexListInfo.tempVisitorNumber) {
+        //             isAdd = false;
+        //           }
+        //         });
+        //       }
+        //       if((mIndex+1 === self.mShowVisitorPopList.length) && isAdd) {
+        //         self.popTitle = "访客通知";
+        //         self.popType = "visitor";
+        //         self.isShowCloseIcon = true;
+        //         self.popPlainText = visitorIndexListInfo.plotName
+        //           + visitorIndexListInfo.buildingName
+        //           + (visitorIndexListInfo.doorName ? visitorIndexListInfo.doorName : "");
+        //         self.visitorSrcList = visitorIndexListInfo.urlList?[...visitorIndexListInfo.urlList]:[];
+        //         self.visitorSrc = visitorIndexListInfo.urlList.length>0?visitorIndexListInfo.urlList[0]:"";
+        //         self.popCancelText = "忽略";
+        //         self.popSureText = visitorIndexListInfo.openStatus===0?'开门':
+        //           visitorIndexListInfo.openStatus===1?'已开门':
+        //             visitorIndexListInfo.openStatus===2?'开门中':'';
+        //         self.tempVisitorNumber = visitorIndexListInfo.tempVisitorNumber;
+        //         self.triggeringTime = visitorIndexListInfo.triggeringTime;
+        //         self.openStatus = visitorIndexListInfo.openStatus;
+        //         self.isPopShow = true;
+        //
+        //         if(self.mShowVisitorPopList instanceof Array) {
+        //
+        //           self.setShowVisitorPopList(visitorIndexListInfo.tempVisitorNumber);
+        //         }
+        //
+        //         // self.setIsShowOtherPop(true);
+        //       }
+        //     }
+        //   });
+        // } else if (type===2){
+        //   if(!self.isPopShow) {
+        //     self.$post("entry", "/wxVisitor", {}).then(wxRes => {
+        //       if(wxRes.data.length>0) {
+        //         console.log("2222222222>>>>>>>>>333333333",wxRes);
+        //         isAdd = true; mIndex = -1;
+        //         self.wxVisitorListInfo = wxRes.data[0];
+        //         self.wxVisitorNumber = self.wxVisitorListInfo.visitorNumber;
+        //         console.log("2222222222>>>>>>>>>22",self.wxVisitorNumber);
+        //         if(self.mShowVisitorPopList instanceof Array && self.mShowVisitorPopList.length>0) {
+        //           self.mShowVisitorPopList.forEach((item,index)=>{
+        //             mIndex = index;
+        //             if(item === self.wxVisitorNumber) {
+        //               isAdd = false;
+        //             }
+        //           });
+        //         }
+        //         if((mIndex+1 === self.mShowVisitorPopList.length) && isAdd) {
+        //           self.popTitle = "访客通知";
+        //           self.popType = "wxVisitor";
+        //           self.isShowCloseIcon = true;
+        //           self.popPlainText1 = self.wxVisitorListInfo.visitorName ? self.wxVisitorListInfo.visitorName : '匿名';
+        //           self.popPlainText2 = self.wxVisitorListInfo.plotName + self.wxVisitorListInfo.buildingName
+        //             + (self.wxVisitorListInfo.doorName ? self.wxVisitorListInfo.doorName : "");
+        //           self.popCancelText = "拒绝";
+        //           self.popSureText = "同意";
+        //           self.isPopShow = true;
+        //           if(self.mShowVisitorPopList instanceof Array) {
+        //             self.setShowVisitorPopList(self.wxVisitorNumber);
+        //           }
+        //           // self.setIsShowOtherPop(true);
+        //         }
+        //       }
+        //     });
+        //   }
+        // }
+      // },
+
+      switchTo(path) {
+        if(path==="/ma-hu-index") {
+          this.getCommonInfos();
+        }
         this.$router.replace(path);
         // this.$router.push(path);
       },
@@ -619,9 +1206,9 @@
               self.areaNumber = item.areaNumber;
               self.isShowCloseIcon = false;//
               console.log("接口chenggong","/getNewAlert");
-              this.setIsShowOtherPop(true);
+              self.setIsShowOtherPop(true);
               // utils.maskTabShow().then((e)=>{
-                this.isPopShow = true;
+                self.isPopShow = true;
               // });
             });
           }
@@ -636,7 +1223,7 @@
               alertNumber: self.newAlertNumber
             }).then((res) => {
               self.setMyHomeWork({alertTab: 1, maintainTab: 0});
-              self.$router.push({ path: "/my-home/work", query: {areaNumber: self.areaNumber, tabChoose: 1}});
+              self.$router.push({ path: "/ma-hu-index/work", query: {areaNumber: self.areaNumber, tabChoose: 1}});
             });
             break;
           case 'alarmProcessing'://发生报警
@@ -644,7 +1231,7 @@
               alertNumber: self.newAlertNumber
             }).then((res) => {
               self.setMyHomeWork({alertTab: 1, maintainTab: 0});
-              self.$router.push({ path: "/my-home/work", query: {areaNumber: self.areaNumber, tabChoose: 1}});
+              self.$router.push({ path: "/ma-hu-index/work", query: {areaNumber: self.areaNumber, tabChoose: 1}});
             });
             break;
           case 'callSecure'://请求出警
@@ -652,13 +1239,19 @@
               alertNumber: self.newAlertNumber
             }).then((res) => {
               self.setMyHomeWork({alertTab: 1, maintainTab: 0});
-              self.$router.push({ path: "/my-home/work", query: {areaNumber: self.areaNumber, tabChoose: 1}});
+              self.$router.push({ path: "/ma-hu-index/work", query: {areaNumber: self.areaNumber, tabChoose: 1}});
             });
+            break;
+          case 'visitor'://访客忽略
+            // self.mOpenDoor(3);
+            break;
+          case 'wxVisitor'://微信拒绝
+            // self.weCharVisitor(2);
             break;
           default:
             break;
         }
-        self.setIsShowOtherPop(false);
+        // self.setIsShowOtherPop(false);
         // utils.maskTabHide().then((e)=>{
           self.isPopShow = false;
           self.clearPoppupParameter();
@@ -708,6 +1301,12 @@
               self.clearPoppupParameter();
             // });
             break;
+          case 'visitor'://访客开门
+            // self.openDoor(self.openStatus);
+            break;
+          case 'wxVisitor'://微信拒绝
+            // self.weCharVisitor(1);
+            break;
           default:
             break;
         }
@@ -729,7 +1328,62 @@
         this.popPlainText = "";
         this.popPlainText2 = "";
         this.areaNumber = "";
-      }
+      },
+
+      // // 开门按钮
+      // openDoor(openStatus) {
+      //   if (openStatus === 0) {
+      //     this.mOpenDoor(2)
+      //   } else if (openStatus === 1) {
+      //     this.$createToast({
+      //       type: "correct",
+      //       txt: "已经开门了"
+      //     }).show();
+      //     this.isPopShow = false;
+      //   } else if (openStatus === 2) {
+      //     this.$createToast({
+      //       type: "correct",
+      //       txt: "开门中，请稍后..."
+      //     }).show();
+      //     this.isPopShow = false;
+      //   } else {
+      //     this.$createToast({
+      //       type: "correct",
+      //       txt: "状态出错，请刷新"
+      //     }).show();
+      //     this.isPopShow = false;
+      //   }
+      // },
+      // mOpenDoor(openStatus) {//访客开门
+      //   let self = this;
+      //   self.$post("entry","/callOpenDoor",{
+      //     tempVisitorNumber: self.tempVisitorNumber,
+      //     triggeringTime: self.triggeringTime,
+      //     openStatus: openStatus,
+      //   }).then((res)=>{
+      //     console.log(self.openStatus+"门",res);
+      //     self.setIsShowOtherPop(false);
+      //     self.isPopShow = false;
+      //     self.setPushInfo("访客消息： "+new Date());//做一个假推送
+      //   });
+      // },
+      // weCharVisitor(status) {//微信访客
+      //   let self = this;
+      //   self.$post("entry","/agree",{
+      //     visitorID: self.wxVisitorNumber,
+      //     status: status
+      //   }).then((res)=>{
+      //     self.setIsShowOtherPop(false);
+      //     self.isPopShow = false;
+      //     const toast = this.$createToast({
+      //       type: "correct",
+      //       txt: status===1 ? "已同意" : status===2 ? "已取消" : ""
+      //       // txt: res.errorCode+":"+e.index+":"+e.vistorID+"已同意"
+      //     }).show();
+      //     self.visitorID = "";
+      //     self.setPushInfo("访客消息： "+new Date());//做一个假推送
+      //   });
+      // },
     }
   };
 </script>
@@ -798,6 +1452,19 @@
         color #3388FF
       &:active{
           background: #f4f4f4;}
+
+  .in-and-out-index-title {
+    margin: 0 15.6666vw;
+    font-size: 4.8vw;
+    width: 53.33vw;
+    text-align: center;
+  }
+  .in-and-out-index-pop-img {
+    margin: 0 4.3vw;
+    width: 74.6666vw;
+    height: 53.3333vw;
+    margin-top: 4.5333vw;
+  }
 
 </style>
 

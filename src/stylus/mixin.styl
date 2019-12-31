@@ -58,3 +58,28 @@
 //     height: 100%
 //     border-right: 1px solid $color
 
+border-1px($color)
+    position relative
+    &::after
+        box-sizing: border-box;
+        content:''
+        display:block
+        position: absolute;
+        top:0
+        left:0
+        right 0
+        bottom:0
+        border: 1PX solid $color
+        transform-origin: 0 0;
+        @media (-webkit-min-device-pixel-ratio: 2),  (min-resolution: 2dppx)
+            width: 200%;
+            height: 200%;
+            border-radius: 4PX;
+            transform: scale(0.5);
+        @media (-webkit-min-device-pixel-ratio: 3), (min-resolution: 3dppx)
+            width: 300%;
+            height: 300%;
+            border-radius: 6PX;
+            transform: scale(0.333);
+
+

@@ -12,6 +12,7 @@
         class="scroll-wrapper-text-style"
         :options="options"
         :data="packagesPayList">
+        <equipment-empty v-if="packagesPayList.length===0" context="您的账号内暂无套餐"></equipment-empty>
         <div v-for="(item,index) in packagesPayList" :key="index">
           <packages-pay-item class="packages-pay-box"
                              :packagesPayInfo="item"
@@ -40,7 +41,6 @@
       </div>
     </base-popup>
 
-    <equipment-empty v-if="packagesPayList.length===0" context="您的账号内暂无套餐"></equipment-empty>
 
     <transition name="slide-fade">
       <router-view></router-view>
