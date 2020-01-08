@@ -19,31 +19,31 @@
          'font-size: 5.2666vw;color: #ccc;'"
         @click="tabOnClick(index,item.label)"
       >{{item.label}}</p>
-    </div> -->
+    </div>-->
 
     <div class="base-horizontal-layout-general">
       <cube-tab-bar
         class="index-top-menu"
         v-model="selectedLabel"
         v-if="isBusiness || isFamily || isGate"
-        @click="tabOnClick">
-        <cube-tab
-          v-for="(item, index) in tabLabels"
-          :key="index"
-          :label="item.label">
-        </cube-tab>
+        @click="tabOnClick"
+      >
+        <cube-tab v-for="(item, index) in tabLabels" :key="index" :label="item.label"></cube-tab>
       </cube-tab-bar>
-      <div class="base-horizontal-layout-center-item-center"
-           style="flex: 1;background-color: white"
-           @click="openScan">
-        <img :src="require('@/assets/icon/icon-scan.png')" class="base-icon-large-style">
+      <div
+        class="base-horizontal-layout-center-item-center"
+        style="flex: 1;background-color: white"
+        @click="openScan"
+      >
+        <img :src="require('@/assets/icon/icon-scan.png')" class="base-icon-large-style" />
       </div>
     </div>
 
     <cube-tab-panels
       class="index-tab-panels"
       v-model="selectedLabel"
-      v-if="isBusiness || isFamily || isGate">
+      v-if="isBusiness || isFamily || isGate"
+    >
       <!-- 商企 -->
       <cube-tab-panel v-if="isBusiness" :label="'马虎商企'">
         <my-business-index
@@ -203,7 +203,7 @@
           </div>
         </cube-slide-item>
       </cube-slide>
-    </div> -->
+    </div>-->
 
     <!-- <div v-if="!isBusiness && !isFamily  && !isGate"
          class="scroll-wrapper-page-title"
@@ -246,27 +246,18 @@
       <!--:isOtherMsgChoose="isOtherMsgChoose"-->
       <!--@allChoose="otherMsgAllChoose"-->
       <!--没有回车的纯文字-->
-      <div
-        v-if="popType === 'plainText'"
-        class="base-vertical-layout-center-item-center"
-      >
+      <div v-if="popType === 'plainText'" class="base-vertical-layout-center-item-center">
         <p class="popup-text" style="width: 56.3333vw">{{ popPlainText }}</p>
       </div>
       <!--有回车的纯文字-->
-      <div
-        v-if="popType === 'plainTextEnter'"
-        class="base-vertical-layout-center-item-center"
-      >
+      <div v-if="popType === 'plainTextEnter'" class="base-vertical-layout-center-item-center">
         <div class="popup-text" style="width: 56.3333vw">
           <p>{{ popPlainText }}</p>
           <p>{{ popPlainText2 }}</p>
         </div>
       </div>
       <!--打电话界面-->
-      <div
-        v-if="popType === 'callEnter'"
-        class="base-vertical-layout-center-item-center"
-      >
+      <div v-if="popType === 'callEnter'" class="base-vertical-layout-center-item-center">
         <div class="popup-text" style="width: 56.3333vw">
           <p>{{ popPlainText }}</p>
           <a id="dial" href="#">{{ popPlainText2 }}</a>
@@ -299,13 +290,8 @@
       <!--</div>-->
       <!--故障申报-->
       <div v-if="popType === 'failureToDeclare'" style="margin-top: 6.4vw">
-        <div
-          class="base-horizontal-layout-space-between"
-          style="margin-top: 5.33vw"
-        >
-          <p style="font-size: 3.47vw;color: #333333;margin-top: 1.6vw">
-            标&emsp;&emsp;题
-          </p>
+        <div class="base-horizontal-layout-space-between" style="margin-top: 5.33vw">
+          <p style="font-size: 3.47vw;color: #333333;margin-top: 1.6vw">标&emsp;&emsp;题</p>
           <div
             v-if="alertMsgNumber === ''"
             style="width: 54.13vw;height: 7.67vw;background-color: #EDEEF0;margin-left: 3vw;border-radius: 1.33vw"
@@ -321,22 +307,12 @@
             />
             <!--@blur="lostInputFocus" @focus="getInputFocus"-->
           </div>
-          <div
-            v-else
-            style="width: 54.13vw;height: 7.67vw;margin-top: 1.6vw;margin-left: 3vw"
-          >
-            <p style="font-size: 3.2vw;color: #808080;margin: 0 2vw">
-              {{ alertMsgName }}
-            </p>
+          <div v-else style="width: 54.13vw;height: 7.67vw;margin-top: 1.6vw;margin-left: 3vw">
+            <p style="font-size: 3.2vw;color: #808080;margin: 0 2vw">{{ alertMsgName }}</p>
           </div>
         </div>
-        <div
-          class="base-horizontal-layout-space-between"
-          style="margin-top: 5.33vw"
-        >
-          <p style="font-size: 3.47vw;color: #333333;margin-top: 1.6vw">
-            问题描述
-          </p>
+        <div class="base-horizontal-layout-space-between" style="margin-top: 5.33vw">
+          <p style="font-size: 3.47vw;color: #333333;margin-top: 1.6vw">问题描述</p>
           <div
             v-if="alertMsgOrderTime === 0"
             style="width: 54.13vw;height: 18.67vw;background-color: #EDEEF0;margin-left: 3vw;border-radius: 1.33vw"
@@ -359,31 +335,19 @@
             <div style="margin: 1vw 2vw">
               <p
                 style="width: 50vw;height: 16vw;font-size: 3.2vw;color: #808080"
-              >
-                {{ alertMsgContent }}
-              </p>
+              >{{ alertMsgContent }}</p>
             </div>
           </div>
         </div>
-        <div
-          class="base-horizontal-layout-space-between"
-          style="margin-top: 5.33vw"
-        >
-          <p style="font-size: 3.47vw;color: #333333;margin-top: 1.6vw">
-            预约时间
-          </p>
+        <div class="base-horizontal-layout-space-between" style="margin-top: 5.33vw">
+          <p style="font-size: 3.47vw;color: #333333;margin-top: 1.6vw">预约时间</p>
           <div
             class="base-horizontal-layout-general-item-center"
             style="width: 54.13vw;height: 6.93vw;background-color: #EDEEF0;justify-content: flex-end;
                       box-sizing: border-box;padding: 0 1.33vw;border-radius: 1.33vw"
             @click="showDeclareDatePicker"
           >
-            <p
-              class="base-text-details-normal-gray-dark"
-              style="font-size: 3.47vw"
-            >
-              {{ nowTimeStr }}
-            </p>
+            <p class="base-text-details-normal-gray-dark" style="font-size: 3.47vw">{{ nowTimeStr }}</p>
             <img
               :src="require('@/assets/icon/icon_date.png')"
               style="width: 3.73vw;height: 3.73vw;margin-left: 1.87vw"
@@ -394,22 +358,13 @@
       <!--请求报警-->
       <div v-if="popType === 'alertRequest'" style>
         <!--margin-top: 6.4vw-->
-        <div
-          class="base-vertical-layout-center-item-center"
-          style="width: 100%"
-        >
+        <div class="base-vertical-layout-center-item-center" style="width: 100%">
           <p class="popup-text" style="width: 56.3333vw">{{ popPlainText }}</p>
         </div>
       </div>
       <!--故障警报弹窗-->
-      <div
-        v-if="popType === 'alarmProcessing'"
-        class="base-vertical-layout-center-item-center"
-      >
-        <img
-          :src="require('@/assets/icon/icon_alert.png')"
-          style="width: 8vw;height: 8vw"
-        />
+      <div v-if="popType === 'alarmProcessing'" class="base-vertical-layout-center-item-center">
+        <img :src="require('@/assets/icon/icon_alert.png')" style="width: 8vw;height: 8vw" />
         <div class="popup-text" style="width: 56.3333vw">
           <p>{{ popPlainText }}</p>
           <p>{{ popPlainText2 }}</p>
@@ -425,30 +380,18 @@
             style="margin-top: 4vw"
           >
             <div class="base-vertical-layout-general" style="width: 40vw">
-              <p class="base-text-details-normal-black-light">
-                {{ item.title }}
-              </p>
+              <p class="base-text-details-normal-black-light">{{ item.title }}</p>
               <p
                 class="base-text-details-normal-black-light"
                 style="color: #999999;margin-top: 1.33vw"
-              >
-                {{ item.location }}-{{ item.defenceArea }}
-              </p>
+              >{{ item.location }}-{{ item.defenceArea }}</p>
             </div>
-            <p
-              class="base-text-details-normal-gray-light"
-              style="color: #AAADB3"
-            >
-              {{ item.time }}
-            </p>
+            <p class="base-text-details-normal-gray-light" style="color: #AAADB3">{{ item.time }}</p>
           </div>
         </cube-scroll>
       </div>
       <!--过期提醒-->
-      <div
-        v-if="popType === 'pastDue'"
-        class="base-vertical-layout-center-item-center"
-      >
+      <div v-if="popType === 'pastDue'" class="base-vertical-layout-center-item-center">
         <div class="popup-text" style="width: 56.3333vw">
           <p>
             亲爱的用户，您的
@@ -669,7 +612,7 @@ export default {
       this.guanggao.push("@/assets/guanggao/guanggao-" + count + ".png");
     }
 
-    window.getQrcodeResult = this.getQrcodeResult;//二维码扫描回调
+    window.getQrcodeResult = this.getQrcodeResult; //二维码扫描回调
   },
   mounted() {},
   methods: {
@@ -732,21 +675,52 @@ export default {
     },
     getQrcodeResult(res) {
       let self = this;
-      if(res.indexOf("https://mahu.cyjaf.cn/othersHtml/scan.html") === -1) {
-        this.$createToast({
-          type: "warn",
-          txt: "二维码无效"
-        }).show();
-      } else {
-        let resObj = utils.urlParse(res);
-        if(resObj && resObj.type === "coupon" && resObj.id) {
-          self.$router.push({ path: "/coupon-index", query: {comUserCouponId: resObj.id}});
-        } else {
+      if (Object.prototype.toString.call(res) === "[object String]") {
+        if (res.indexOf("https://mahu.cyjaf.cn/othersHtml/scan.html") === -1) {
           this.$createToast({
             type: "warn",
             txt: "二维码无效"
           }).show();
+        } else {
+          let resObj = utils.urlParse(res);
+          if (resObj && resObj.type === "coupon" && resObj.id) {
+            self.$post("coupon", "/getById", {
+                id: resObj.id
+              },{
+                returnAll:true
+              }
+            ).then(res => {
+              if (res.errorCode === 0 && res.data) {
+                if(res.data.isEffective) {
+                  self.$router.push({
+                    path: "/coupon-index",
+                    query: { comUserCouponId: resObj.id }
+                  });
+                } else {
+                  self.$createToast({
+                    type: "warn",
+                    txt: "优惠券已失效",
+                  }).show();
+                }
+              } else {
+                self.$createToast({
+                  type: "warn",
+                  txt: "二维码无效",
+                }).show();
+              }
+            });
+          } else {
+            this.$createToast({
+              type: "warn",
+              txt: "二维码无效"
+            }).show();
+          }
         }
+      } else {
+        this.$createToast({
+          type: "warn",
+          txt: "二维码无效"
+        }).show();
       }
     },
 
@@ -801,23 +775,26 @@ export default {
       this.isPopShow = true;
       // });
     },
-    callAlertPersonnelOnClick(e) {
+    callAlertPersonnelOnClick({ phone, messageType }) {
       //消息中点击联系安保、联系维保
-      this.isCallShow = true;
-      this.phoneNumber = e.phone;
-      this.popTitle =
-        e.messageType === "报警"
-          ? "联系安保"
-          : e.messageType === "维保"
-          ? "联系维保"
-          : "";
-      this.popType = "callEnter";
-      this.popPlainText = "即将拨号";
-      this.popPlainText2 = e.phone;
-      this.setIsShowOtherPop(true);
-      // utils.maskTabShow().then((e)=>{
-      this.isPopShow = true;
-      // });
+      let title = null;
+      if (messageType === "报警") {
+        title = "联系安保";
+      } else if (messageType === "维保") {
+        title = "联系维保";
+      }
+      this.$createDialog({
+        type: "confirm",
+        title,
+        content: phone,
+        confirmBtn: {
+          text: "拨打电话",
+          href: `tel:${phone}`
+        },
+        cancelBtn: {
+          text: "取消"
+        }
+      }).show();
     },
     alertMsgMaintainOnClick(e) {
       //消息中点击申报维修
@@ -905,22 +882,76 @@ export default {
       this.isPopShow = true;
       // });
     },
-    closeMsgOnClick(e) {
+    closeMsgOnClick({ alertMsgNumber, messageType }) {
       //消息中点击关闭消息
-      this.alertMsgNumber = e.alertMsgNumber;
-      this.alertMsgType = e.messageType;
-      this.popTitle = "确认关闭";
-      this.popType = "plainTextEnter";
-      this.popPlainText = "您的评价对服务人员至关重要，";
-      this.popPlainText2 = "给服务人员一个好评吧！";
-      this.popCancelText = "继续关闭";
-      this.popSureText = "前往评价";
-      this.homeIndex = e.homeIndex;
-      this.alertMsgIndex = e.alertMsgIndex;
-      this.setIsShowOtherPop(true);
-      // utils.maskTabShow().then((e)=>{
-      this.isPopShow = true;
-      // });
+
+      this.$createDialog(
+        {
+          type: "confirm",
+          title: "确认关闭",
+
+          confirmBtn: {
+            text: "前往评价"
+          },
+          showClose: true,
+          onConfirm: () => {
+            utils.localStorage("myWordInfoNum", alertMsgNumber);
+            this.$router.push({
+              path: "/ma-hu-index/work/work-details",
+              query: { messageType }
+            });
+          },
+          onCancel: () => {
+            if (messageType === "报警" || messageType === "维保") {
+              this.$post(
+                messageType === "报警" ? "alertMessage" : "maintainMessage",
+                "/close",
+                {
+                  number: alertMsgNumber
+                }
+              ).then(() => {
+                this.$createToast({
+                  type: "correct",
+                  txt: "消息已关闭"
+                }).show();
+                // self.getMyHomeInfoList();
+                this.setPushInfo("报警消息： " + new Date());
+              });
+            }
+          },
+          cancelBtn: {
+            text: "继续关闭"
+          }
+        },
+        h => {
+          return h(
+            "div",
+            {
+              style: {
+                "text-align": "center"
+              },
+              slot: "content"
+            },
+            [
+              h("div", "您的评价对服务人员至关重要"),
+              h("div", "给服务人员一个好评吧!")
+            ]
+          );
+        }
+      ).show();
+
+      //   this.alertMsgNumber = e.alertMsgNumber;
+      //   this.alertMsgType = e.messageType;
+      //   this.popTitle = "确认关闭";
+      //   this.popType = "plainTextEnter";
+      //   this.popPlainText = "您的评价对服务人员至关重要，";
+      //   this.popPlainText2 = "给服务人员一个好评吧！";
+      //   this.popCancelText = "继续关闭";
+      //   this.popSureText = "前往评价";
+      //   this.homeIndex = e.homeIndex;
+      //   this.alertMsgIndex = e.alertMsgIndex;
+      //   this.setIsShowOtherPop(true);
+      //   this.isPopShow = true;
     },
 
     toMyHomeWork(e) {
@@ -1072,11 +1103,12 @@ export default {
                     }
                   )
                   .then(res => {
-                    const toast = this.$createToast({
-                      type: "correct",
-                      txt: "消息已关闭"
-                    });
-                    toast.show();
+                    self
+                      .$createToast({
+                        type: "correct",
+                        txt: "消息已关闭"
+                      })
+                      .show();
                     // self.getMyHomeInfoList();
                     self.setPushInfo("报警消息： " + new Date());
                   });
@@ -1167,11 +1199,12 @@ export default {
                   number: this.alertMsgNumber
                 })
                 .then(res => {
-                  const toast = this.$createToast({
-                    type: "correct",
-                    txt: "操作已成功"
-                  });
-                  toast.show();
+                  self
+                    .$createToast({
+                      type: "correct",
+                      txt: "操作已成功"
+                    })
+                    .show();
                   // self.getMyHomeInfoList();
                   self.setPushInfo("报警消息： " + new Date());
                 });
@@ -1289,11 +1322,12 @@ export default {
           this.isPopShow = false; //todo 处理一下
           if (this.alertMsgNumber === "") {
             if (this.alertMsgName === "") {
-              const toast = this.$createToast({
-                type: "warn",
-                txt: "请填写标题"
-              });
-              toast.show();
+              self
+                .$createToast({
+                  type: "warn",
+                  txt: "请填写标题"
+                })
+                .show();
               return;
             } else {
               self
@@ -1305,11 +1339,12 @@ export default {
                   orderTime: Math.floor(this.nowTime / 1000)
                 })
                 .then(res => {
-                  const toast = this.$createToast({
-                    type: "correct",
-                    txt: "故障申报已提交"
-                  });
-                  toast.show();
+                  self
+                    .$createToast({
+                      type: "correct",
+                      txt: "故障申报已提交"
+                    })
+                    .show();
                   // self.getMyHomeInfoList();
                   self.setPushInfo("报警消息： " + new Date());
                 });
@@ -1338,11 +1373,12 @@ export default {
                   orderTime: Math.floor(this.nowTime / 1000)
                 })
                 .then(res => {
-                  const toast = this.$createToast({
-                    type: "correct",
-                    txt: "故障申报已提交"
-                  });
-                  toast.show();
+                  self
+                    .$createToast({
+                      type: "correct",
+                      txt: "故障申报已提交"
+                    })
+                    .show();
                   // self.getMyHomeInfoList();
                   self.setPushInfo("报警消息： " + new Date());
                 });
@@ -1353,11 +1389,12 @@ export default {
                   orderTime: Math.floor(this.nowTime / 1000)
                 })
                 .then(res => {
-                  const toast = this.$createToast({
-                    type: "correct",
-                    txt: "时间已修改"
-                  });
-                  toast.show();
+                  self
+                    .$createToast({
+                      type: "correct",
+                      txt: "时间已修改"
+                    })
+                    .show();
                   // self.getMyHomeInfoList();
                   self.setPushInfo("报警消息： " + new Date());
                 });
@@ -1376,11 +1413,12 @@ export default {
               name: self.alertMsgName
             })
             .then(res => {
-              const toast = this.$createToast({
-                type: "correct",
-                txt: "请求出警已提交"
-              });
-              toast.show();
+              self
+                .$createToast({
+                  type: "correct",
+                  txt: "请求出警已提交"
+                })
+                .show();
               // self.getMyHomeInfoList();
               self.setPushInfo("报警消息： " + new Date());
             });
@@ -1543,47 +1581,55 @@ export default {
 </script>
 
 <style lang="stylus" scoped>
-.index-wrapper{
-    bottom: 14.933vw !important;
-    display: flex;
-    flex-flow: column;
-    background: #f5f5f5;
-    .index-top-menu{
-        width: 88vw;
-        height: 11.733vw;
-        background: #fff;
-        align-items: flex-end;
-        padding: 0 5.333vw 0 2.667vw;
-        box-sizing:border-box;
-        justify-content: flex-start;
+.index-wrapper {
+  bottom: 14.933vw !important;
+  display: flex;
+  flex-flow: column;
+  background: #f5f5f5;
+
+  .index-top-menu {
+    width: 88vw;
+    height: 11.733vw;
+    background: #fff;
+    align-items: flex-end;
+    padding: 0 5.333vw 0 2.667vw;
+    box-sizing: border-box;
+    justify-content: flex-start;
+    font-weight: bold;
+
+    >>>.cube-tab_active {
+      flex: 0 0 26.667vw !important;
+      color: #333 !important;
+      font-size: 5.867vw !important;
+    }
+
+    >>>.cube-tab {
+      font-size: 4.267vw;
       font-weight: bold;
-        >>>.cube-tab_active{
-            flex: 0 0 26.667vw !important;
-            color: #333 !important;
-            font-size: 5.867vw !important;
-        }
-        >>>.cube-tab{
-            font-size: 4.267vw;
-            font-weight: bold;
-            flex: 0 0 24vw;
-            color: #999;
-            div{
-                font-weight: bold;
-            }
-        }
+      flex: 0 0 24vw;
+      color: #999;
+
+      div {
+        font-weight: bold;
+      }
     }
-    .index-tab-panels{
-        flex: 1;
-        background: #fff;
-        >>>.cube-tab-panels-group{
-            height: 100%;
-            .cube-tab-panel{
-                background:#f5f5f5;
-                position: relative;
-            }
-        }
+  }
+
+  .index-tab-panels {
+    flex: 1;
+    background: #fff;
+
+    >>>.cube-tab-panels-group {
+      height: 100%;
+
+      .cube-tab-panel {
+        background: #f5f5f5;
+        position: relative;
+      }
     }
+  }
 }
+
 .cube-tab-bar {
   width: 100%;
   justify-content: space-between;
@@ -1600,12 +1646,6 @@ export default {
     font-size: 5.2667vw;
   }
 }
-
-// >>>.cube-tab-bar-slider {
-//   background-color: #38F;
-//   width: 16.5333vw !important;
-//   left: 0;
-// }
 </style>
 
 <style scoped>

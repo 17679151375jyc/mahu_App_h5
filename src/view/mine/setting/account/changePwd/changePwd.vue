@@ -16,16 +16,16 @@
       <div class="item border-bottom-1px">
         <cube-input
           :type="type"
-          :maxlength="12"
+          :maxlength="18"
           :eye="eye"
-          placeholder="输入新密码,长度6-12位由数字、字母组成"
+          placeholder="输入新密码,长度6-18位由数字、字母组成"
           v-model="passwordFirst"
         ></cube-input>
       </div>
       <div class="item">
         <cube-input
           :type="type"
-          :maxlength="12"
+          :maxlength="18"
           :eye="eye"
           placeholder="重复输入新的密码"
           v-model="passwordSecond"

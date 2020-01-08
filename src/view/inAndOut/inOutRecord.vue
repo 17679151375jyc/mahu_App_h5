@@ -92,8 +92,6 @@
       self.getRecordData("0","0",0);
     },
     created() {
-      let now = new Date();
-      this.year = now.getFullYear();
     },
     computed: {
       ...mapState({
@@ -109,7 +107,6 @@
     },
     methods: {
       swipeleft() {
-        console.log(3333);
       },
       showDrawer() {
         this.showPopup = !this.showPopup;
@@ -182,40 +179,46 @@
           return;
         } else {
           self.isNotLoading = false;
+          let months3 = self.$moment().subtract(3, "months").valueOf();//获取前三个月前的一天的时间戳
           self.$post("entry","/record",{
-            role: aPeopleType,
+            role: aPeopleType==="0" ? null : aPeopleType,
             filter: aMonth,
+            selectTime: Math.round(months3/1000),
             lastID: self.lastID,
             pageSize: self.pageSize,
           }).then((res)=>{
+            let now = new Date();
+            self.year = (aMonth==="0") ? now.getFullYear() : aMonth.substr(0,4);
             self.queryAbleRole = [...res.data.queryAbleRole];
             self.queryAbleRole.unshift({type: "0", typeDesc: "全部"});
 
             if (arrAdd===0) {
               self.inDaysOf = [...res.data.list];
             } else {
-
               if (res.data.list.length===0) {
                 self.isNotLoading = true;
-                const toast = this.$createToast({
+                self.$createToast({
                   type: 'correct',
                   txt: "没有更多东西了"
-                });
-                toast.show();
+                }).show();
               }
               self.inDaysOf.push.apply(self.inDaysOf,res.data.list);
             }
-            self.lastID = res.data.list[res.data.list.length-1].recordID;
 
-            // self.$refs.inAndOutRecordScroll.scrollTo(//回到顶部
-            //   0,
-            //   0,
-            //   300,
-            //   "EasingFn"
-            // );
+            if(res.data.list && res.data.list.length>0) {
+              self.lastID = res.data.list[res.data.list.length-1].recordID;
+            }
+
+            if(arrAdd===0) {
+              self.$refs.inAndOutRecordScroll.scrollTo(//回到顶部
+                0,
+                0,
+                300,
+                "EasingFn"
+              );
+            }
           });
         }
-
       }
     }
   };

@@ -52,7 +52,7 @@
           </cube-scroll>
           <div v-else class="base-vertical-layout-center-item-center" style="margin-top: 22.6666vw">
             <img :src="require('./icon-card-blank.png')" class="card-bag-blank-icon" />
-            <p class="base-text-title-normal-gray" style="margin-top: 2.6666vw">暂无优惠券</p>
+            <p class="base-text-title-normal-666" style="margin-top: 2.6666vw">暂无优惠券</p>
           </div>
         </cube-tab-panel>
       </cube-tab-panels>
@@ -144,7 +144,7 @@ export default {
   },
   computed: {
     ...mapState({
-      mPushInfo: state => state.user.pushInfo
+      'mPushInfo': state => state.user.pushInfo
     })
   },
   watch: {
@@ -199,7 +199,6 @@ export default {
             cardData.options.pullUpLoad = false;
           }
 
-          //  console.log(self.$refs[key].length)
           if (self.$refs[key] && self.$refs[key].length > 0) {
             setTimeout(() => {
               self.$refs[key]["0"].forceUpdate();

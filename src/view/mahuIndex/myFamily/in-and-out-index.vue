@@ -449,14 +449,14 @@ export default {
     },
     getInAndOutIndexInfo() {
       let self = this;
-      self
-        .$post("entry", "/record", {
-          role: 0,
+      let months3 = self.$moment().subtract(3, "months").valueOf();//获取前三个月前的一天的时间戳
+      self.$post("entry", "/record", {
+          // role: 0,
           filter: 0,
+          selectTime: Math.round(months3/1000),
           lastID: 0,
           pageSize: 1
-        })
-        .then(res => {
+        }).then(res => {
           if (res.data.list.length > 0) {
             self.isInAndOutIndexInfoEmpty = true;
             self.inAndOutIndexInfo = [...res.data.list][1];
@@ -797,7 +797,7 @@ export default {
                 this.$post("domicile", "/deletePassword", {
                   domicileNumber
                 }).then(res => {
-                    
+
                   this.$createToast({
                     type: "correct",
                     txt: "临时密码取消成功！"

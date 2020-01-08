@@ -30,7 +30,7 @@
               <span class="date">{{item.date.substr(5,5)}}</span>
             </div>
             <div class="intro-wrapper">
-              <span class="intro">{{item.content}}</span>
+              <span class="intro but_text_line_height">{{item.content}}</span>
               <div v-if="item.auditStatus===0" class="jiao_css">
                 <img :src="require('@/assets/community/jiao.png')" />
               </div>

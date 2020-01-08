@@ -1,3 +1,11 @@
+<!--
+ * @Descripttion: 
+ * @version: 
+ * @Author: Vencent Lum
+ * @Date: 2020-01-02 17:43:11
+ * @LastEditors  : Vencent Lum
+ * @LastEditTime : 2020-01-03 09:48:31
+ -->
 <template>
   <div class="base-horizontal-layout-center-item-center"
        :class="{'little-red-dot' : true, 'little-red-dot-long-width' : (num>99),
@@ -44,8 +52,8 @@
 
 <style scoped>
   .little-red-dot {
-    width: 10.87vw;
-    height: 4.27vw;
+    width: 11.87vw;
+    height: 5.57vw;
     border-radius: 2.67vw;
     /*background-color: #3388FF;*/
     background-color: #DADFE6;
@@ -57,7 +65,8 @@
     background-color: #DADFE6;
   }
   .little-red-dot-text {
-    font-size: 3.2vw;
+    font-size: 3.9vw;
+    line-height: 4.9vw;
     color: white;
     text-align: center;
   }

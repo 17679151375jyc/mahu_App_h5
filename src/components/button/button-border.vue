@@ -1,5 +1,5 @@
 <template>
-  <div class="button-border-style"
+  <div class="base-vertical-layout-center-item-center button-border-style"
        v-bind:class="buttonBorderClass"
        :style="buttonBorderStyle"
        @click="buttonOnClick">
@@ -35,14 +35,15 @@
 <style scoped>
   .button-border-style {
     /*width: 18.67vw;*/
-    height: 6.67vw;
-    padding: 0 3vw;
+    height: 8.6666vw;
+    padding: 0 1vw;
     border: 1px solid #FFF;
-    border-radius: 5.07vw;
+    border-radius: 1.07vw;
     display: flex;
     flex-direction: row;
     justify-content: center;
     align-items: center;
+    line-height: 8vw;
   }
   .button-border-text {
     text-align: center;

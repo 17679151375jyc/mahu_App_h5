@@ -6,7 +6,12 @@
   <div class="wrapper">
     <return-head title="社区续费服务"></return-head>
 
-    <div class="scroll-wrapper-addition-title">
+    <div v-if="isPaySuccess" class="base-vertical-layout-center-item-center" style="margin-top: 13.3333vw">
+      <img :src="require('@/assets/icon/icon-paySuccess.png')" style="width: 16vw;height: 16vw">
+      <p class="base-text-title-normal-666" style="font-weight: bold;margin-top: 2.6666vw">支付成功</p>
+      <p class="plot-renew-success-price">¥ {{sumPrice}}</p>
+    </div>
+    <div v-else class="scroll-wrapper-addition-title">
       <cube-scroll
         ref="plotRenewScroll"
         class="scroll-wrapper-text-style"
@@ -50,12 +55,14 @@
         </div>
 
         <choose-pay @handoverPaymentOnClick="handoverPayment"></choose-pay>
-
         <div style="height: 20.6666vw"></div>
       </cube-scroll>
     </div>
 
-    <div class="base-button-fixed-bottom">
+    <div v-if="isPaySuccess" class="base-button-fixed-bottom">
+      <button-main text="完成" @btnOnclick="toSuccess"></button-main>
+    </div>
+    <div v-else class="base-button-fixed-bottom">
       <button-main text="确认支付" @btnOnclick="toPay"></button-main>
     </div>
   </div>
@@ -177,37 +184,6 @@
         });
       },
 
-      onPay(res) {
-        if (res) {
-          this.isPaySuccess = (res===0 ? true : false);
-          if(res===1) {
-            this.$createToast({
-              type: 'correct',
-              txt: "用户取消"
-            }).show();
-          } else if(res===0) {
-            this.$createToast({
-              type: 'correct',
-              txt: "支付成功"
-            }).show();
-            localStorage.setItem("plotRenewPay","success");
-            setTimeout(() => {
-              this.$router.goBack();
-            }, 700);
-          } else {
-            this.$createToast({
-              type: 'correct',
-              txt: "支付失败"
-            }).show();
-          }
-        } else {
-          this.$createToast({
-            type: 'warn',
-            txt: "支付出错"
-          }).show();
-        }
-      },
-
       onWxPay(res) {
         console.log("onWxPay121212",res);
         if (res || res==0) {
@@ -224,9 +200,6 @@
               txt: "支付成功"
             }).show();
             localStorage.setItem("plotRenewPay","success");
-            setTimeout(() => {
-              this.$router.goBack();
-            }, 700);
           } else {
             this.$createToast({
               type: 'correct',
@@ -256,9 +229,6 @@
               txt: "支付成功"
             }).show();
             localStorage.setItem("plotRenewPay","success");
-            setTimeout(() => {
-              this.$router.goBack();
-            }, 700);
           } else {
             this.$createToast({
               type: 'correct',
@@ -272,6 +242,10 @@
           }).show();
         }
       },
+
+      toSuccess() {
+        this.$router.goBack();
+      }
     }
   }
 </script>
@@ -294,5 +268,12 @@
     white-space: nowrap;
     /* 当文本溢出包含元素时，以省略号表示超出的文本 */
     text-overflow: ellipsis;
+  }
+
+  .plot-renew-success-price {
+    font-size: 8vw;
+    color: #333333;
+    font-weight: bold;
+    margin-top: 5.3333vw;
   }
 </style>

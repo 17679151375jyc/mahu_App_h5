@@ -1,7 +1,7 @@
 <template>
   <div class="wrapper" style="background-color: #F4F4F4">
     <return-head title="发布消息"></return-head>
-
+ 
     <cube-scroll class="scroll-list-wrap">
       <div style="background-color: #fff;padding-bottom: 3.47vw;">
         <div>
@@ -38,7 +38,7 @@
               <div @click="bigImg(index)">
                 <img  style='z-index: 1000' :src="item" />
               </div>
-
+ 
             </div> -->
         </div>
         <div class="botttom_but">
@@ -239,9 +239,9 @@ export default {
           console.log("开始上传");
           let compressFile = results.file
           this.updataFile({file, compressFile})
-        }).catch( (err)=> {
+        }).catch( (err)=> {
           this.updataFile({file, file})
-        })            
+        })            
       } else {
         this.$createToast({
           time: 1500,

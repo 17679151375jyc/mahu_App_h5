@@ -191,12 +191,11 @@
           idcard: self.userInfo[2].value
         }).then((res)=>{
           self.clearPoppup();
-          const toast = self.$createToast({
+          self.$createToast({
             type: 'correct',
             txt: "保存成功！"
-          });
-          toast.show();
-          this.$store.commit('setUserHeadPortraitNative', this.imgUrl);
+          }).show();
+          self.$store.commit('setUserHeadPortraitNative', this.imgUrl);
 
           self.$post("common","/infos",{
           }).then((infoRes)=>{
@@ -204,11 +203,11 @@
             self.setUserRealName(infoRes.data.infos.realName);
             self.setUserPhone(infoRes.data.infos.userPhone);
             self.setUserIdCard(infoRes.data.infos.idcard);
-            utils.localStorage('userInfo', infoRes.data).then((r) => {
+            // utils.localStorage('userInfo', infoRes.data).then((r) => {
               setTimeout(() => {
                 self.$router.goBack();
-              }, 700);
-            });
+              }, 1000);
+            // });
           });
         });
       },

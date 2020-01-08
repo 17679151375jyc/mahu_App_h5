@@ -28,7 +28,7 @@
             :class="['base-horizontal-layout-center-item-center']"
             class="feedback-apply-audit-btn"
             @click="toRead">
-          <p class="base-text-details-large-white">已阅</p>
+          <p class="base-text-details-large-white but_text_line_height">已阅</p>
         </div>
       </div>
     </div>
@@ -43,6 +43,7 @@
     components: {returnHead},
     data() {
       return {
+        clickAll: true,
         feedbackID: '',
         feedbackInfo: {},
         pageId: ''
@@ -72,19 +73,30 @@
       },    
       toRead() {
         let self = this;
-        self.$post("gateCommunity", "/feedback/read", {
-          feedbackId: self.feedbackID
-        }).then((res) => {
-          localStorage.setItem("feedbackRead","yes");
-          const toast = self.$createToast({
-            type: "correct",
-            txt: "该反馈已阅"
-          });
-          toast.show();
+        if(self.clickAll){
+          self.clickAll = false
           setTimeout(() => {
-            self.$router.goBack();
-          }, 700);
-        });
+            self.clickAll = true
+          }, 2000);
+          self.$post("gateCommunity", "/feedback/read", {
+            feedbackId: self.feedbackID
+          }).then((res) => {
+            localStorage.setItem("feedbackRead","yes");
+            const toast = self.$createToast({
+              type: "correct",
+              txt: "该反馈已阅"
+            });
+            toast.show();
+            setTimeout(() => {
+              self.$router.goBack();
+            }, 700);
+          });
+        }else{
+          self.$createToast({
+            type: "txt",
+            txt: "请勿重复点击"
+          }).show();
+        }
       }
     }
   }

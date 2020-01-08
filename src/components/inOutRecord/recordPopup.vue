@@ -103,7 +103,7 @@
       let year = now.getFullYear();
       this.monthFirst = now.getFullYear() + "-" + month;
       this.monthSecond = (month<2 ? year-1 : year) + "-" + (month<2 ? 12 : month-1);
-      this.monthThird = (month<3 ? year-1 : year) + "-" + (month<3 ? 12 : month-2);
+      this.monthThird = (month<3 ? year-1 : year) + "-" + (month<2 ? 11 : month<3 ? 12 : month-2);
 
       console.log(this.queryAbleRole);
       for(let count=0;count<this.queryAbleRole.length;count++){
@@ -112,7 +112,6 @@
         } else {
           this.aPeopleStyle['p'+count] = [];
         }
-        console.log(444444444444,this.aPeopleStyle);
       }
       // this.queryAbleRole.forEach((index)=>{
       //   if(index === 0) {

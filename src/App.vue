@@ -1,12 +1,12 @@
 <template>
   <div>
-    
+
     <div  id="app">
       <!--<transition :name="aheadBack">-->
         <router-view></router-view>
       <!--</transition>-->
 
-      <div v-show="isIndexPage" >
+      <div v-show="isIndexPage">
         <div class="bottom-tab border-top-1px">
           <div v-for="(item,index) in tabBarImgArr" :key="index" class="tab-item" @click="switchTo(item.toPath)">
             <img :src="item.toPath === $route.path ? item.selected : item.normal" :alt="item.value">
@@ -74,7 +74,8 @@
 <script>
   import utils from '_libs/utils';
   import appData from '@/app_data';
-  import md5 from '@/md5'
+  import md5 from '@/md5';
+  import { getSystemInitList } from "@/api/system";
   import basePopup from '_c/popup/base-popup';
   import minePopup from  '_c/popup/mine-popup';
   import doorListGatePopup from  '_c/popup/door-list-gate-popup';
@@ -167,22 +168,18 @@
 
     },
     created() {
-      let self = this;
       /*** 清除标签 ***/
-      self.setIsShowOtherPop(false);
-      self.setIsShowMinePop(false);
-      self.setIsShowDoorListGatePop(false);
+      this.setIsShowOtherPop(false);
+      this.setIsShowMinePop(false);
+      this.setIsShowDoorListGatePop(false);
 
-      let mDate = new Date().getTime();
-      if(window.CYJ.userID) {
-        self.setUserID(CYJ.userID());
-        // self.setUserSign(CYJ.userSign(mDate));
-      }
+      this.saveUserID();
+      this.saveUserToken();
 
-      window.myRouter = self.myRouter;//提供给原生使用--页面跳转
-      window.toGoBack = self.toGoBack;//提供给原生使用--返回键
-      window.getPush = self.getPush;//提供给原生使用--推送
-      window.clickPush = self.clickPush;//提供给原生使用--推送有类型的
+      window.myRouter = this.myRouter;//提供给原生使用--页面跳转
+      window.toGoBack = this.toGoBack;//提供给原生使用--返回键
+      window.getPush = this.getPush;//提供给原生使用--推送
+      window.clickPush = this.clickPush;//提供给原生使用--推送有类型的
 
       // //监听视窗变动，重新计算高度,60是头部固定高度
       // // this.aheadBack == "slide"? this.aheadBack = null:this.aheadBack=null;
@@ -240,7 +237,7 @@
         // if (to.path==="/my-home" || to.path==="/inAndOut" || to.path==="/service" || to.path==="/mine" ||
         //   to.path==="/ma-hu-index" || to.path==="/service-index") {
         //   console.log("to.path",to.path)
-        if (to.path==="/mine" || to.path==="/ma-hu-index" || to.path==="/service-index") {
+        if (to.path==="/ma-hu-index" || to.path==="/service-index" || to.path==="/mine") {
           console.log("to.path",to.path);
           this.isIndexPage = true;
           this.getVisitorIndexList();
@@ -261,6 +258,7 @@
     },
     mounted() {
       let self = this;
+      self.getSystemInitList();
       self.getCommonInfos();
       // self.getVisitorIndexList(2);
       // self.getVisitorIndexList(1);
@@ -268,6 +266,7 @@
     methods: {
       ...mapActions(
         [
+          'setSystemInitList',//公共属性
           'setUserInfo',//用户所有信息
           'setUserID', 'setUserToken',//用户ID、用户token
           'setUserNickName', 'setUserRealName', 'setUserHeadPortrait', 'setUserPhone', 'setUserIdCard',//用户基础信息
@@ -313,29 +312,50 @@
         }
       },
 
-      /*** 获取登录信息 ***/
-      getCommonInfos() {
-        let self = this;
-
-        if (utils.isIos()) {
-          // 注销ios推送
-          self.$post("iosViop","",{
-          }).then((res)=>{
-          });
-        }
-
-        if(window.CYJ.token) {
-          self.setUserToken(CYJ.token());
+      /*** 保存全局用户Id ***/
+      saveUserID() {
+        if(window.CYJ.userID) {
+          this.setUserID(CYJ.userID());
           // self.setUserSign(CYJ.userSign(mDate));
+        }
+      },
+
+      /*** 保存全局用户Token ***/
+      saveUserToken() {
+        if(window.CYJ.token) {
+          this.setUserToken(CYJ.token());
+          // this.setUserSign(CYJ.userSign(mDate));
         } else {
-          if(!self.$store.state || !self.$store.state.user || !self.$store.state.user.userToken) {
-            self.myRouter('login');
+          if(!this.$store.state || !this.$store.state.user || !this.$store.state.user.userToken) {
+            this.myRouter('login');
             return;
           } else {
             if(this.$route.path==='/'){
               //self.$router.replace('/ma-hu-index');//跳到主页
             }
           }
+        }
+      },
+
+      /*** 获取公共属性 ***/
+      getSystemInitList() {
+        let self = this;
+        getSystemInitList({}).then((res) => {
+          self.setSystemInitList(res.data);
+        }).catch(err => {
+          console.log(err);
+        });
+      },
+
+      /*** 获取登录信息 ***/
+      getCommonInfos() {
+        let self = this;
+
+        if(utils.isIos()) {
+          // 注销ios推送
+          self.$post("iosViop","",{
+          }).then((res)=>{
+          });
         }
 
         self.$post("common","/infos", {
@@ -390,12 +410,12 @@
           });
           let plots = [...res.data.plots];
           self.setUserPlotList([...plots]);
-          self.setIsPlotBlankDomicile(true);
-          if(plots.length===1) {
-            if(!plots[0].domicile || (plots[0].domicile instanceof Array && plots[0].domicile.length===0)) {
-              self.setIsPlotBlankDomicile(false);
+          self.setIsPlotBlankDomicile(false);
+          plots.forEach((item)=> {
+            if(item.domicile && (item.domicile instanceof Array && item.domicile.length>0)) {
+              self.setIsPlotBlankDomicile(true);
             }
-          }
+          });
 
           let familyPlotList = [];
           for(let count = 0; count < plots.length; count++) {
@@ -458,6 +478,115 @@
 
           /** 检查全部未读未处理 **/
           self.checkIsUntreated();
+        });
+      },
+
+      setCommonInfos() {
+        let self = this;
+        self.$post("common","/infos", {
+        }).then((res)=> {
+          let plotIDList = [], plotIDListStr = "";
+          res.data.plots.forEach((item,index,arr) => {
+            plotIDList.push(item.plotID);
+            if(res.data.plots.length === index+1) {
+              if(plotIDList.length>0) {
+                plotIDList.forEach((item,index) => {
+                  if (index===0) {
+                    plotIDListStr = plotIDListStr + item;
+                  } else {
+                    plotIDListStr = plotIDListStr + "," + item;
+                  }
+                  if(plotIDList.length === index+1) {
+                    plotIDListStr = plotIDListStr + "," + res.data.infos.pushPropertyManagePlot;
+                    // utils.setPushAlias(res.data.infos.userPhone, plotIDListStr);//注册推送
+                  }
+                });
+              } else {
+                if(res.data.infos.pushPropertyManagePlot) {
+                  plotIDListStr = res.data.infos.pushPropertyManagePlot;
+                  // utils.setPushAlias(res.data.infos.userPhone, plotIDListStr);//注册推送
+                }
+              }
+            }
+          });
+          utils.setPushAlias(res.data.infos.userPhone, plotIDListStr);//注册推送
+
+          self.setUserInfo(res.data);
+          self.setUserNickName(res.data.infos.nickName);
+          self.setUserRealName(res.data.infos.realName);
+          self.setUserHeadPortrait(res.data.infos.headPortrait);
+          self.setUserPhone(res.data.infos.userPhone);
+          self.setUserIdCard(res.data.infos.idcard);
+          // self.setUserHasProprietor(false);
+          self.setUserHasProprietor(res.data.infos.hasProprietor);
+          res.data.plots.forEach((item)=>{
+            let domicileList = [], domicileIndex = 0;
+            if(item.domicile) {
+              item.domicile.forEach((domicileItem,index,arr)=>{
+                domicileIndex = index;
+                if(domicileItem.effectiveStatus === 0) {
+                  domicileList.push(domicileItem);
+                }
+              });
+            }
+            if(item.domicile.length === domicileIndex+1) {
+              item.domicile = [...domicileList];
+            }
+          });
+          let plots = [...res.data.plots];
+          self.setUserPlotList([...plots]);
+          self.setIsPlotBlankDomicile(false);
+          plots.forEach((item)=> {
+            if(item.domicile && (item.domicile instanceof Array && item.domicile.length>0)) {
+              self.setIsPlotBlankDomicile(true);
+            }
+          });
+
+          let familyPlotList = [];
+          for(let count = 0; count < plots.length; count++) {
+            familyPlotList.push({
+              value: plots[count].plotID,
+              text: plots[count].plotName,
+              plotId: plots[count].plotID,
+              parkId: plots[count].parkId,
+              temporaryCount: plots[count].temporaryCount
+            })
+          }
+          self.setFamilyPlotList([...familyPlotList]);
+
+          let isAreaTypes = false;
+          let areaTypes = [],areaTypesIndex = 0;
+          res.data.infos.areaTypes.forEach((item,index)=>{
+            if(item === 0) {
+              areaTypes.push(0);
+            } else if(item === 1){
+              areaTypes.push(1);
+            }
+            areaTypesIndex = index;
+          });
+          if(!res.data.infos.areaTypes) {
+            if(res.data.infos.propertyManage &&res.data.infos.propertyManage===1) {
+              areaTypes.push(2);
+              isAreaTypes = true;
+            } else {
+              isAreaTypes = true;
+            }
+          } else {
+            if(res.data.infos.areaTypes &&
+              (res.data.infos.areaTypes.length === 0 || ((areaTypesIndex+1) === res.data.infos.areaTypes.length))) {
+              if(res.data.infos.propertyManage && res.data.infos.propertyManage===1) {
+                areaTypes.push(2);
+                isAreaTypes = true;
+              } else {
+                isAreaTypes = true;
+              }
+            }
+          }
+
+          self.setPropertyManagePlotNumber(res.data.infos.propertyManagePlotNumber);
+          self.setPropertyManagePlotName(res.data.infos.propertyManagePlotName);
+
+          self.setAreaTypesList([...areaTypes]);
         });
       },
 
@@ -543,7 +672,6 @@
 
       getPush(res) {//接收推送消息
         console.log(res);
-      //  console.log(Object.prototype.toString.call(res));
         let self = this;
         let mPushRes = Object.prototype.toString.call(res) === '[Object Object]' ? res : JSON.parse(res);
         mPushRes.time = new Date().getTime();
@@ -593,7 +721,6 @@
                 // }).show();
               }
             },500)
-
             break;
           case "FEEDBACK_MESSAGE":
             console.log("PUSH_SUBJECT","用户反馈消息");
@@ -636,13 +763,16 @@
             console.log("PUSH_SUBJECT","备城门开门");
             self.setPushInfo(mPushRes);
             if(mPushRes.message) {
-              const toast = self.$createToast({
+              self.$createToast({
                 type: "correct",
                 txt: mPushRes.message
-              });
-              toast.show();
+              }).show();
             }
             break;
+          case "SUCCESS_PAY_MESSAGE":
+            console.log("PUSH_SUBJECT","续费消息");
+            self.setCommonInfos();//刷新用户信息
+            self.setPushInfo("续费消息： "+new Date());
           case "COUPON_GET_MESSAGE":
             console.log("PUSH_SUBJECT","收到优惠券消息");
             self.setPushInfo("收到优惠券消息： "+new Date());
@@ -659,6 +789,7 @@
         console.log(res);
         let self = this;
         let mPushRes = Object.prototype.toString.call(res) === '[Object Object]' ? res : JSON.parse(res);
+        mPushRes.time = new Date().getTime();
         let subject = mPushRes.PUSH_SUBJECT;
         console.log(subject);
         switch (subject) {
@@ -707,7 +838,7 @@
             //   // txt: mPushRes.areaName+" "+mPushRes.machineName+" "+mPushRes.status+" 已成功"
             //   txt: mPushRes.machineName+" "+mPushRes.status+" 已成功"
             // });
-            toast.show();
+            // toast.show();
             if(this.mAppPath==="/ma-hu-index") {
               self.setPushInfo("主机状态： "+ new Date());
             } else {
@@ -727,9 +858,10 @@
             setTimeout(()=>{
               if(this.mAppPath==="/ma-hu-index") {
                 self.setPushInfo("访客消息： "+ new Date());
-              } else {
-                utils.changePage("ma-hu-index");
               }
+            /*  else {
+                utils.changePage("ma-hu-index");
+              }*/
               if(mPushRes.notify && (mPushRes.notify==="开门通知" || mPushRes.notify==="访客出入记录" || mPushRes.notify==="wxCharVisitor")) {
                 console.log("1111111111>>>>>>>>>","PUSH_SUBJECT访客消息");
                 if(mPushRes.notify==="开门通知") {
@@ -743,7 +875,6 @@
                 }
               }
             },500);
-
             break;
           case "FEEDBACK_MESSAGE":
             console.log("PUSH_SUBJECT","用户反馈消息");
@@ -786,6 +917,9 @@
             break;
           case "CALL_OPEN_DOOR_SERVER":
             console.log("PUSH_SUBJECT","备城门开门");
+            break;
+          case "SUCCESS_PAY_MESSAGE":
+            console.log("PUSH_SUBJECT","续费消息");
             break;
           case "COUPON_GET_MESSAGE":
             console.log("PUSH_SUBJECT","收到优惠券消息");
@@ -1454,9 +1588,9 @@
           background: #f4f4f4;}
 
   .in-and-out-index-title {
-    margin: 0 15.6666vw;
+    margin: 0 12.6666vw;
     font-size: 4.8vw;
-    width: 53.33vw;
+    width: 60.33vw;
     text-align: center;
   }
   .in-and-out-index-pop-img {
@@ -1466,6 +1600,9 @@
     margin-top: 4.5333vw;
   }
 
+  .cube-dialog-content {
+    font-size: 4.2666vw;
+  }
 </style>
 
 

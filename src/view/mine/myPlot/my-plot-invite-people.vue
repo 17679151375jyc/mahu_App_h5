@@ -7,22 +7,14 @@
     <return-head title="社区邀请用户"></return-head>
 
     <div class="invite-people-form" style="background-color: #F2F2F2">
-      <div
-        class="base-horizontal-layout-space-between-item-center"
-        style="background-color: white;min-height: 13.3333vw"
-      >
-        <div
-          class="base-horizontal-layout-center-item-center"
-          style="width: 61.3333vw;margin-left: 6vw;"
-        >
-        <span style="color: #ff0e00;font-size: 4.2666vw;padding-right: 2vw">
-          *
-        </span>
+      <div class="base-horizontal-layout-space-between-item-center"
+        style="background-color: white;min-height: 13.3333vw;padding-left: 8vw">
+        <div class="base-horizontal-layout-center-item-center"">
+        <span style="color: #ff0e00;font-size: 4.2666vw;padding-right: 2.6vw">*</span>
           <input
             id="invitePlotInput0"
             type="number"
-            class="invite-people-phone"
-            style="font-size: 4.2666vw;color: #666;height: 10.6666vw;border:1px solid #eeeeee;resize:none;outline:none;border:0"
+            style="width: 56.3333vw;font-size: 4.2666vw;color: #666;height: 10.6666vw;border:1px solid #eeeeee;resize:none;outline:none;border:0"
             :autofocus="false"
             placeholder="请填写对方注册的手机号"
             v-model="phone"
@@ -33,8 +25,7 @@
         <div
           class="base-horizontal-layout-end-item-center"
           style="height: 13vw;flex: 1;margin-right: 8.333vw"
-          @click="readContactss"
-        >
+          @click="readContactss">
           <p class="base-text-title-normal-blue">通讯录</p>
           <img
             :src="require('@/assets/icon/icon-arrow-right-list.png')"
@@ -50,16 +41,13 @@
         class="base-horizontal-layout-space-between-item-center invite-people-form-item"
         :class="{
           'invite-people-form-item-line': index < fromFields.length - 1
-        }"
-      >
+        }">
         <!--'invite-people-form-item-bottom':index===0-->
-        <p
-          v-if="index === 0"
-          style="align-self: flex-start;margin-top: 4.533333vw"
-        >
-          <span style="color: #FF0000">* </span>{{ item.title }}
+        <p v-if="index === 0"
+          style="align-self: flex-start;margin-top: 4.533333vw">
+          <span style="color: #FF0000;font-size: 4.2666vw;padding-right: 2.6vw">*</span>{{ item.title }}
         </p>
-        <p v-else><span style="color: #FF0000">* </span>{{ item.title }}</p>
+        <p v-else><span style="color: #FF0000;font-size: 4.2666vw;padding-right: 2.6vw">*</span>{{ item.title }}</p>
         <div>
           <div
             v-if="item.title === '关系'"
@@ -207,11 +195,14 @@ export default {
     this.fromFields.forEach((item, index) => {
       item.title = this.titleList[index];
     });
+
+
   },
   mounted() {
     /** 加载通讯录 **/
     setTimeout(() => {
-      window.readContacts = this.readContactsCallback; //调用原生通讯录回调
+      window.checkContactsResult = this.checkContactsResult;//调用原生通讯录回调，是否有权限
+      window.readContacts = this.readContactsCallback;//调用原生通讯录回调
     }, 700);
   },
   methods: {
@@ -238,7 +229,16 @@ export default {
 
     /** 联系人 **/
     readContactss() {
-      utils.openContacts();
+      if(utils.isIos()) {
+        utils.openContacts();
+      } else {
+        utils.checkContacts();
+      }
+    },
+    checkContactsResult(res) {
+      if(res === 1) {
+        utils.openContacts();
+      }
     },
     readContactsCallback(res) {
       if (utils.isIos()) {

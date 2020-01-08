@@ -40,8 +40,7 @@
       <div v-if="isShowPlotFamily && isShowPlot"
         class="base-vertical-layout-general"
         :style="mUserHasProprietor ? 'margin: 6.6666vw 5.3333vw 4.3333vw 5.3333vw' : 'margin: 6.6666vw 5.3333vw 2.6666vw 5.3333vw'">
-        <p class="base-text-details-large-black-666"
-        >{{menuList.communityMenuList.title}}</p>
+        <p class="base-text-title-normal-666">{{menuList.communityMenuList.title}}</p>
         <div v-if="mUserHasProprietor"
           class="base-horizontal-layout-space-between-item-center"
           style="margin-top: 2.6666vw">
@@ -53,7 +52,7 @@
             <img :src="(!isPark&&item.title==='车辆管理')?item.disableIcon:item.icon"
               style="width: 6vw;height: 5.3333vw;margin-bottom: 2.1333vw"/>
             <!--:style="!isPark?{filter: '#999',filter: 'grayscale(100%)'}:{}"-->
-            <p class="base-text-details-normal-black-666"
+            <p class="base-text-details-normal-black-666" style="font-size: 4vw"
               :class="{'base-text-details-normal-gray':(!isPark&&item.title==='车辆管理')}">{{item.title}}</p>
           </div>
         </div>
@@ -722,12 +721,6 @@ export default {
 </script>
 
 <style lang="stylus" scoped>
-.base-text-details-large-black-666{
-    font-size:4.267vw;
-}
-.base-text-details-normal-black-666{
-    font-size:4vw;
-}
 .mine-top-head-portrait {
   width: 19.2vw;
   height: 19.2vw;

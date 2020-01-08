@@ -5,8 +5,9 @@ import Vuex from 'vuex'
 import user from './module/user'
 import plot from './module/plot'
 import layout from './module/layout'
+import system from './module/system'
 import createPersistedState from "vuex-persistedstate"
-Vue.use(Vuex)
+Vue.use(Vuex);
 
  const store =  new Vuex.Store({
     plugins: [createPersistedState()],
@@ -20,8 +21,8 @@ Vue.use(Vuex)
       //
     },
     modules: {
-        user, layout, plot
+        user, layout, plot, system
     }
-})
+});
 
 export default store

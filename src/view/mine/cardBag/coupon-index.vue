@@ -42,11 +42,11 @@
           <div class="address">{{comUserCouponInfo.cityName ?
             comUserCouponInfo.cityName+comUserCouponInfo.areaName+comUserCouponInfo.streetName+comUserCouponInfo.address : ""}}</div>
         </div>
-        <a :href="`tel:${comUserCouponInfo.businessContactPhone}`" class="right border-left-1px">
+        <a :href="`tel:${comUserCouponInfo.businessContactPhone ? comUserCouponInfo.businessContactPhone : comUserCouponInfo.contactPhone}`" class="right border-left-1px">
           <img :src="require('./icon-phone.png')"/>
         </a>
       </div>
-      <div class="base-vertical-layout-general info-wrapper" style="margin-bottom: 5.3333vw">
+      <div v-if="comUserCouponInfo.description" class="base-vertical-layout-general info-wrapper" style="margin-bottom: 5.3333vw">
         <p class="base-text-title-normal-black" style="font-weight: bold;margin-top: 2.3333vw">使用说明</p>
         <div class="base-text-details-large-black" style="margin-top: 2.6666vw">{{comUserCouponInfo.description}}</div>
       </div>
@@ -113,19 +113,40 @@ export default {
         }
       ).then(res => {
         self.comUserCouponInfo = res.data;
+        self.createQrcode(self.comUserCouponInfo);
       });
     } else if (this.$route.query.comUserCouponId){
       self.isGetCoupon = true;
       self.$post("coupon", "/getById", {
           id: self.$route.query.comUserCouponId
+        },{
+        returnAll:true
         }
       ).then(res => {
-        self.comUserCouponInfo = res.data;
+        if (res.errorCode === 0 && res.data) {
+          if(res.data.isEffective) {
+            self.comUserCouponInfo = res.data;
+          } else {
+            self.$createToast({
+              type: "warn",
+              txt: "优惠券已失效",
+              onTimeout: () => {
+                self.$router.goBack();
+              }
+            }).show();
+          }
+        } else {
+          self.$createToast({
+            type: "warn",
+            txt: "二维码无效",
+            onTimeout: () => {
+              self.$router.goBack();
+            }
+          }).show();
+        }
       });
     }
-    this.$nextTick(function() {
-      this.createQrcode(this.comUserCouponInfo);
-    });
+
   },
   methods: {
     createQrcode({ id = "二维码无效" }) {

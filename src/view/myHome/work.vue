@@ -5,13 +5,13 @@
     <div class="base-horizontal-layout-center-item-center"
          style="background-color: white;border-style: solid;border-width: 0.27vw 0 0 0;border-color: #E3E4E6">
       <div class="my-home-work-title-tab-box" :class="{'base-horizontal-layout-center-item-center' : true}">
-        <p class="base-text-details-normal-gray"
+        <p class="base-text-title-normal-gray"
            v-bind:class="{'my-home-work-title-tab-box-text':true, 'my-home-work-title-tab-box-text-choose':tabChoose==1}"
            @click="tabChooseOnclick(1)">报警</p>
       </div>
       <div class="my-home-work-title-tab-box-line"></div>
       <div class="my-home-work-title-tab-box" :class="{'base-horizontal-layout-center-item-center' : true}">
-        <p class="base-text-details-normal-gray"
+        <p class="base-text-title-normal-gray"
            v-bind:class="{'my-home-work-title-tab-box-text':true, 'my-home-work-title-tab-box-text-choose':tabChoose==2}"
            @click="tabChooseOnclick(2)">故障</p>
       </div>
@@ -33,7 +33,7 @@
       <div v-else v-for="(item,index) in alertChooseList" :key="index">
         <button-border :buttonBorderStyle="alertChoose==index ? buttonBorderChooseStyle : buttonBorderNoChooseStyle"
                        :buttonBorderTextClass="alertChoose==index ?
-                       {'base-text-details-normal-blue':true} : {'base-text-details-normal-gray':true}"
+                       {'base-text-details-large-blue':true} : {'base-text-details-large-gray':true}"
                        :text="item"
                        @buttonOnClick="alertChooseOnClick(index)">
         </button-border>
@@ -49,7 +49,7 @@
       <div v-else v-for="(item,index) in maintainChooseList" :key="index">
         <button-border :buttonBorderStyle="maintainChoose==index ? buttonBorderChooseStyle : buttonBorderNoChooseStyle"
                        :buttonBorderTextClass="maintainChoose==index ?
-                       {'base-text-details-normal-blue':true} : {'base-text-details-normal-gray':true}"
+                       {'base-text-details-large-blue':true} : {'base-text-details-large-gray':true}"
                        :text="item"
                        @buttonOnClick="maintainChooseOnClick(index)">
         </button-border>
@@ -195,7 +195,7 @@
           <div v-for="(item,index) in mMsgCollectList"
                class="base-horizontal-layout-space-between-item-center"
                style="margin-top: 4vw" :key="index">
-            <div class="base-vertical-layout-general">
+            <div class="base-vertical-layout-general" style="width: 42vw;line-height: 5vw;">
               <p class="base-text-details-normal-black-light">{{item.title}}</p>
               <p class="base-text-details-normal-black-light" style="color: #999999;margin-top: 1.33vw">{{item.location}}-{{item.defenceArea}}</p>
             </div>
@@ -811,13 +811,6 @@
 </script>
 
 <style lang="stylus" scoped>
->>>.base-vertical-layout-general{
-  width: 42vw;
-  line-height: 5vw;
-}
->>>.my-home-work-item-text{
-  line-height: 4.1vw;
-}
 >>>.base-text-details-normal-gray-light{
   width: 40vw;
   text-align: right;
@@ -828,7 +821,7 @@
     height: 10.67vw;
   }
   .my-home-work-title-tab-box-line {
-    width: 0.27vw;
+    width: 1px;
     height: 5.33vw;
     background-color: #E3E4E6;
   }

@@ -7,7 +7,7 @@
     <return-head title="车辆审核"></return-head>
 
     <transition name="slide-fade">
-      <router-view @Refresh="Refresh" :list="list[index]"></router-view>
+      <router-view @Refresh="Refresh" :list="applyList[index]"></router-view>
     </transition>
     <cube-tab-bar
       @click="tabClick"
@@ -29,7 +29,7 @@
             <li
               @click="detail(index)"
               :class="{'ul_li bg_no':item.status == 0||item.status == 3||item.status==1, 'ul_li bg_pass':item.status == 2}"
-              v-for="(item, index) in list"
+              v-for="(item, index) in applyList"
               :key="index">
               <div style="height: 6.67vw;line-height: 6.67vw;left:5.33vw;margin-top:3.2vw;right: 5.33vw;">
                 <span
@@ -39,7 +39,7 @@
                 <span style="font-size: 3.73vw;margin-left: 4.26vw;">{{ item.phone}}</span>
                 <span
                   style="display: block;float: right;font-size:4vw;font-weight:bold;"
-                >{{ statusList[item.status].name }}</span>
+                >{{ item.status | systemInit('UserCarStatus') }}</span>
               </div>
               <div style="height: 5.33vw;margin-top: 13.33vw;left:5.33vw;right: 5.33vw;line-height: 5.33vw;font-size: 3.73vw;">
                 <span style="margin-right: 3.2vw; font-size: 4.267vw;">{{item.carownName}} {{item.carownPhone}}</span>
@@ -90,25 +90,7 @@ export default {
   data() {
     return {
       defauleShow: false,
-      statusList: {
-        0: {
-          name: "未审核",
-          value: 0
-        },
-        1: {
-          name: "已审核",
-          value: 1
-        },
-        2: {
-          name: "审核不通过",
-          value: 2
-        },
-        3: {
-          name: "审核中",
-          value: 3
-        }
-      },
-      list: [],
+      applyList: [],
       index: 0,
       formTitle: {
         addressName: "",
@@ -178,10 +160,10 @@ export default {
       }).then(({ data, errorCode }) => {
         if (errorCode === 0) {
           if (data.list && data.list.length>0) {
-            this.list = data.list;
+            this.applyList = data.list;
             this.defauleShow = false
           } else {
-            this.list = [];
+            this.applyList = [];
             this.defauleShow = true
           }
         }

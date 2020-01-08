@@ -6,17 +6,14 @@
   <div
     class="visitor-item-index-box"
     :class="{'base-vertical-layout-space-between':true,
-             'base-background-img-blue-light':true}"
-  >
+             'base-background-img-blue-light':true}">
     <div
       class="base-horizontal-layout-space-between-item-center"
-      style="margin: 4vw 5.3333vw 0 5.3333vw"
-    >
+      style="margin: 4vw 5.3333vw 0 5.3333vw">
       <div class="base-horizontal-layout-center-item-center">
         <p v-if="visitorIndexInfo.openid" class="visitor-item-index-title"
         >{{visitorIndexInfo.visitorName ? visitorIndexInfo.visitorName  : '匿名'}}</p>
-        <p v-else class="visitor-item-index-title"
-        >{{visitorIndexInfo.roleName}}</p>
+        <p v-else class="visitor-item-index-title">{{visitorIndexInfo.roleName}}</p>
         <img v-if="visitorIndexInfo.visitorSex"
              class="visitor-item-index-vistorSex-img"
              :src="visitorIndexInfo.visitorSex===1 ?
@@ -26,8 +23,7 @@
           v-if="!visitorIndexInfo.recordType===1"
           class="visitor-item-index-vistorSex-img"
           :src="visitorIndexInfo.vistorSex==='男' ?
-             require('@/assets/icon/icon-male.png') : require('@/assets/icon/icon-female.png')"
-        />
+             require('@/assets/icon/icon-male.png') : require('@/assets/icon/icon-female.png')"/>
         <p
           v-if="!visitorIndexInfo.recordType===1"
           class="base-text-details-large-black-666"
@@ -40,12 +36,11 @@
         v-if="!visitorIndexInfo.openid"
         :class="['base-vertical-layout-center-item-center']"
         class="visitor-item-index-btn-border"
-        @click="btnOnClick(0,visitorIndexInfo.tempVisitorNumber,visitorIndexInfo.triggeringTime)"
-      >
+        @click="btnOnClick(0,visitorIndexInfo.tempVisitorNumber,visitorIndexInfo.triggeringTime)">
         <p class="base-text-details-normal-white">忽略</p>
       </div>
     </div>
-    <div class="base-horizontal-layout-space-between" style="padding: 5.3333vw">
+    <div class="base-horizontal-layout-space-between" style="padding: 4.2333vw 5.3333vw 5.3333vw 5.3333vw">
       <!--<div class="base-vertical-layout-space-between"-->
       <!--:class="{'base-text-details-large-black-666':!item.valid,-->
       <!--'base-text-details-large-white':item.valid}" style="height: 18vw">-->
@@ -54,28 +49,27 @@
       <!--<p>{{item.startTime}}</p>-->
     <!--</div>-->
 
-
       <div
         v-if="visitorIndexInfo.openid"
         class="base-vertical-layout-space-between"
         :class="{'base-text-details-large-white':true}"
-        style="height: 18vw"
-      >
-        <p style="font-size: 4.533vw">{{`${visitorIndexInfo.plotName}-${visitorIndexInfo.buildingName}-${visitorIndexInfo.doorName}`}}</p>
-        <!--<p class="base-text-details-normal-white" style="color: rgba(255,255,255,0.7);">微信访客</p>-->
+        style="height: 21vw">
+        <div class="base-horizontal-layout-center visitor-item-index-plot-wx"
+        >{{`${visitorIndexInfo.plotName}-${visitorIndexInfo.buildingName}-${visitorIndexInfo.doorName}`}}</div>
         <p>{{visitorIndexInfo.carNumber}}</p>
-        <p>{{getTime(visitorIndexInfo.startTime)}} 来源：微信</p>
+        <p class="base-horizontal-layout-general-item-center"
+        >{{getTime(visitorIndexInfo.startTime)}} <span style="font-size: 3.2vw;margin-left: 1.8666vw;">来源：微信</span></p>
       </div>
       <div
         v-else
         class="base-vertical-layout-space-between"
         :class="{'base-text-details-large-white':true}"
-        style="height: 18vw"
-      >
-        <p class="but_text_line_height">{{visitorIndexInfo.plotName}}{{visitorIndexInfo.buildingName}}</p>
-        <p class="base-text-details-normal-white" style="color: rgba(255,255,255,0.7);">
+        style="height: 21vw">
+        <div class="visitor-item-index-plot-doorbell"
+        >{{visitorIndexInfo.plotName}}{{visitorIndexInfo.buildingName}}</div>
+        <p class="base-text-details-normal-white" style="color: rgba(255,255,255,0.7);line-height: 3.8vw">
           温馨提醒：开门前可先查看门禁
-          <br />摄图，辨识访客是否认识。
+          <br/>摄图，辨识访客是否认识。
         </p>
         <p>{{getTime(visitorIndexInfo.triggeringTime)}}</p>
       </div>
@@ -83,16 +77,14 @@
         <div
           class="visitor-item-index-btn-color"
           :class="['base-horizontal-layout-center-item-center']"
-          @click="wxVisitorOnclick('拒绝',visitorIndexInfo.visitorNumber)"
-        >
+          @click="wxVisitorOnclick('拒绝',visitorIndexInfo.visitorNumber)">
           <p class="base-text-details-large-blue">拒绝</p>
         </div>
         <div
           class="visitor-item-index-btn-color"
           :class="['base-horizontal-layout-center-item-center']"
           style="margin-top: 2.6666vw"
-          @click="wxVisitorOnclick('同意',visitorIndexInfo.visitorNumber)"
-        >
+          @click="wxVisitorOnclick('同意',visitorIndexInfo.visitorNumber)">
           <p class="base-text-details-large-blue">同意</p>
         </div>
       </div>
@@ -113,8 +105,7 @@
           class="visitor-item-index-btn-color"
           :class="['base-horizontal-layout-center-item-center']"
           style="margin-top: 2.6666vw"
-          @click="btnOnClick(2,visitorIndexInfo.tempVisitorNumber,visitorIndexInfo.triggeringTime)"
-        >
+          @click="btnOnClick(2,visitorIndexInfo.tempVisitorNumber,visitorIndexInfo.triggeringTime)">
           <p class="base-text-details-large-blue but_text_line_height">
             {{visitorIndexInfo.openStatus===0?'开门':
             visitorIndexInfo.openStatus===1?'已开门':
@@ -204,36 +195,63 @@ export default {
 </script>
 
 <style scoped>
-.visitor-item-index-box {
-  height: 37.3333vw;
-  margin: 0 4vw 2.9vw 4vw;
-  border-radius: 1.6vw;
-  background-size: 100% 100%;
-  background-color: #fff;
-}
-.visitor-item-index-title {
-  font-size: 4.8vw;
-  font-weight: bold;
-  color: white;
-}
-.visitor-item-index-vistorSex-img {
-  width: 5.31vw;
-  height: 5.41vw;
-  margin-left: 1.8666vw;
-}
-.visitor-item-index-btn-border {
-  width: 17.0666vw;
-  height: 5.3333vw;
-  border: 1px solid rgba(255, 255, 255, 1);
-  border-radius: 1.0666vw;
-}
-.visitor-item-index-btn-color {
-  width: 26.1333vw;
-  height: 8.5333vw;
-  border-radius: 1.0666vw;
-  /*background: linear-gradient(to bottom, #30c9ff, #38f);*/
-  background-color: white;
-}
-.visitor-item-index-btn-gray {
-}
+  .visitor-item-index-box {
+    height: 37.3333vw;
+    margin: 0 4vw 2.9vw 4vw;
+    border-radius: 1.6vw;
+    background-size: 100% 100%;
+    background-color: #fff;
+  }
+  .visitor-item-index-title {
+    font-size: 4.8vw;
+    font-weight: bold;
+    color: white;
+  }
+  .visitor-item-index-vistorSex-img {
+    width: 5.31vw;
+    height: 5.41vw;
+    margin-left: 1.8666vw;
+  }
+  .visitor-item-index-btn-border {
+    width: 17.0666vw;
+    height: 5.3333vw;
+    border: 1px solid rgba(255, 255, 255, 1);
+    border-radius: 1.0666vw;
+  }
+  .visitor-item-index-btn-color {
+    width: 26.1333vw;
+    height: 8.5333vw;
+    border-radius: 1.0666vw;
+    /*background: linear-gradient(to bottom, #30c9ff, #38f);*/
+    background-color: white;
+  }
+  .visitor-item-index-btn-gray {
+  }
+
+  .visitor-item-index-plot-wx {
+    width: 50vw;
+    height: 10vw;
+    line-height: 5vw;
+    font-size: 4.2666vw;
+    word-break: break-all;
+    white-space: pre-wrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    display:-webkit-box;
+    -webkit-box-orient:vertical;
+    -webkit-line-clamp:2;
+  }
+  .visitor-item-index-plot-doorbell {
+    width: 50vw;
+    height: 5vw;
+    line-height: 5vw;
+    font-size: 4.2666vw;
+    word-break: break-all;
+    white-space: pre-wrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    display:-webkit-box;
+    -webkit-box-orient:vertical;
+    -webkit-line-clamp:1;
+  }
 </style>

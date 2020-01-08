@@ -1,6 +1,6 @@
-/*
- * @Descripttion: 
- * @version: 
+/**
+ * @Descripttion:
+ * @version:
  * @Author: Vencent Lum
  * @Date: 2019-12-13 15:05:40
  * @LastEditors: Vencent Lum
@@ -38,6 +38,9 @@ const vConsole = process.env.NODE_ENV === 'production' ? null : new VConsole();
 
 // import setConsole from './setVconsole'
 // const setVcosole = new setConsole('#__vconsole');
+
+import moment from 'moment' // 时间格式化
+Vue.prototype.$moment = moment;
 
 // /* fundebug错误调试 */
 // import * as fundebug from "fundebug-javascript";
@@ -93,7 +96,15 @@ Vue.prototype.safetyInvoke = utils.safetyInvoke;
 // 将window的方法直接加在vue的原型链上
 Vue['prototype']['unescape'] = (str) => { //这个是将utf8转成utf16
     return window.unescape(str.replace(/\\u/g, "%u"));
-}
+};
+
+/**
+ * 定义全局过滤器
+ */
+import * as custom from '@/libs/filters';
+Object.keys(custom).forEach(key => { //注册全局过滤器
+  Vue.filter(key, custom[key]);
+});
 
 Vue.config.productionTip = false;
 
@@ -101,4 +112,4 @@ new Vue({
     router,
     store,
     render: h => h(App),
-}).$mount('#app')
+}).$mount('#app');

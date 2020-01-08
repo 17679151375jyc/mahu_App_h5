@@ -33,7 +33,7 @@
             <div class="right-side">
               <cube-input v-model="addVisitorDataModel.vistorName"
                           placeholder="填写来客姓名"
-                          :maxlength="8"
+                          :maxlength="4"
                           class="name-input"></cube-input>
               <div
                 class="base-text-title-normal-blue note-book-btn"
@@ -325,7 +325,7 @@ export default {
         required: this.isVistorPhoneIn,
         custom: val => {
           if (val) {
-            val = val.replace(/[ ]|[-]/g, "").slice(0,12);
+            val = val.replace(/[ ]|[-]/g, "");
             if (this.isVistorPhoneIn) {
               return utils.numberVerification("telephone", val);
             } else {
@@ -363,6 +363,7 @@ export default {
   mounted() {
     /** 加载通讯录 **/
     setTimeout(() => {
+      window.checkContactsResult = this.checkContactsResult;//调用原生通讯录回调，是否有权限
       window.readContacts = this.readContactsCallback; //调用原生通讯录回调
     }, 700);
   },
@@ -640,7 +641,16 @@ export default {
 
     /** 联系人 **/
     readContactss() {
-      utils.openContacts();
+      if(utils.isIos()) {
+        utils.openContacts();
+      } else {
+        utils.checkContacts();
+      }
+    },
+    checkContactsResult(res) {
+      if(res === 1) {
+        utils.openContacts();
+      }
     },
     readContactsCallback(res) {
       if (utils.isIos()) {
@@ -706,7 +716,7 @@ export default {
             self.$createDialog(
                 {
                   type: "confirm",
-                  title: message + "访客成功！",
+                  title: "提示",
                   confirmBtn: {
                     text: "分享到微信"
                   },
@@ -731,12 +741,23 @@ export default {
                         slot: "content"
                       },
                       [
-
+                        h(
+                          "div",
+                          {
+                            class: {
+                              "in-and-out-index-title": true
+                            }
+                          },
+                          [h("span", message + "访客成功！")]
+                        ),
                         h(
                           "div",
                           {
                             class: {
                               "in-and-out-index-details": true
+                            },
+                            style: {
+                              "text-align": "center"
                             }
                           },
                           [h("span", "您要马上分享二维码给微信来访客人吗？")]
@@ -769,24 +790,19 @@ export default {
             "来访二维码",
             "使用你的来访二维码进行来访确认"
           )
-          .then(res => {
-            // self.$createToast({
-            //   type: "correct",
-            //   txt: toastStr
-            // }).show();
-            setTimeout(() => {
-              self.goToVisitorIndex();
-            }, 250);
-          });
         //   .catch(err => {
         //   this.$createToast({
         //     type: "warn",
         //     txt: err
         //   }).show();
         // });
+          setTimeout(() => {
+              self.goToVisitorIndex();
+            }, 250);
       });
     }
   },
+
 };
 </script>
 
@@ -1279,17 +1295,13 @@ export default {
 }
 </style>
 
-<style>
-  .in-and-out-index-details {
-    margin: 2vw 14.6666vw 0 15.6666vw;
-    font-size: 4.3333vw;
-    width: 53.33vw;
-    text-align: center;
-  }
-</style>
-
-
 <style lang="stylus" scoped>
+ .in-and-out-index-details {
+   margin: 2vw 0 2vw 15.6666vw;
+   font-size: 4.3333vw;
+   width: 53.33vw;
+   text-align: center;
+ }
 
 .note-book-btn
  width 30vw

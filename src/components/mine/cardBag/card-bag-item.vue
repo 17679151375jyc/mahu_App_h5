@@ -18,18 +18,10 @@
     >
       <div class="base-horizontal-layout-general-item-end" >
         <p class="base-text-details-large-white">
-          <span style="font-size: 9.6vw;font-weight: bold">{{
-            comUserCouponInfo.couponType === 0
-              ? (safetyInvoke(comUserCouponInfo, "price", "number", 1) * 10).toFixed(2)
-              : safetyInvoke(comUserCouponInfo, "price", "number", 1)
-          }}</span>
-          {{
-            comUserCouponInfo.couponType === 0
-              ? "折"
-              : comUserCouponInfo.couponType === 1
-              ? "元"
-              : ""
-          }}
+          <span style="font-size: 9.6vw;font-weight: bold">
+          {{ comUserCouponInfo.couponType | couponTypePrice('money',comUserCouponInfo) }}
+          </span>
+          {{ comUserCouponInfo.couponType | couponTypePrice('unit') }}
         </p>
         <div
           class="base-horizontal-layout-center-item-center card-bag-item-label"
@@ -46,14 +38,7 @@
               }
             ]"
             style="transform: skewX(45deg)"
-          >
-            {{
-              comUserCouponInfo.couponType === 0
-                ? "折扣券"
-                : comUserCouponInfo.couponType === 1
-                ? "代金券"
-                : ""
-            }}
+          >{{comUserCouponInfo.couponType | systemInit('CouponType')}}
           </p>
         </div>
       </div>
@@ -69,25 +54,19 @@
     <div
       v-if="comUserCouponInfo.status === 0 && comUserCouponInfo.isEffective"
       class="base-vertical-layout-center-item-center"
-      style="margin-right: 5.7333vw"
-    >
+      style="margin-right: 5.7333vw">
       <p style="font-size: 4.8vw;font-weight: bold;color: #D72A25">有效期</p>
       <p class="base-text-details-large-red-dark" style="margin-top: 3.2vw">
         {{ getUseTime(comUserCouponInfo.effectiveTime) }}
       </p>
     </div>
-    <img
-      v-else
-      :src="
-        comUserCouponInfo.status === 1
+    <img v-else :src="comUserCouponInfo.status === 1
           ? require('./icon-used.png')
           : comUserCouponInfo.status === 0 && !comUserCouponInfo.isEffective
           ? require('./icon-expired.png')
-          : ''
-      "
-      :class="{'usedImg':comUserCouponInfo.status === 1}"
-      style="width: 21.0666vw;height: 21.0666vw;margin-right: 7.7333vw"
-    />
+          : '' "
+         class="usedImg"
+        :class="{'usedImg-status1':comUserCouponInfo.status === 1}"/>
     <span class="used-time" v-if="comUserCouponInfo.status === 1">
       {{useTime}}
     </span>
@@ -111,7 +90,7 @@ export default {
     };
   },
   created() {
-    this.useTime = utils.timetrans(this.comUserCouponInfo.useTime,"yymmdd");  
+    this.useTime = utils.timetrans(this.comUserCouponInfo.useTime,"yymmdd");
   },
   mounted() {},
   methods: {
@@ -177,6 +156,11 @@ export default {
   margin-top: 8vw
 }
 .usedImg {
+  width: 21.0666vw;
+  height: 21.0666vw;
+  margin-right: 7.7333vw;
+}
+.usedImg-status1 {
   margin-bottom: 5vw;
 }
 </style>

@@ -41,11 +41,9 @@
 
           <div :class="['other-info', !item.valid || item.status==2 ? '' : 'valid']">
             <div class="left">
-              <span class="name">{{`${item.plotName}-${item.buildingName}-${item.doorName}`}}</span>
+              <span class="base-horizontal-layout-center visitor-index-item-plot">{{`${item.plotName}-${item.buildingName}-${item.doorName}`}}</span>
               <span v-if="item.carNumber" class="carNumber">{{item.carNumber}}</span>
-              <span class="time">
-                {{item.startTime}}<span>{{item.wxOpenId?'来源:微信':''}}</span>
-              </span>
+              <span class="time base-horizontal-layout-general-item-center">{{item.startTime}}<span>{{item.wxOpenId?'来源:微信':''}}</span></span>
             </div>
             <div class="right">
               <div
@@ -134,16 +132,14 @@
     <addVisitorPopup
       v-if="addVisitorPopup"
       @addVisitorClose="addVisitorPopupClose"
-      @addVisitorTo="addVisitorTo"
-    />
+      @addVisitorTo="addVisitorTo"/>
 
     <base-popup
       v-if="isPopShow"
       :refId="refId"
       :popTitle="popTitle"
       @leftBtnPoppup="leftBtnPoppup"
-      @rightBtnPoppup="rightBtnPoppup"
-    >
+      @rightBtnPoppup="rightBtnPoppup">
       <!--没有回车的纯文字-->
       <div class="base-vertical-layout-center-item-center">
         <p class="popup-text" style="width: 53.33vw">{{popPlainText}}</p>
@@ -443,7 +439,7 @@ export default {
     flex: 1;
 
     .name {
-      font-size: 4.533vw;
+      font-size: 4.2666vw;
       font-weight: bold;
       margin-right: 1.867vw;
       word-break: break-all;
@@ -474,6 +470,20 @@ export default {
   }
 }
 
+  .visitor-index-item-plot {
+    width: 50vw;
+    height: 10vw;
+    line-height: 5vw;
+    font-size: 4.2666vw;
+    word-break: break-all;
+    white-space: pre-wrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    display:-webkit-box;
+    -webkit-box-orient:vertical;
+    -webkit-line-clamp:2;
+  }
+
 .other-info {
   flex: 1;
   padding-bottom: 2.133vw;
@@ -496,7 +506,7 @@ export default {
       font-size: 3.733vw;
 
       span {
-        margin-left: 1.867vw;
+        margin-left: 1.8666vw;
         font-size: 3.2vw;
       }
     }

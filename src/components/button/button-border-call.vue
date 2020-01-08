@@ -1,3 +1,11 @@
+<!--
+ * @Descripttion: 
+ * @version: 
+ * @Author: Vencent Lum
+ * @Date: 2019-12-13 15:05:40
+ * @LastEditors: Vencent Lum
+ * @LastEditTime: 2020-01-03 10:22:37
+ -->
 <template>
   <div @click="buttonOnClick">
     <a class="button-border-style"
@@ -42,7 +50,7 @@
   .button-border-style {
     /*width: 18.67vw;*/
     height: 6.67vw;
-    padding: 0 4vw;
+    padding: 0 2vw;
     border: 0.2666666vw solid #FFF;
     border-radius: 5.07vw;
     display: flex;

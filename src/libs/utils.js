@@ -1,10 +1,10 @@
 /*
  * @Descripttion:
  * @version:
- * @Author: Vencent Lum
- * @Date: 2019-12-13 15:05:40
- * @LastEditors: Vencent Lum
- * @LastEditTime: 2019-12-16 17:42:47
+ * @Author: michael Huang
+ * @Date: 2019-01-06 18:05:40
+ * @LastEditors: michael Huang
+ * @LastEditTime: 2020-01-06 18:05:40
  */
 import { throws } from "assert";
 
@@ -13,7 +13,7 @@ import { throws } from "assert";
 
 import axios from 'axios';
 import COS from "cos-js-sdk-v5";
-const version = 'v201912251759';
+const version = 'v202001061038';
 
 import store from "@/store/index";
 import router from '@/router';
@@ -163,7 +163,7 @@ let utils = {
     },
 
     /**
-     *  获取用户通讯录
+     *  获取用户通讯录读取权限
      */
     checkContacts() {
       return new Promise((resolve, reject) => {
@@ -733,7 +733,7 @@ let utils = {
       let telephoneReg = /^1[3|4|5|6|7|8|9][0-9]{9}$/;
       // let telephoneReg = /^1[3|4|5|8][0-9]\d{4,8}$/;
       // let passwordReg = /^(?![^a-zA-Z]+$)(?!\D+$){6,18}/;
-      let passwordReg = /^(?=.*[0-9])(?=.*[a-zA-Z])(.{6,18})$/; //配合java
+      let passwordReg = /^(?=.*[0-9])(?=.*[a-zA-Z])(.{6,18})$/;
       // let passwordReg = /^[0-9a-zA-Z]{6,18}$/;
       // let carNumberReg = /^[京津沪渝冀豫云辽黑湘皖鲁新苏浙赣鄂桂甘晋蒙陕吉闽贵粤青藏川宁琼使领A-Z]{1}[A-Z]{1}[A-HJ-NP-Z0-9]{4}[A-HJ-NP-Z0-9挂学警港澳使领]{1}$/;
       // let carNumberReg = /(^[京津沪渝冀豫云辽黑湘皖鲁新苏浙赣鄂桂甘晋蒙陕吉闽贵粤青藏川宁琼使领]{1}[A-Z0-9]{6}$)|(^[A-Z]{2}[A-Z0-9]{2}[A-Z0-9京津沪渝冀豫云辽黑湘皖鲁新苏浙赣鄂桂甘晋蒙陕吉闽贵粤青藏川宁琼使领]{1}[A-Z0-9]{4}$)|(^[京津沪渝冀豫云辽黑湘皖鲁新苏浙赣鄂桂甘晋蒙陕吉闽贵粤青藏川宁琼使领]{1}[A-Z0-9]{5}[挂学警军港澳]{1}$)|(^[A-Z]{2}[0-9]{5}$)|(^(08|38){1}[A-Z0-9]{4}[A-Z0-9挂学警军港澳]{1}$)/;

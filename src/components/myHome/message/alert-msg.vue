@@ -16,8 +16,8 @@
       <div class="base-horizontal-layout-center-item-center">
         <div class="base-horizontal-layout-general-item-center">
           <img :src="titleIcon" class="base-icon-large-style" style="margin-right: 1.33vw">
-          <p class="base-text-title-normal-white"
-             style="max-width:32vw;margin: 0.2vw 1vw 0 0">{{messageInfo.name}}</p>
+          <p class="base-text-title-normal-white base-text-overflow"
+             style="max-width:32vw;margin: 0.2vw 1vw 0 0;line-height: 4.5vw">{{messageInfo.name}}</p>
           <label-msg :labelBoxStyle="stateBoxStyle"
                      :labelTextStyle="stateTextStyle"
                      :labelText="stateStr">
@@ -106,7 +106,13 @@
                @click="alertOnClick"
                @touchstart="alertOnClickTouch"
                @touchend="alertOnClickTouchEnd(1)">
-            <p :class="{'alert-msg-btn-red':(messageInfo.messageType==='报警' && messageInfo.type==='紧急'),
+            <a v-if="messageInfo.status==='已接警' || messageInfo.status==='正在出警' || messageInfo.status==='已接单'"
+               :href="`tel:${messageInfo.securePhone}`"
+               :class="{'alert-msg-btn-red':(messageInfo.messageType==='报警' && messageInfo.type==='紧急'),
+                          'alert-msg-btn-yellow':(messageInfo.messageType==='报警' && messageInfo.type==='一般'),
+                          'alert-msg-btn-green':messageInfo.messageType==='维保'}"
+            >联系{{messageInfo.messageType==='报警'?'安保':messageInfo.messageType==='维保'?'维保':''}}</a>
+            <p v-else :class="{'alert-msg-btn-red':(messageInfo.messageType==='报警' && messageInfo.type==='紧急'),
                           'alert-msg-btn-yellow':(messageInfo.messageType==='报警' && messageInfo.type==='一般'),
                           'alert-msg-btn-green':messageInfo.messageType==='维保'}">{{button1Text}}</p>
           </div>
@@ -129,7 +135,7 @@
                           'alert-msg-btn-green':messageInfo.messageType==='维保'}">{{button2Text}}</p>
           </div>
         </div>
-        <p v-else class="base-text-details-large-white" style="text-align: right;line-height: 3.8vw"
+        <p v-else class="base-text-details-large-white but_text_line_height" style="text-align: right"
            v-html="beingMsgText"
            @click="toWorkDetails(messageInfo.messageType)">
         </p>
@@ -325,10 +331,10 @@
                 self.$emit('alertOnClick', {number: self.messageInfo.number, name: self.messageInfo.name});
                 break;
               case "已接警":
-                self.$emit('callAlertPersonnelOnClick', {phone: self.messageInfo.securePhone,messageType: self.messageInfo.messageType});
+                // self.$emit('callAlertPersonnelOnClick', {phone: self.messageInfo.securePhone,messageType: self.messageInfo.messageType});
                 break;
               case "正在出警":
-                self.$emit('callAlertPersonnelOnClick', {phone: self.messageInfo.securePhone,messageType: self.messageInfo.messageType});
+                // self.$emit('callAlertPersonnelOnClick', {phone: self.messageInfo.securePhone,messageType: self.messageInfo.messageType});
                 break;
               case "出警完成":
                 self.toWorkDetails("报警");
@@ -343,7 +349,7 @@
                   content: self.messageInfo.content, orderTime: 0});
                 break;
               case "已接单":
-                self.$emit('callAlertPersonnelOnClick', {phone: self.messageInfo.securePhone,messageType: self.messageInfo.messageType});
+                // self.$emit('callAlertPersonnelOnClick', {phone: self.messageInfo.securePhone,messageType: self.messageInfo.messageType});
                 break;
               case "正在处理":
 

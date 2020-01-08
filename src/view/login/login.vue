@@ -43,8 +43,7 @@ export default {
     login() {
       let self = this;
       let loginInfo = {};
-      self
-        .$post("login", "", {
+      self.$post("login", "", {
           phone: self.account,
           password: self.password
         })

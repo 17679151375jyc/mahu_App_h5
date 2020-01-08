@@ -126,15 +126,14 @@ export default {
     goToShareInfo() {
       let self = this;
       this.closePoppup('myPopup');
-      self
-        .$post("entry", "/link", {
+      self.$post("entry", "/link", {
           domicileID: self.myComnunities.domicileID
         })
         .then(res => {
           utils.shareUrl(
             res.data.link,
-            "穿云箭智能小区来访登记",
-            "穿云箭智能小区来访登记"
+            "穿云智能小区来访登记",
+            "穿云智能小区来访登记"
           );
         });
     },
